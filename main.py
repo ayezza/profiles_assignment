@@ -2,7 +2,7 @@
 """
 Author : Abdel YEZZA (Ph.D)
 Date :  july 2021
-LicenseMIT License
+License: MIT License
 NOTE : This code is completely free and can be modified with only one condition, DOT NOT REMOVE author's name
 """
 
