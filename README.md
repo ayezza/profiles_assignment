@@ -31,7 +31,8 @@ Les fichiers CSV doivent avoir le format suivant :
 
 ### MCA (Matrix Compétences-Activités) - example
 
-csv
+#### CSV file:
+
 Activity,Comp1,Comp2,Comp3,...
 
 Act1,0.8,0.6,0.4,...
@@ -41,7 +42,8 @@ Act2,0.5,0.9,0.3,...
 
 ### MCP (Matrix Compétences-Profils)
 
-csv
+#### CSV file:
+
 Profile,Comp1,Comp2,Comp3,...
 
 Prof1,0.9,0.5,0.3,...
