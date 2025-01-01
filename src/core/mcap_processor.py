@@ -1,3 +1,11 @@
+"""
+Author : Abdel YEZZA (Ph.D)
+Date :  july 2021
+LicenseMIT License
+NOTE : This code is completely free and can be modified with only one condition, DOT NOT REMOVE author's name
+"""
+
+
 import numpy as np
 import pandas as pd
 from sklearn import preprocessing
@@ -80,27 +88,32 @@ class McapProcessor:
         
         # Générer une palette de couleurs dynamique
         def get_color_palette(n):
-            if n <= 10:
-                base_colors = {
-                    'Prof1': '#e74c3c', 'Prof2': '#2ecc71', 'Prof3': '#3498db',
-                    'Prof4': '#f1c40f', 'Prof5': '#9b59b6', 'Prof6': '#e67e22',
-                    'Prof7': '#1abc9c', 'Prof8': '#34495e', 'Prof9': '#d35400',
-                    'Prof10': '#27ae60'
-                }
-                return base_colors
-            else:
-                # Générer une palette de couleurs distinctes
-                import colorsys
-                colors = {}
-                for i in range(n):
-                    hue = i / n
-                    saturation = 0.7 + 0.3 * (i % 2)  # Alterner entre 0.7 et 1.0
-                    value = 0.8 + 0.2 * (i % 3) / 2   # Varier entre 0.8 et 1.0
-                    rgb = colorsys.hsv_to_rgb(hue, saturation, value)
-                    colors[f'Prof{i+1}'] = '#{:02x}{:02x}{:02x}'.format(
+            """Génère une palette de couleurs pour les profils"""
+            import colorsys
+            colors = {}
+            base_colors = {
+                'Profile.1': '#e74c3c', 'Profile.2': '#2ecc71', 'Profile.3': '#3498db',
+                'Profile.4': '#f1c40f', 'Profile.5': '#9b59b6', 'Profile.6': '#e67e22',
+                'Profile.7': '#1abc9c', 'Profile.8': '#34495e', 'Profile.9': '#d35400',
+                'Profile.10': '#27ae60'
+            }
+            
+            # Utiliser la matrice passée en paramètre au lieu de self.result_matrix
+            profiles = list(result_matrix.columns)
+            
+            for profile in profiles:
+                if profile in base_colors:
+                    # Utiliser les couleurs prédéfinies si le profil existe dans base_colors
+                    colors[profile] = base_colors[profile]
+                else:
+                    # Générer une nouvelle couleur pour les profils non définis
+                    hue = len(colors) / len(profiles)
+                    rgb = colorsys.hsv_to_rgb(hue, 0.8, 0.9)
+                    colors[profile] = '#{:02x}{:02x}{:02x}'.format(
                         int(rgb[0]*255), int(rgb[1]*255), int(rgb[2]*255)
                     )
-                return colors
+            
+            return colors
         
         colors = get_color_palette(n_profiles)
             
@@ -133,7 +146,7 @@ class McapProcessor:
                        color=color,
                        alpha=0.7)
                 ax.fill(angles, profile_score, 
-                       alpha=0.1,
+                       alpha=0.05,
                        color=color)
             
             # Configurer l'apparence
@@ -143,12 +156,17 @@ class McapProcessor:
             ax.set_title(f'Activité: {activity}', pad=20, size=8)
             
             # Définir les limites et la grille
-            ax.set_ylim(0, max(1, result_matrix.values.max() + 0.1))
+            max_value = result_matrix.values.max()
+            # Arrondir au nombre entier supérieur pour une meilleure lisibilité
+            max_limit = np.ceil(max_value)
+            ax.set_ylim(0, max_limit)
             ax.grid(True, alpha=0.3)
             
             # Ajouter les niveaux de la grille avec des labels plus petits
-            ax.set_rticks([0.2, 0.4, 0.6, 0.8, 1.0])
-            ax.set_yticklabels(['0.2', '0.4', '0.6', '0.8', '1.0'], 
+            # Créer des graduations adaptées aux valeurs
+            ticks = np.linspace(0, max_limit, 5)
+            ax.set_rticks(ticks)
+            ax.set_yticklabels([f'{tick:.1f}' for tick in ticks], 
                               fontsize=6)
             
             # Ajouter une légende compacte avec police plus petite

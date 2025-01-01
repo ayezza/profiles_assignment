@@ -2,6 +2,7 @@
 """
 Author : Abdel YEZZA (Ph.D)
 Date :  july 2021
+LicenseMIT License
 NOTE : This code is completely free and can be modified with only one condition, DOT NOT REMOVE author's name
 """
 
@@ -25,7 +26,12 @@ def get_default_paths():
 def get_model_function(model_name):
     """Retourne la fonction de modèle selon le nom"""
     model_mapping = {
+        'model1': ModelFunctions.model_function1,
         'model2': ModelFunctions.model_function2,
+        'model3': ModelFunctions.model_function3,
+        'model4': ModelFunctions.model_function4,
+        'model5': ModelFunctions.model_function5
+        
         # Ajouter d'autres modèles ici si nécessaire
     }
     return model_mapping.get(model_name, ModelFunctions.model_function2)
