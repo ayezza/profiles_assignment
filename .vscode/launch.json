@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "purpose": ["debug-in-terminal"], 
+            "args": [".\\tests\\mca3.csv",
+            ".\\tests\\mcp3.csv", "4"]
+        }
+    ]
+}
