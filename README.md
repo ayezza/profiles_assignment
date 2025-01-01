@@ -74,17 +74,17 @@ mcap-profiles/
 
 ├── config/
 
-│   └── mylogger.ini
+   └── mylogger.ini
 
 ├── data/
 
-│   ├── input/
+  ├── input/
 
-│   │   ├── mca_01.csv
+     ├── mca_01.csv
 
-│   │   └── mcp_01.csv
+     └── mcp_01.csv
 
-│   └── output/
+  └── output/
 
 └── src/
 
