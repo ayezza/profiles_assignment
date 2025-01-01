@@ -5,3 +5,6 @@ New methods to assign profiles to activities
 Un package Python pour l'affectation des profils aux activités basé sur les compétences.
 
 ## Installation
+
+
+## Utilisation
