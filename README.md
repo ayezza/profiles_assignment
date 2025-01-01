@@ -55,3 +55,27 @@ Prof2,0.4,0.8,0.6,...
 
 Ce projet est sous licence MIT.
 
+
+## Structure
+
+mcap-profiles/
+├── LICENSE
+├── MANIFEST.in
+├── README.md
+├── setup.py
+├── .gitignore
+├── main.py
+├── config/
+│   └── mylogger.ini
+├── data/
+│   ├── input/
+│   │   ├── mca_01.csv
+│   │   └── mcp_01.csv
+│   └── output/
+└── src/
+    ├── __init__.py
+    ├── core/
+    ├── models/
+    └── utils/
+
+
