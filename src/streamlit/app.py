@@ -20,6 +20,12 @@ def run_streamlit_app():
     st.cache_data.clear()
     st.title("Affectation des Profils")
     
+    # Titre dans la sidebar
+    st.sidebar.markdown("""
+    # Affectation des profils aux activités
+    ---
+    """)
+    
     # Configuration de la page
     st.sidebar.header("Configuration")
     
@@ -170,18 +176,18 @@ def run_streamlit_app():
                 if f.endswith('.png'):
                     os.remove(os.path.join(figures_dir, f))
             
-            # Traitement MCAP
-            model_function = getattr(ModelFunctions, f"model_function{selected_model[-1]}")
-            processor = McapProcessor(
-                logger=logger,
-                mca_matrix=mca_data,
-                mcp_matrix=mcp_data,
-                model_function=model_function,
-                scale_type=scale_type
-            )
-            
-            # Exécution du traitement
-            if processor.process() == 0:
+            try:
+                # Traitement MCAP
+                model_function = getattr(ModelFunctions, f"model_function{selected_model[-1]}")
+                processor = McapProcessor(
+                    logger=logger,
+                    mca_matrix=mca_data,
+                    mcp_matrix=mcp_data,
+                    model_function=model_function,
+                    scale_type=scale_type
+                )
+                
+                processor.process()
                 st.success("Traitement terminé avec succès!")
                 
                 # Affichage des résultats CSV
@@ -231,17 +237,30 @@ def run_streamlit_app():
                     Visualisation des scores pour chaque profil par activité
                     """)
                     
-                    # Calculer le nombre de colonnes en fonction du nombre de graphiques
-                    n_cols = min(2, len(radar_graphs))  # Maximum 2 colonnes
-                    cols = st.columns(n_cols)
+                    # Créer un conteneur pour les graphiques
+                    graph_container = st.container()
                     
-                    for idx, fig_file in enumerate(radar_graphs):
-                        with cols[idx % n_cols]:
-                            st.image(
-                                f'data/output/figures/{fig_file}',
-                                use_column_width=True,
-                                caption=f"Radar {idx+1}"
-                            )
+                    # Afficher les graphiques par paires
+                    with graph_container:
+                        for i in range(0, len(radar_graphs), 2):
+                            col1, col2 = st.columns(2)
+                            
+                            # Premier graphique de la paire
+                            with col1:
+                                st.image(
+                                    f'data/output/figures/{radar_graphs[i]}',
+                                    use_column_width=True,
+                                    caption=f"Radar de l'activité {i+1}"
+                                )
+                            
+                            # Second graphique de la paire (s'il existe)
+                            if i + 1 < len(radar_graphs):
+                                with col2:
+                                    st.image(
+                                        f'data/output/figures/{radar_graphs[i+1]}',
+                                        use_column_width=True,
+                                        caption=f"Radar de l'activité {i+2}"
+                                    )
                 
                 # Afficher le graphique en barres
                 if bar_graphs:
@@ -254,14 +273,18 @@ def run_streamlit_app():
                             f'data/output/figures/{fig_file}',
                             use_column_width=True
                         )
-            else:
+            except Exception as e:
                 st.error("Une erreur s'est produite pendant le traitement")
+                st.error(f"Détails de l'erreur : {str(e)}")
+                st.error(f"Type d'erreur : {type(e).__name__}")
+                import traceback
+                st.error(f"Traceback complet :")
+                st.code(traceback.format_exc())
+                return
                 
         except Exception as e:
-            st.error(f"Erreur détaillée : {str(e)}")
-            st.error(f"Type d'erreur : {type(e).__name__}")
-            import traceback
-            st.error(f"Traceback : {traceback.format_exc()}")
+            st.error(f"Erreur lors du chargement des fichiers : {str(e)}")
+            return
 
 if __name__ == "__main__":
     run_streamlit_app()

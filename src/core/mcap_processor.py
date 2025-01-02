@@ -73,7 +73,7 @@ class McapProcessor:
 
     def plot_radar(self, result_matrix):
         """Génère un graphique radar (pentagone) pour chaque activité"""
-        # Nettoyer result_matrix en supprimant les colonnes de statistiques si elles existent
+        # Nettoyer result_matrix en supprimant les colonnes de statistiques
         if 'max_value' in result_matrix.columns:
             result_matrix = result_matrix.drop(['max_value'], axis=1)
         if 'first_best_profile' in result_matrix.columns:
@@ -87,11 +87,21 @@ class McapProcessor:
         angles = np.linspace(0, 2*np.pi, 5, endpoint=False)
         angles = np.concatenate((angles, [angles[0]]))
         
-        # Générer une palette de couleurs
-        colors = {
-            f'Profile.{i+1}': plt.cm.Set3(i/10) 
-            for i in range(len(result_matrix.columns))
-        }
+        # Générer une palette de couleurs en utilisant les noms réels des profils
+        colors = {}
+        base_colors = [
+            '#e74c3c', '#2ecc71', '#3498db', '#f1c40f', '#9b59b6',
+            '#e67e22', '#1abc9c', '#34495e', '#d35400', '#27ae60'
+        ]
+        
+        for i, profile in enumerate(result_matrix.columns):
+            if i < len(base_colors):
+                colors[profile] = base_colors[i]
+            else:
+                # Générer des couleurs supplémentaires si nécessaire
+                hue = i / len(result_matrix.columns)
+                rgb = plt.cm.hsv(hue)[:3]
+                colors[profile] = rgb
         
         # Créer une figure par activité
         for activity, scores in result_matrix.iterrows():
@@ -145,17 +155,26 @@ class McapProcessor:
     def process(self):
         try:
             self.logger.info("Début du traitement MCAP")
+            
+            # Vérification des données
+            if self.mca_matrix.empty or self.mcp_matrix.empty:
+                raise ValueError("Les matrices MCA ou MCP sont vides")
+            
             self.logger.info(f"Dimensions MCA: {self.mca_matrix.shape}")
             self.logger.info(f"Dimensions MCP: {self.mcp_matrix.shape}")
             self.logger.info(f"Type d'échelle: {self.scale_type}")
             
+            # Vérifier les dimensions des matrices
+            if self.mca_matrix.shape[1] != self.mcp_matrix.shape[1]:
+                raise ValueError(f"Les dimensions des matrices ne correspondent pas: MCA={self.mca_matrix.shape}, MCP={self.mcp_matrix.shape}")
+            
+            # Vérifier les valeurs NaN
+            if self.mca_matrix.isna().any().any() or self.mcp_matrix.isna().any().any():
+                raise ValueError("Les matrices contiennent des valeurs NaN")
+            
             # Afficher les plages de valeurs avant normalisation
             self.logger.info(f"Plage de valeurs MCA: [{self.mca_matrix.values.min():.2f}, {self.mca_matrix.values.max():.2f}]")
             self.logger.info(f"Plage de valeurs MCP: [{self.mcp_matrix.values.min():.2f}, {self.mcp_matrix.values.max():.2f}]")
-            
-            # Vérifier les dimensions des matrices
-            if self.mca_matrix.shape[1] != self.mcp_matrix.shape[1]:
-                raise ValueError("Les dimensions des matrices ne correspondent pas")
             
             # Normaliser les matrices si demandé
             if self.normalize:
@@ -243,4 +262,4 @@ class McapProcessor:
             
         except Exception as e:
             self.logger.error(f"Erreur lors du traitement MCAP: {str(e)}")
-            return 1 
+            raise  # Propager l'erreur pour plus de détails 
