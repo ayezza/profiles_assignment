@@ -73,119 +73,74 @@ class McapProcessor:
 
     def plot_radar(self, result_matrix):
         """Génère un graphique radar (pentagone) pour chaque activité"""
+        # Nettoyer result_matrix en supprimant les colonnes de statistiques si elles existent
+        if 'max_value' in result_matrix.columns:
+            result_matrix = result_matrix.drop(['max_value'], axis=1)
+        if 'first_best_profile' in result_matrix.columns:
+            result_matrix = result_matrix.drop(['first_best_profile'], axis=1)
+        
+        # Créer le répertoire de sortie
+        output_dir = os.path.abspath('data/output/figures')
+        os.makedirs(output_dir, exist_ok=True)
+        
         # Paramètres pour le graphique radar
-        n_profiles = len(result_matrix.columns)
-        angles = np.linspace(0, 2*np.pi, 5, endpoint=False)  # 5 points pour un pentagone
-        angles = np.concatenate((angles, [angles[0]]))  # Fermer le pentagone
+        angles = np.linspace(0, 2*np.pi, 5, endpoint=False)
+        angles = np.concatenate((angles, [angles[0]]))
         
-        # Créer une figure avec plusieurs sous-graphiques
-        n_activities = len(result_matrix.index)
-        n_cols = 5
-        n_rows = (n_activities + n_cols - 1) // n_cols  # Arrondi supérieur
-        fig, axs = plt.subplots(n_rows, n_cols, figsize=(25, 5*n_rows), 
-                               subplot_kw=dict(projection='polar'))
-        axs = axs.flatten() if n_activities > 1 else [axs]
+        # Générer une palette de couleurs
+        colors = {
+            f'Profile.{i+1}': plt.cm.Set3(i/10) 
+            for i in range(len(result_matrix.columns))
+        }
         
-        # Générer une palette de couleurs dynamique
-        def get_color_palette(n):
-            """Génère une palette de couleurs pour les profils"""
-            import colorsys
-            colors = {}
-            base_colors = {
-                'Profile.1': '#e74c3c', 'Profile.2': '#2ecc71', 'Profile.3': '#3498db',
-                'Profile.4': '#f1c40f', 'Profile.5': '#9b59b6', 'Profile.6': '#e67e22',
-                'Profile.7': '#1abc9c', 'Profile.8': '#34495e', 'Profile.9': '#d35400',
-                'Profile.10': '#27ae60'
-            }
-            
-            # Utiliser la matrice passée en paramètre au lieu de self.result_matrix
-            profiles = list(result_matrix.columns)
-            
-            for profile in profiles:
-                if profile in base_colors:
-                    # Utiliser les couleurs prédéfinies si le profil existe dans base_colors
-                    colors[profile] = base_colors[profile]
-                else:
-                    # Générer une nouvelle couleur pour les profils non définis
-                    hue = len(colors) / len(profiles)
-                    rgb = colorsys.hsv_to_rgb(hue, 0.8, 0.9)
-                    colors[profile] = '#{:02x}{:02x}{:02x}'.format(
-                        int(rgb[0]*255), int(rgb[1]*255), int(rgb[2]*255)
-                    )
-            
-            return colors
-        
-        colors = get_color_palette(n_profiles)
-            
-        for idx, (activity, scores) in enumerate(result_matrix.iterrows()):
-            if idx >= len(axs):
-                break
-                
-            ax = axs[idx]
-            
-            # Adapter les scores au format pentagone
-            score_pentagon = np.array([
-                scores.mean(),  # Haut
-                scores.max(),   # Droite-haut
-                scores.min(),   # Droite-bas
-                scores.median(),# Gauche-bas
-                scores.mean()   # Gauche-haut
-            ])
-            values = np.concatenate((score_pentagon, [score_pentagon[0]]))
+        # Créer une figure par activité
+        for activity, scores in result_matrix.iterrows():
+            fig, ax = plt.subplots(figsize=(10, 10), subplot_kw=dict(projection='polar'))
             
             # Tracer le pentagone pour chaque profil
             for profile in result_matrix.columns:
                 profile_score = np.full(5, scores[profile])
                 profile_score = np.concatenate((profile_score, [profile_score[0]]))
                 
-                color = colors.get(profile, '#000000')
                 ax.plot(angles, profile_score, 'o-', 
                        linewidth=1,
                        markersize=3,
                        label=f"{profile} ({scores[profile]:.2f})",
-                       color=color,
+                       color=colors[profile],
                        alpha=0.7)
                 ax.fill(angles, profile_score, 
                        alpha=0.05,
-                       color=color)
+                       color=colors[profile])
             
             # Configurer l'apparence
             ax.set_xticks(angles[:-1])
             ax.set_xticklabels(['Score\nmoyen', 'Score\nmax', 'Score\nmin', 
-                              'Score\nmédian', 'Score\nmoyen'], size=6)
-            ax.set_title(f'Activité: {activity}', pad=20, size=8)
+                              'Score\nmédian', 'Score\nmoyen'], size=8)
+            ax.set_title(f'Activité: {activity}', pad=20, size=10)
             
             # Définir les limites et la grille
             max_value = result_matrix.values.max()
-            # Arrondir au nombre entier supérieur pour une meilleure lisibilité
             max_limit = np.ceil(max_value)
             ax.set_ylim(0, max_limit)
             ax.grid(True, alpha=0.3)
             
-            # Ajouter les niveaux de la grille avec des labels plus petits
-            # Créer des graduations adaptées aux valeurs
+            # Ajouter les graduations
             ticks = np.linspace(0, max_limit, 5)
             ax.set_rticks(ticks)
-            ax.set_yticklabels([f'{tick:.1f}' for tick in ticks], 
-                              fontsize=6)
+            ax.set_yticklabels([f'{tick:.1f}' for tick in ticks], fontsize=8)
             
-            # Ajouter une légende compacte avec police plus petite
+            # Ajouter la légende
             ax.legend(bbox_to_anchor=(1.2, 1), 
                      loc='upper left', 
-                     fontsize=6,
+                     fontsize=8,
                      title="Profils (scores)")
             
-        plt.suptitle("Graphiques Radar (Pentagones) des Scores d'Affectation par Activité", 
-                    size=14, y=1.05)
-        plt.tight_layout()
-        
-        # Sauvegarder le graphique
-        output_dir = os.path.abspath('data/output/figures')
-        os.makedirs(output_dir, exist_ok=True)
-        output_file = os.path.join(output_dir, f'radar_pentagon_{uuid.uuid4()}.png')
-        plt.savefig(output_file, dpi=300, bbox_inches='tight')
-        self.logger.info(f"Graphique radar (pentagone) sauvegardé : {output_file}")
-        plt.close()
+            plt.tight_layout()
+            
+            # Sauvegarder le graphique
+            output_file = os.path.join(output_dir, f'radar_pentagon_{activity}_{uuid.uuid4()}.png')
+            plt.savefig(output_file, dpi=300, bbox_inches='tight')
+            plt.close(fig)
 
     def process(self):
         try:

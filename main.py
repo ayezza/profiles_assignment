@@ -4,6 +4,8 @@ Author : Abdel YEZZA (Ph.D)
 Date :  july 2021
 License: MIT License
 NOTE : This code is completely free and can be modified with only one condition, DOT NOT REMOVE author's name
+Some examples are presented and explained in my article :
+https://www.linkedin.com/feed/update/urn:li:activity:6853567958246027265/
 """
 
 import os
