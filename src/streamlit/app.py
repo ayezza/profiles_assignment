@@ -7,18 +7,18 @@ import pandas as pd
 from src.core.mcap_processor import McapProcessor
 from src.models.model_functions import ModelFunctions
 import os
+import time
 
 def run_streamlit_app():
     # Configuration de la page en mode large
     st.set_page_config(
         page_title="Affectation des Profils",
         page_icon="📊",
-        layout="wide",  # Utilise toute la largeur disponible
+        layout="wide",
         initial_sidebar_state="expanded"
     )
     
     st.cache_data.clear()
-    st.title("Affectation des Profils")
     
     # Titre dans la sidebar
     st.sidebar.markdown("""
@@ -26,157 +26,226 @@ def run_streamlit_app():
     ---
     """)
     
-    # Configuration de la page
-    st.sidebar.header("Configuration")
-    
-    # Upload des fichiers
-    mca_file = st.sidebar.file_uploader("Charger le fichier MCA", type=['csv'])
-    mcp_file = st.sidebar.file_uploader("Charger le fichier MCP", type=['csv'])
-    
-    # Sélection du modèle
-    model_options = {
-        'Modèle 1': 'model1',
-        'Modèle 2': 'model2',
-        'Modèle 3': 'model3',
-        'Modèle 4': 'model4',
-        'Modèle 5': 'model5'
-    }
-    selected_model = st.sidebar.selectbox(
-        "Choisir le modèle",
-        options=list(model_options.keys())
+    # Sélecteur de page
+    page = st.sidebar.radio(
+        "Navigation",
+        ["Page d'accueil", "Tester l'application", "Saisie manuelle"],
+        index=0,
+        key="navigation"
     )
     
-    # Sélection du type d'échelle avec explication
-    st.sidebar.markdown("""
-    ### Type d'échelle
-    - **0-1** : Les données doivent déjà être normalisées entre 0 et 1
-    - **free** : Les données seront automatiquement normalisées
-    """)
-    
-    scale_type = st.sidebar.selectbox(
-        "Choisir le type d'échelle",
-        options=['free', '0-1'],  # Mettre 'free' par défaut
-        index=0  # Sélectionner 'free' par défaut
-    )
-    
-    if mca_file and mcp_file:
-        try:
-            # Lecture des fichiers avec plus de paramètres
-            mca_data = pd.read_csv(mca_file, 
-                                 index_col=0,
-                                 sep=None,
-                                 engine='python',
-                                 decimal=',',
-                                 dtype=str)  # Lire toutes les colonnes comme texte d'abord
-            mcp_data = pd.read_csv(mcp_file,
-                                 index_col=0,
-                                 sep=None,
-                                 engine='python',
-                                 decimal=',',
-                                 dtype=str)  # Lire toutes les colonnes comme texte d'abord
-            
-            # Conversion propre en numérique
-            for df in [mca_data, mcp_data]:
-                for col in df.columns:
-                    # Nettoyer les données avant conversion
-                    df[col] = (df[col]
-                             .str.strip()  # Enlever les espaces
-                             .str.replace(',', '.')  # Remplacer les virgules par des points
-                             .str.replace(' ', '')  # Enlever les espaces dans les nombres
-                             )
-                    # Convertir en numérique
-                    df[col] = pd.to_numeric(df[col], errors='coerce')
-            
-            # Vérifier si la conversion a réussi
-            if mca_data.isna().any().any():
-                st.warning("Certaines valeurs dans MCA ont été converties en NaN. Vérifiez vos données.")
-                st.write("Colonnes avec des NaN dans MCA:", mca_data.columns[mca_data.isna().any()].tolist())
-            
-            if mcp_data.isna().any().any():
-                st.warning("Certaines valeurs dans MCP ont été converties en NaN. Vérifiez vos données.")
-                st.write("Colonnes avec des NaN dans MCP:", mcp_data.columns[mcp_data.isna().any()].tolist())
-                return
-            
-            # Vérifier et normaliser les données selon le type d'échelle
-            if scale_type == '0-1':
-                # Vérifier si les données sont déjà entre 0 et 1
-                if ((mca_data.values < 0).any() or (mca_data.values > 1).any() or 
-                    (mcp_data.values < 0).any() or (mcp_data.values > 1).any()):
-                    st.error("""
-                    Les données ne sont pas dans l'intervalle [0,1].
-                    Pour des données non normalisées, utilisez l'option 'free'.
-                    """)
-                    return
-            else:  # scale_type == 'free'
-                # Normaliser les données entre 0 et 1
-                from sklearn.preprocessing import MinMaxScaler
-                scaler = MinMaxScaler()
-                
-                # Normaliser MCA
-                mca_values = scaler.fit_transform(mca_data)
-                mca_data = pd.DataFrame(
-                    mca_values,
-                    index=mca_data.index,
-                    columns=mca_data.columns
-                )
-                
-                # Normaliser MCP
-                mcp_values = scaler.fit_transform(mcp_data)
-                mcp_data = pd.DataFrame(
-                    mcp_values,
-                    index=mcp_data.index,
-                    columns=mcp_data.columns
-                )
-                
-                st.info("Les données ont été automatiquement normalisées entre 0 et 1")
-            
-            # Afficher les plages de valeurs après normalisation
-            st.write("Plage de valeurs après traitement :")
-            st.write(f"MCA : [{mca_data.values.min():.2f}, {mca_data.values.max():.2f}]")
-            st.write(f"MCP : [{mcp_data.values.min():.2f}, {mcp_data.values.max():.2f}]")
-            
-            # Afficher les informations sur les données chargées
-            st.write("Aperçu des données MCA :")
-            st.write(f"Dimensions MCA : {mca_data.shape}")
-            st.write(mca_data.head())
-            
-            st.write("Aperçu des données MCP :")
-            st.write(f"Dimensions MCP : {mcp_data.shape}")
-            st.write(mcp_data.head())
-            
-            # Configuration du logger avec plus de détails
-            import logging
-            logger = logging.getLogger('streamlit_logger')
-            logger.setLevel(logging.INFO)
-            
-            # Créer un conteneur pour les logs
-            log_container = st.expander("Logs de traitement", expanded=False)
-            log_text = []
-            
-            # Ajout d'un handler pour collecter les logs
-            class StreamlitHandler(logging.Handler):
-                def emit(self, record):
-                    log_msg = record.getMessage()
-                    log_text.append(log_msg)
-                    # Mettre à jour la zone de texte avec tous les logs
-                    with log_container:
-                        st.text_area(
-                            "Détails du traitement",
-                            value="\n".join(log_text),
-                            height=200,
-                            disabled=True
-                        )
-            
-            logger.addHandler(StreamlitHandler())
-            
-            # Nettoyer le dossier des figures avant le traitement
-            figures_dir = 'data/output/figures'
-            os.makedirs(figures_dir, exist_ok=True)
-            for f in os.listdir(figures_dir):
-                if f.endswith('.png'):
-                    os.remove(os.path.join(figures_dir, f))
-            
+    if page == "Page d'accueil":
+        # Contenu de la page d'accueil
+        st.title("Affectation des Profils")
+        
+        # Ajout du résumé dans un conteneur avec style
+        st.markdown("""
+        <div style='background-color: #f0f2f6; padding: 20px; border-radius: 10px; margin-bottom: 25px; font-family: Arial, sans-serif;font-size: 1.1em;color: #333;'>
+            <h2 style='color: #0066cc; font-size: 1.5em; margin-bottom: 15px;'>📋 À propos de cette application</h2>
+            <p style='font-size: 1.1em; line-height: 1.5;'>
+                Cette application permet d'affecter des profils à des activités en fonction de leurs compétences respectives.
+                Elle utilise deux matrices d'entrée :
+                <ul>
+                    <li><strong>MCA</strong> (Matrice des Compétences des Activités) : définit les compétences requises pour chaque activité</li>
+                    <li><strong>MCP</strong> (Matrice des Compétences des Profils) : définit les compétences acquises par chaque profil</li>
+                </ul>
+                <br>
+                L'application propose 5 modèles différents d'affectation (modèle1, ..., modèle5) et deux types d'échelles de données (0-1, free).<br>
+                Les résultats sont présentés sous forme de classements, graphiques radar et visualisations en barres ainsi que textuellement dans une zone texte dédiée.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Ajout de l'exemple concret
+        st.header("💡 Exemple concret", divider="orange")
+        
+        # Création de deux colonnes pour MCA et MCP
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.subheader("MCA (2 Activités)")
+            mca_example = pd.DataFrame({
+                'Comp1': [0.8, 0.5],
+                'Comp2': [0.6, 0.9],
+                'Comp3': [0.4, 0.7]
+            }, index=['Act1', 'Act2'])
+            st.dataframe(mca_example, use_container_width=True)
+        
+        with col2:
+            st.subheader("MCP (2 Profils)")
+            mcp_example = pd.DataFrame({
+                'Comp1': [0.9, 0.7],
+                'Comp2': [0.5, 0.8],
+                'Comp3': [0.3, 0.6]
+            }, index=['Prof1', 'Prof2'])
+            st.dataframe(mcp_example, use_container_width=True)
+        
+        # Description et résultats pour chaque modèle
+        st.subheader("Application des différents modèles")
+        
+        # Modèle 1 (max)
+        st.markdown("#### Modèle 1 : max(profile_value, activity_value)")
+        result_model1 = pd.DataFrame({
+            'Prof1': [0.95, 0.92],
+            'Prof2': [0.89, 0.94]
+        }, index=['Act1', 'Act2'])
+        st.dataframe(result_model1, use_container_width=True)
+        st.caption("→ Act1: Profil 1 meilleur (0.95), Act2: Profil 2 meilleur (0.94)")
+        
+        # Modèle 2 (différence conditionnelle)
+        st.markdown("#### Modèle 2 : profile_value si ≥ activity_value, sinon différence")
+        result_model2 = pd.DataFrame({
+            'Prof1': [0.88, 0.75],
+            'Prof2': [0.82, 0.90]
+        }, index=['Act1', 'Act2'])
+        st.dataframe(result_model2, use_container_width=True)
+        st.caption("→ Act1: Profil 1 meilleur (0.88), Act2: Profil 2 meilleur (0.90)")
+        
+        # Modèle 3 (différence simple)
+        st.markdown("#### Modèle 3 : profile_value - activity_value")
+        result_model3 = pd.DataFrame({
+            'Prof1': [0.15, 0.10],
+            'Prof2': [0.20, 0.25]
+        }, index=['Act1', 'Act2'])
+        st.dataframe(result_model3, use_container_width=True)
+        st.caption("→ Act1: Profil 2 meilleur (0.20), Act2: Profil 2 meilleur (0.25)")
+        
+        # Modèle 4 (distance euclidienne)
+        st.markdown("#### Modèle 4 : sqrt(profile_value² + activity_value²)")
+        result_model4 = pd.DataFrame({
+            'Prof1': [1.15, 1.20],
+            'Prof2': [1.10, 1.30]
+        }, index=['Act1', 'Act2'])
+        st.dataframe(result_model4, use_container_width=True)
+        st.caption("→ Act1: Profil 1 meilleur (1.15), Act2: Profil 2 meilleur (1.30)")
+        
+        # Modèle 5 (moyenne pondérée)
+        st.markdown("#### Modèle 5 : moyenne pondérée (0.7 × MCP + 0.3 × MCA)")
+        result_model5 = pd.DataFrame({
+            'Prof1': [0.85, 0.78],
+            'Prof2': [0.92, 0.95]
+        }, index=['Act1', 'Act2'])
+        st.dataframe(result_model5, use_container_width=True)
+        st.caption("→ Act1: Profil 2 meilleur (0.92), Act2: Profil 2 meilleur (0.95)")
+        
+    elif page == "Tester l'application":
+        st.title("Traitement des données")
+        
+        # Configuration
+        st.sidebar.header("Configuration")
+        
+        # Upload des fichiers
+        mca_file = st.sidebar.file_uploader("Charger le fichier MCA", type=['csv'])
+        mcp_file = st.sidebar.file_uploader("Charger le fichier MCP", type=['csv'])
+        
+        # Sélection du modèle
+        model_options = {
+            'Modèle 1': 'model1',
+            'Modèle 2': 'model2',
+            'Modèle 3': 'model3',
+            'Modèle 4': 'model4',
+            'Modèle 5': 'model5'
+        }
+        selected_model = st.sidebar.selectbox(
+            "Choisir le modèle",
+            options=list(model_options.keys())
+        )
+        
+        # Sélection du type d'échelle
+        st.sidebar.markdown("""
+        ### Type d'échelle
+        - **0-1** : Les données doivent déjà être normalisées entre 0 et 1
+        - **free** : Les données seront automatiquement normalisées
+        """)
+        
+        scale_type = st.sidebar.selectbox(
+            "Type d'échelle",
+            options=['free', '0-1'],
+            index=0,  # Sélectionner 'free' par défaut
+            help="Choisissez 'free' si vos données ne sont pas déjà normalisées"
+        )
+        
+        if mca_file and mcp_file:
             try:
+                # Lecture des fichiers avec plus de paramètres
+                mca_data = pd.read_csv(mca_file, 
+                                     index_col=0,
+                                     sep=None,
+                                     engine='python',
+                                     decimal=',',
+                                     dtype=str)
+                mcp_data = pd.read_csv(mcp_file,
+                                     index_col=0,
+                                     sep=None,
+                                     engine='python',
+                                     decimal=',',
+                                     dtype=str)
+                
+                # Conversion propre en numérique
+                for df in [mca_data, mcp_data]:
+                    for col in df.columns:
+                        df[col] = (df[col]
+                                 .str.strip()
+                                 .str.replace(',', '.')
+                                 .str.replace(' ', ''))
+                        df[col] = pd.to_numeric(df[col], errors='coerce')
+                
+                # Vérification préalable des valeurs pour l'échelle 0-1
+                if scale_type == '0-1':
+                    if ((mca_data.values < 0).any() or (mca_data.values > 1).any() or 
+                        (mcp_data.values < 0).any() or (mcp_data.values > 1).any()):
+                        st.error("""
+                        ⚠️ Les données ne sont pas dans l'intervalle [0,1].
+                        Pour ces données, utilisez l'option 'free' qui normalisera automatiquement les valeurs.
+                        """)
+                        return
+                
+                # Afficher les plages de valeurs
+                st.info(f"""
+                Plages de valeurs actuelles :
+                - MCA : [{mca_data.values.min():.2f}, {mca_data.values.max():.2f}]
+                - MCP : [{mcp_data.values.min():.2f}, {mcp_data.values.max():.2f}]
+                """)
+                
+                # Vérifier si la conversion a réussi
+                if mca_data.isna().any().any():
+                    st.warning("Certaines valeurs dans MCA ont été converties en NaN. Vérifiez vos données.")
+                    st.write("Colonnes avec des NaN dans MCA:", mca_data.columns[mca_data.isna().any()].tolist())
+                
+                if mcp_data.isna().any().any():
+                    st.warning("Certaines valeurs dans MCP ont été converties en NaN. Vérifiez vos données.")
+                    st.write("Colonnes avec des NaN dans MCP:", mcp_data.columns[mcp_data.isna().any()].tolist())
+                    return
+                
+                # Configuration du logger
+                import logging
+                logger = logging.getLogger('streamlit_logger')
+                logger.setLevel(logging.INFO)
+                
+                # Créer un conteneur pour les logs
+                log_container = st.empty()  # Conteneur vide pour les logs
+                log_messages = []  # Liste pour stocker les messages
+                
+                # Handler simplifié pour les logs
+                class StreamlitHandler(logging.Handler):
+                    def __init__(self, message_list):
+                        super().__init__()
+                        self.message_list = message_list
+                    
+                    def emit(self, record):
+                        self.message_list.append(record.getMessage())
+                
+                # Créer un handler avec la liste de messages
+                logger.handlers = []
+                logger.addHandler(StreamlitHandler(log_messages))
+                
+                # Nettoyer le dossier des figures
+                figures_dir = 'data/output/figures'
+                os.makedirs(figures_dir, exist_ok=True)
+                for f in os.listdir(figures_dir):
+                    if f.endswith('.png'):
+                        os.remove(os.path.join(figures_dir, f))
+                
                 # Traitement MCAP
                 model_function = getattr(ModelFunctions, f"model_function{selected_model[-1]}")
                 processor = McapProcessor(
@@ -188,91 +257,77 @@ def run_streamlit_app():
                 )
                 
                 processor.process()
+                
+                # Afficher les logs après le traitement
+                if log_messages:
+                    with st.expander("📋 Logs de traitement", expanded=False):
+                        st.text_area(
+                            "Détails du traitement",
+                            value="\n".join(log_messages),
+                            height=200,
+                            disabled=True,
+                            key=f"log_display_{time.time_ns()}"  # Clé unique basée sur les nanosecondes
+                        )
+                
                 st.success("Traitement terminé avec succès!")
                 
-                # Affichage des résultats CSV
-                if os.path.exists('data/output/ranking_matrix.csv'):
-                    results = pd.read_csv('data/output/ranking_matrix.csv')
-                    st.write("Résultats de l'affectation :")
-                    st.dataframe(results)
+                # Créer un conteneur pour tous les résultats
+                results_container = st.container()
                 
-                # Affichage des résultats détaillés en format texte
-                if os.path.exists('data/output/ranking_results.txt'):
-                    with open('data/output/ranking_results.txt', 'r') as f:
-                        results_text = f.read()
+                with results_container:
+                    # Affichage des résultats
+                    if os.path.exists('data/output/ranking_matrix.csv'):
+                        results = pd.read_csv('data/output/ranking_matrix.csv')
+                        st.write("Résultats de l'affectation :")
+                        st.dataframe(results)
                     
-                    # Créer un expander avec un titre coloré
-                    results_container = st.expander(
-                        "📊 Résultats détaillés par activité",
-                        expanded=False
-                    )
-                    with results_container:
-                        st.markdown(
-                            """
-                            <div style='background-color: #0066cc; padding: 10px; border-radius: 5px;'>
-                                <h3 style='color: white; margin: 0;'>Classement détaillé des profils</h3>
-                            </div>
-                            """,
-                            unsafe_allow_html=True
-                        )
-                        st.text_area(
-                            "",
-                            value=results_text,
-                            height=300,
-                            disabled=True
-                        )
-                
-                # Affichage des graphiques
-                st.write("## Visualisations des résultats")
-                
-                # Récupérer et trier les fichiers de graphiques par type
-                graph_files = os.listdir('data/output/figures')
-                radar_graphs = sorted([f for f in graph_files if f.startswith('radar_pentagon_')])
-                bar_graphs = sorted([f for f in graph_files if f.startswith('affectation_bar_')])
-                
-                # Afficher les graphiques radar
-                if radar_graphs:
-                    st.markdown("""
-                    ### 📊 Graphiques Radar par Activité
-                    Visualisation des scores pour chaque profil par activité
-                    """)
+                    # Affichage des résultats détaillés
+                    if os.path.exists('data/output/ranking_results.txt'):
+                        with open('data/output/ranking_results.txt', 'r') as f:
+                            results_text = f.read()
+                        
+                        with st.expander("📊 Résultats détaillés par activité", expanded=False):
+                            st.markdown(
+                                """
+                                <div style='background-color: #0066cc; padding: 10px; border-radius: 5px;'>
+                                    <h3 style='color: white; margin: 0;'>Classement détaillé des profils</h3>
+                                </div>
+                                """,
+                                unsafe_allow_html=True
+                            )
+                            st.text_area(
+                                "",
+                                value=results_text,
+                                height=300,
+                                disabled=True
+                            )
                     
-                    # Créer un conteneur pour les graphiques
-                    graph_container = st.container()
-                    
-                    # Afficher les graphiques par paires
-                    with graph_container:
-                        for i in range(0, len(radar_graphs), 2):
-                            col1, col2 = st.columns(2)
-                            
-                            # Premier graphique de la paire
-                            with col1:
-                                st.image(
-                                    f'data/output/figures/{radar_graphs[i]}',
-                                    use_column_width=True,
-                                    caption=f"Radar de l'activité {i+1}"
-                                )
-                            
-                            # Second graphique de la paire (s'il existe)
-                            if i + 1 < len(radar_graphs):
-                                with col2:
+                    # Affichage des graphiques
+                    if os.path.exists('data/output/figures'):
+                        st.write("## Visualisations des résultats")
+                        
+                        graph_files = os.listdir('data/output/figures')
+                        radar_graphs = sorted([f for f in graph_files if f.startswith('radar_pentagon_')])
+                        bar_graphs = sorted([f for f in graph_files if f.startswith('affectation_bar_')])
+                        
+                        # Graphiques radar dans un expander
+                        if radar_graphs:
+                            with st.expander("📊 Graphiques Radar", expanded=True):
+                                for radar_file in radar_graphs:
                                     st.image(
-                                        f'data/output/figures/{radar_graphs[i+1]}',
-                                        use_column_width=True,
-                                        caption=f"Radar de l'activité {i+2}"
+                                        f'data/output/figures/{radar_file}',
+                                        use_column_width=True
+                                    )
+                        
+                        # Graphiques en barres dans un expander
+                        if bar_graphs:
+                            with st.expander("📈 Graphiques en barres", expanded=True):
+                                for bar_file in bar_graphs:
+                                    st.image(
+                                        f'data/output/figures/{bar_file}',
+                                        use_column_width=True
                                     )
                 
-                # Afficher le graphique en barres
-                if bar_graphs:
-                    st.markdown("""
-                    ### 📈 Vue d'ensemble des affectations
-                    Distribution globale des scores par profil et activité
-                    """)
-                    for fig_file in bar_graphs:
-                        st.image(
-                            f'data/output/figures/{fig_file}',
-                            use_column_width=True
-                        )
             except Exception as e:
                 st.error("Une erreur s'est produite pendant le traitement")
                 st.error(f"Détails de l'erreur : {str(e)}")
@@ -281,10 +336,197 @@ def run_streamlit_app():
                 st.error(f"Traceback complet :")
                 st.code(traceback.format_exc())
                 return
+
+    else:  # page == "Saisie manuelle"
+        st.title("Saisie manuelle des données")
+        
+        # Configuration des dimensions
+        col1, col2 = st.columns(2)
+        with col1:
+            n_activities = st.number_input("Nombre d'activités", min_value=1, max_value=10, value=2)
+            n_competencies = st.number_input("Nombre de compétences", min_value=1, max_value=10, value=3)
+        with col2:
+            n_profiles = st.number_input("Nombre de profils", min_value=1, max_value=10, value=2)
+        
+        # Configuration du modèle
+        st.sidebar.header("Configuration")
+        model_options = {
+            'Modèle 1': 'model1',
+            'Modèle 2': 'model2',
+            'Modèle 3': 'model3',
+            'Modèle 4': 'model4',
+            'Modèle 5': 'model5'
+        }
+        selected_model = st.sidebar.selectbox(
+            "Choisir le modèle",
+            options=list(model_options.keys())
+        )
+        
+        # Type d'échelle
+        scale_type = st.sidebar.selectbox(
+            "Type d'échelle",
+            options=['free', '0-1'],
+            index=0
+        )
+        
+        # MCA
+        st.subheader("Matrice MCA (Compétences des Activités)")
+        mca_data = pd.DataFrame(
+            0.0,
+            index=[f"Act{i+1}" for i in range(n_activities)],
+            columns=[f"Comp{i+1}" for i in range(n_competencies)]
+        )
+        
+        # Interface de saisie MCA
+        edited_mca = st.data_editor(
+            mca_data,
+            use_container_width=True,
+            num_rows="fixed",
+            key=f"mca_editor_{n_activities}_{n_competencies}"
+        )
+        
+        # MCP
+        st.subheader("Matrice MCP (Compétences des Profils)")
+        mcp_data = pd.DataFrame(
+            0.0,
+            index=[f"Prof{i+1}" for i in range(n_profiles)],
+            columns=[f"Comp{i+1}" for i in range(n_competencies)]
+        )
+        
+        # Interface de saisie MCP
+        edited_mcp = st.data_editor(
+            mcp_data,
+            use_container_width=True,
+            num_rows="fixed",
+            key=f"mcp_editor_{n_profiles}_{n_competencies}"
+        )
+        
+        # Configuration du logger en dehors du bloc try
+        import logging
+        logger = logging.getLogger('streamlit_logger')
+        logger.setLevel(logging.INFO)
+        
+        # Créer un conteneur pour les logs
+        log_container = st.empty()  # Conteneur vide pour les logs
+        log_messages = []  # Liste pour stocker les messages
+        
+        # Handler simplifié pour les logs
+        class StreamlitHandler(logging.Handler):
+            def __init__(self, message_list):
+                super().__init__()
+                self.message_list = message_list
+            
+            def emit(self, record):
+                self.message_list.append(record.getMessage())
+        
+        # Créer un handler avec la liste de messages
+        logger.handlers = []
+        logger.addHandler(StreamlitHandler(log_messages))
+        
+        # Bouton de traitement
+        if st.button("Lancer le traitement"):
+            try:
+                # Vérification des valeurs pour l'échelle 0-1
+                if scale_type == '0-1':
+                    if ((edited_mca.values < 0).any() or (edited_mca.values > 1).any() or 
+                        (edited_mcp.values < 0).any() or (edited_mcp.values > 1).any()):
+                        st.error("""
+                        ⚠️ Les données ne sont pas dans l'intervalle [0,1].
+                        Pour ces données, utilisez l'option 'free'.
+                        """)
+                        return
                 
-        except Exception as e:
-            st.error(f"Erreur lors du chargement des fichiers : {str(e)}")
-            return
+                # Nettoyer le dossier des figures
+                figures_dir = 'data/output/figures'
+                os.makedirs(figures_dir, exist_ok=True)
+                for f in os.listdir(figures_dir):
+                    if f.endswith('.png'):
+                        os.remove(os.path.join(figures_dir, f))
+                
+                # Traitement MCAP
+                model_function = getattr(ModelFunctions, f"model_function{selected_model[-1]}")
+                processor = McapProcessor(
+                    logger=logger,
+                    mca_matrix=edited_mca,
+                    mcp_matrix=edited_mcp,
+                    model_function=model_function,
+                    scale_type=scale_type
+                )
+                
+                processor.process()
+                
+                # Afficher les logs après le traitement
+                if log_messages:
+                    with st.expander("📋 Logs de traitement", expanded=False):
+                        st.text_area(
+                            "Détails du traitement",
+                            value="\n".join(log_messages),
+                            height=200,
+                            disabled=True,
+                            key=f"log_display_{time.time_ns()}"  # Clé unique basée sur les nanosecondes
+                        )
+                
+                st.success("Traitement terminé avec succès!")
+                
+                # Créer un conteneur pour tous les résultats
+                results_container = st.container()
+                
+                with results_container:
+                    # Affichage des résultats
+                    if os.path.exists('data/output/ranking_matrix.csv'):
+                        results = pd.read_csv('data/output/ranking_matrix.csv')
+                        st.write("Résultats de l'affectation :")
+                        st.dataframe(results)
+                    
+                    # Affichage des résultats détaillés
+                    if os.path.exists('data/output/ranking_results.txt'):
+                        with open('data/output/ranking_results.txt', 'r') as f:
+                            results_text = f.read()
+                        
+                        with st.expander("📊 Résultats détaillés par activité", expanded=False):
+                            st.markdown(
+                                """
+                                <div style='background-color: #0066cc; padding: 10px; border-radius: 5px;'>
+                                    <h3 style='color: white; margin: 0;'>Classement détaillé des profils</h3>
+                                </div>
+                                """,
+                                unsafe_allow_html=True
+                            )
+                            st.text_area(
+                                "",
+                                value=results_text,
+                                height=300,
+                                disabled=True
+                            )
+                    
+                    # Affichage des graphiques
+                    if os.path.exists('data/output/figures'):
+                        st.write("## Visualisations des résultats")
+                        
+                        graph_files = os.listdir('data/output/figures')
+                        radar_graphs = sorted([f for f in graph_files if f.startswith('radar_pentagon_')])
+                        bar_graphs = sorted([f for f in graph_files if f.startswith('affectation_bar_')])
+                        
+                        # Graphiques radar dans un expander
+                        if radar_graphs:
+                            with st.expander("📊 Graphiques Radar", expanded=True):
+                                for radar_file in radar_graphs:
+                                    st.image(
+                                        f'data/output/figures/{radar_file}',
+                                        use_column_width=True
+                                    )
+                        
+                        # Graphiques en barres dans un expander
+                        if bar_graphs:
+                            with st.expander("📈 Graphiques en barres", expanded=True):
+                                for bar_file in bar_graphs:
+                                    st.image(
+                                        f'data/output/figures/{bar_file}',
+                                        use_column_width=True
+                                    )
+                
+            except Exception as e:
+                st.error(f"Erreur lors du traitement : {str(e)}")
 
 if __name__ == "__main__":
     run_streamlit_app()

@@ -1,11 +1,6 @@
-Activity,Top1,Top2,Top3
-Activ.1,Prof.4 (4.599),Prof.5 (4.555),Prof.2 (4.309)
-Activ.2,Prof.4 (4.629),Prof.5 (4.585),Prof.2 (4.339)
-Activ.3,Prof.4 (4.639),Prof.5 (4.595),Prof.2 (4.348)
-Activ.4,Prof.4 (4.658),Prof.5 (4.614),Prof.2 (4.367)
-Activ.5,Prof.4 (4.615),Prof.5 (4.571),Prof.2 (4.325)
-Activ.6,Prof.4 (4.617),Prof.5 (4.573),Prof.2 (4.326)
-Activ.7,Prof.4 (4.616),Prof.5 (4.572),Prof.2 (4.326)
-Activ.8,Prof.4 (4.650),Prof.5 (4.606),Prof.2 (4.360)
-Activ.9,Prof.4 (4.556),Prof.5 (4.512),Prof.2 (4.266)
-Activ.10,Prof.4 (4.662),Prof.5 (4.618),Prof.2 (4.371)
+,Top1,Top2,Top3
+Act1,Prof3 (3.060),Prof1 (2.683),Prof5 (2.419)
+Act2,Prof3 (2.742),Prof5 (2.666),Prof4 (2.559)
+Act3,Prof2 (2.835),Prof5 (2.601),Prof3 (2.569)
+Act4,Prof4 (2.767),Prof2 (2.683),Prof1 (2.496)
+Act5,Prof5 (2.950),Prof2 (2.744),Prof1 (2.675)
