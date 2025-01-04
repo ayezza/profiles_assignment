@@ -181,6 +181,15 @@ def run_streamlit_app():
                                      decimal=',',
                                      dtype=str)
                 
+                # Vérifier le minimum de 3 lignes
+                if mca_data.shape[0] < 3 or mcp_data.shape[0] < 3:
+                    st.error("""
+                    ⚠️ Les matrices doivent avoir au moins 3 lignes chacune.
+                    - MCA: {} lignes
+                    - MCP: {} lignes
+                    """.format(mca_data.shape[0], mcp_data.shape[0]))
+                    return
+                
                 # Conversion propre en numérique
                 for df in [mca_data, mcp_data]:
                     for col in df.columns:
@@ -343,10 +352,25 @@ def run_streamlit_app():
         # Configuration des dimensions
         col1, col2 = st.columns(2)
         with col1:
-            n_activities = st.number_input("Nombre d'activités", min_value=1, max_value=10, value=2)
-            n_competencies = st.number_input("Nombre de compétences", min_value=1, max_value=10, value=3)
+            n_activities = st.number_input(
+                "Nombre d'activités",
+                min_value=3,  # Forcer minimum 3
+                max_value=10,
+                value=3
+            )
+            n_competencies = st.number_input(
+                "Nombre de compétences",
+                min_value=1,
+                max_value=10,
+                value=3
+            )
         with col2:
-            n_profiles = st.number_input("Nombre de profils", min_value=1, max_value=10, value=2)
+            n_profiles = st.number_input(
+                "Nombre de profils",
+                min_value=3,  # Forcer minimum 3
+                max_value=10,
+                value=3
+            )
         
         # Configuration du modèle
         st.sidebar.header("Configuration")

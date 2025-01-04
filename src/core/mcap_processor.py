@@ -72,7 +72,7 @@ class McapProcessor:
         plt.close()
 
     def plot_radar(self, result_matrix):
-        """Génère un graphique radar (pentagone) pour chaque activité"""
+        """Génère un graphique radar pour chaque activité"""
         # Nettoyer result_matrix
         if 'max_value' in result_matrix.columns:
             result_matrix = result_matrix.drop(['max_value'], axis=1)
@@ -82,71 +82,55 @@ class McapProcessor:
         output_dir = os.path.abspath('data/output/figures')
         os.makedirs(output_dir, exist_ok=True)
         
-        # Limiter le nombre d'activités et profils
-        max_activities = 10
-        max_profiles = 8
-        if len(result_matrix.index) > max_activities:
-            result_matrix = result_matrix.head(max_activities)
-        if len(result_matrix.columns) > max_profiles:
-            top_profiles = result_matrix.mean().nlargest(max_profiles).index
-            result_matrix = result_matrix[top_profiles]
-        
-        # S'assurer d'avoir au moins 3 points pour le radar
-        n_points = max(3, len(self.mca_matrix.columns))
-        angles = np.linspace(0, 2*np.pi, n_points, endpoint=False)
-        angles = np.concatenate((angles, [angles[0]]))  # Fermer le polygone
-        
-        # Créer une figure pour chaque activité séparément
+        # Pour chaque activité
         for activity in result_matrix.index:
-            fig, ax = plt.subplots(figsize=(10, 10), subplot_kw=dict(projection='polar'))
+            # Créer une figure
+            fig = plt.figure(figsize=(10, 10))
+            ax = fig.add_subplot(111, projection='polar')
+            
+            # Obtenir les scores pour cette activité
             scores = result_matrix.loc[activity]
             
-            # Calculer les limites des axes avec une marge
-            min_val = scores.min()
-            max_val = scores.max()
-            margin = (max_val - min_val) * 0.1 if max_val != min_val else max_val * 0.1
-            ylim = (min_val - margin, max_val + margin)
+            # Forcer un minimum de 3 points en dupliquant les valeurs si nécessaire
+            if len(scores) < 3:
+                scores = pd.concat([scores] * (3 // len(scores) + 1)).head(3)
+                scores.index = [f'Point {i+1}' for i in range(3)]
             
-            # Tracer le polygone pour chaque profil
-            for profile in result_matrix.columns:
-                # Répéter la valeur si nécessaire pour avoir au moins 3 points
-                if len(self.mca_matrix.columns) < 3:
-                    profile_score = np.full(3, scores[profile])
-                else:
-                    profile_score = np.full(n_points, scores[profile])
-                profile_score = np.concatenate((profile_score, [profile_score[0]]))
-                
-                ax.plot(angles, profile_score, 'o-', 
-                       linewidth=1,
-                       markersize=3,
-                       label=f"{profile} ({scores[profile]:.2f})")
+            # Nombre de points sur le radar (minimum 3)
+            num_vars = len(scores)
             
-            # Configuration du graphique
-            ax.set_title(f'Activité: {activity}', pad=20, size=10)
-            ax.set_xticks(angles[:-1])
+            # Calculer les angles pour chaque point
+            angles = [n / float(num_vars) * 2 * np.pi for n in range(num_vars)]
+            angles += angles[:1]  # Compléter le cercle
             
-            # Adapter les labels en fonction du nombre réel de compétences
-            if len(self.mca_matrix.columns) < 3:
-                competency_labels = [f'Comp{i+1}' for i in range(len(self.mca_matrix.columns))]
-                competency_labels.extend([''] * (3 - len(self.mca_matrix.columns)))
-            else:
-                competency_labels = [f'Comp{i+1}' for i in range(n_points)]
-            ax.set_xticklabels(competency_labels, size=8)
+            # Initialiser le graphique
+            ax.set_theta_offset(np.pi / 2)
+            ax.set_theta_direction(-1)
             
-            # Configurer la grille et les limites
-            ax.grid(True, alpha=0.3)
-            ax.set_ylim(ylim)
+            # Dessiner les axes
+            plt.xticks(angles[:-1], scores.index)
             
-            # Ajouter une légende avec des labels non vides
-            if ax.get_legend() is not None:
-                ax.get_legend().remove()
-            ax.legend(title='Profils',
-                     bbox_to_anchor=(1.2, 1),
-                     loc='upper left',
-                     fontsize=8,
-                     frameon=True)
+            # Tracer les données
+            values = scores.values
+            values = np.concatenate((values, [values[0]]))  # Compléter le cercle
+            ax.plot(angles, values, 'o-', linewidth=2, label=activity)
+            ax.fill(angles, values, alpha=0.25)
+            
+            # Ajouter les labels
+            ax.set_title(f"Scores pour l'activité: {activity}")
+            
+            # Ajuster les limites
+            ax.set_ylim(0, max(values) * 1.1)
+            
+            # Ajouter une grille
+            ax.grid(True)
+            
+            # Ajouter une légende
+            plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
             
             plt.tight_layout()
+            
+            # Sauvegarder
             output_file = os.path.join(output_dir, f'radar_pentagon_{activity}_{uuid.uuid4()}.png')
             plt.savefig(output_file, dpi=300, bbox_inches='tight')
             plt.close(fig)
