@@ -1,99 +1,106 @@
-# profiles_assignment
+# MCAP Profiles 📊
 
-New methods to assign profiles to activities
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
-# MCAP Profiles
+Un package Python innovant pour l'affectation optimale des profils aux activités basé sur les compétences. Cette solution utilise des algorithmes avancés pour maximiser la correspondance entre les compétences requises pour les activités et les compétences disponibles dans les profils.
 
-Un package Python pour l'affectation des profils aux activités basé sur les compétences.
+## ✨ Fonctionnalités
 
-## Installation
+- Analyse matricielle des compétences
+- Affectation automatique des profils
+- Support de différentes échelles d'évaluation
+- Génération de rapports détaillés
+- Interface en ligne de commande intuitive
 
+## 🚀 Installation
 
-## Utilisation
+```bash
+pip install mcap-profiles
+```
 
-bash
-Utilisation avec les paramètres par défaut
+## 📖 Utilisation
+
+### Utilisation basique
+
+```bash
 mcap
+```
 
+### Utilisation avancée
 
-## Utilisation avec des fichiers personnalisés
-
+```bash
 mcap --mca chemin/vers/mca.csv --mcp chemin/vers/mcp.csv --scale free
+```
 
+### Options disponibles
 
-## Aide
+```bash
 mcap --help
+```
 
+## 📋 Format des fichiers d'entrée
 
-## Format des fichiers d'entrée
+### MCA (Matrice Compétences-Activités)
 
-Les fichiers CSV doivent avoir le format suivant :
+Format CSV requis :
 
-### MCA (Matrix Compétences-Activités) - example
+```csv
+Activity,Comp1,Comp2,Comp3
+Act1,0.8,0.6,0.4
+Act2,0.5,0.9,0.3
+```
 
-#### CSV file:
+### MCP (Matrice Compétences-Profils)
 
-Activity,Comp1,Comp2,Comp3,...
+Format CSV requis :
 
-Act1,0.8,0.6,0.4,...
+```csv
+Profile,Comp1,Comp2,Comp3
+Prof1,0.9,0.5,0.3
+Prof2,0.4,0.8,0.6
+```
 
-Act2,0.5,0.9,0.3,...
+## 📁 Structure du projet
 
-
-### MCP (Matrix Compétences-Profils)
-
-#### CSV file:
-
-Profile,Comp1,Comp2,Comp3,...
-
-Prof1,0.9,0.5,0.3,...
-
-Prof2,0.4,0.8,0.6,...
-
-
-## Licence
-
-Ce projet est sous licence MIT.
-
-
-## Structure
-
+```
 mcap-profiles/
-
 ├── LICENSE
-
 ├── MANIFEST.in
-
 ├── README.md
-
 ├── setup.py
-
 ├── .gitignore
-
 ├── main.py
-
 ├── config/
-
-   └── mylogger.ini
-
+│   └── mylogger.ini
 ├── data/
-
-  ├── input/
-
-     ├── mca_01.csv
-
-     └── mcp_01.csv
-
-  └── output/
-
+│   ├── input/
+│   │   ├── mca_01.csv
+│   │   └── mcp_01.csv
+│   └── output/
 └── src/
-
     ├── __init__.py
-    
     ├── core/
-    
     ├── models/
-    
     └── utils/
+```
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues ! N'hésitez pas à :
+
+1. Fork le projet
+2. Créer une branche (`git checkout -b feature/amelioration`)
+3. Commit vos changements (`git commit -am 'Ajout d'une nouvelle fonctionnalité'`)
+4. Push vers la branche (`git push origin feature/amelioration`)
+5. Créer une Pull Request
+
+## 📝 Licence
+
+Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+## 📫 Contact
+
+Pour toute question ou suggestion, n'hésitez pas à ouvrir une issue sur GitHub.
 
 
