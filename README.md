@@ -3,15 +3,17 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
-Un package Python innovant pour l'affectation optimale des profils aux activités basé sur les compétences. Cette solution utilise des algorithmes avancés pour maximiser la correspondance entre les compétences requises pour les activités et les compétences disponibles dans les profils.
+An innovative Python package for optimal profile-to-activity assignment based on skills matching. This solution leverages advanced algorithms to maximize the correspondence between required activity competencies and available profile skills.
 
-## ✨ Fonctionnalités
+## ✨ Features
 
-- Analyse matricielle des compétences
-- Affectation automatique des profils
-- Support de différentes échelles d'évaluation
-- Génération de rapports détaillés
-- Interface en ligne de commande intuitive
+- Skills matrix analysis
+- Automatic profile assignment
+- Multiple evaluation scale support
+- Detailed reporting generation
+- Intuitive command-line interface
+- Data-driven decision making
+- Customizable matching algorithms
 
 ## 🚀 Installation
 
@@ -19,31 +21,31 @@ Un package Python innovant pour l'affectation optimale des profils aux activité
 pip install mcap-profiles
 ```
 
-## 📖 Utilisation
+## 📖 Usage
 
-### Utilisation basique
+### Basic Usage
 
 ```bash
 mcap
 ```
 
-### Utilisation avancée
+### Advanced Usage
 
 ```bash
-mcap --mca chemin/vers/mca.csv --mcp chemin/vers/mcp.csv --scale free
+mcap --mca path/to/mca.csv --mcp path/to/mcp.csv --scale free
 ```
 
-### Options disponibles
+### Available Options
 
 ```bash
 mcap --help
 ```
 
-## 📋 Format des fichiers d'entrée
+## 📋 Input File Formats
 
-### MCA (Matrice Compétences-Activités)
+### MCA (Competency-Activity Matrix)
 
-Format CSV requis :
+Required CSV format:
 
 ```csv
 Activity,Comp1,Comp2,Comp3
@@ -51,9 +53,9 @@ Act1,0.8,0.6,0.4
 Act2,0.5,0.9,0.3
 ```
 
-### MCP (Matrice Compétences-Profils)
+### MCP (Competency-Profile Matrix)
 
-Format CSV requis :
+Required CSV format:
 
 ```csv
 Profile,Comp1,Comp2,Comp3
@@ -61,7 +63,7 @@ Prof1,0.9,0.5,0.3
 Prof2,0.4,0.8,0.6
 ```
 
-## 📁 Structure du projet
+## 📁 Project Structure
 
 ```
 mcap-profiles/
@@ -85,22 +87,33 @@ mcap-profiles/
     └── utils/
 ```
 
-## 🤝 Contribution
+## 🤝 Contributing
 
-Les contributions sont les bienvenues ! N'hésitez pas à :
+Contributions are welcome! Here's how you can help:
 
-1. Fork le projet
-2. Créer une branche (`git checkout -b feature/amelioration`)
-3. Commit vos changements (`git commit -am 'Ajout d'une nouvelle fonctionnalité'`)
-4. Push vers la branche (`git push origin feature/amelioration`)
-5. Créer une Pull Request
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -am 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## 📝 Licence
+## 🔍 Documentation
 
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+For detailed documentation and examples, visit our [documentation page](https://github.com/yourusername/mcap-profiles/wiki).
 
-## 📫 Contact
+## 📝 License
 
-Pour toute question ou suggestion, n'hésitez pas à ouvrir une issue sur GitHub.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📫 Contact & Support
+
+- Create an issue for bug reports or feature requests
+- For major changes, please open an issue first to discuss what you would like to change
+- Join our [community discussions](https://github.com/yourusername/mcap-profiles/discussions)
+
+## 🙏 Acknowledgments
+
+- Thanks to all contributors who have helped shape MCAP Profiles
+- Special thanks to the open-source community for their invaluable tools and libraries
 
 
