@@ -385,6 +385,14 @@ def run_streamlit_app():
             key=f"mca_editor_{n_activities}_{n_competencies}"
         )
         
+        # Bouton d'export MCA
+        col_export_mca1, col_export_mca2 = st.columns([1, 3])
+        with col_export_mca1:
+            if st.button("💾 Exporter MCA", key="export_mca"):
+                edited_mca.to_csv('data/output/mca_manual.csv')
+                with col_export_mca2:
+                    st.success("MCA exportée dans 'data/output/mca_manual.csv'")
+        
         # MCP
         st.subheader("Matrice MCP (Compétences des Profils)")
         mcp_data = pd.DataFrame(
@@ -401,30 +409,16 @@ def run_streamlit_app():
             key=f"mcp_editor_{n_profiles}_{n_competencies}"
         )
         
-        # Configuration du logger en dehors du bloc try
-        import logging
-        logger = logging.getLogger('streamlit_logger')
-        logger.setLevel(logging.INFO)
-        
-        # Créer un conteneur pour les logs
-        log_container = st.empty()  # Conteneur vide pour les logs
-        log_messages = []  # Liste pour stocker les messages
-        
-        # Handler simplifié pour les logs
-        class StreamlitHandler(logging.Handler):
-            def __init__(self, message_list):
-                super().__init__()
-                self.message_list = message_list
-            
-            def emit(self, record):
-                self.message_list.append(record.getMessage())
-        
-        # Créer un handler avec la liste de messages
-        logger.handlers = []
-        logger.addHandler(StreamlitHandler(log_messages))
+        # Bouton d'export MCP
+        col_export_mcp1, col_export_mcp2 = st.columns([1, 3])
+        with col_export_mcp1:
+            if st.button("💾 Exporter MCP", key="export_mcp"):
+                edited_mcp.to_csv('data/output/mcp_manual.csv')
+                with col_export_mcp2:
+                    st.success("MCP exportée dans 'data/output/mcp_manual.csv'")
         
         # Bouton de traitement
-        if st.button("Lancer le traitement"):
+        if st.button("🚀 Lancer le traitement", key="process_button"):
             try:
                 # Vérification des valeurs pour l'échelle 0-1
                 if scale_type == '0-1':
@@ -435,6 +429,27 @@ def run_streamlit_app():
                         Pour ces données, utilisez l'option 'free'.
                         """)
                         return
+                
+                # Configuration du logger
+                import logging
+                logger = logging.getLogger('streamlit_logger')
+                logger.setLevel(logging.INFO)
+                
+                # Créer un conteneur pour les logs
+                log_container = st.empty()
+                log_messages = []
+                
+                # Handler pour les logs
+                class StreamlitHandler(logging.Handler):
+                    def __init__(self, message_list):
+                        super().__init__()
+                        self.message_list = message_list
+                    
+                    def emit(self, record):
+                        self.message_list.append(record.getMessage())
+                
+                logger.handlers = []
+                logger.addHandler(StreamlitHandler(log_messages))
                 
                 # Nettoyer le dossier des figures
                 figures_dir = 'data/output/figures'
@@ -455,7 +470,7 @@ def run_streamlit_app():
                 
                 processor.process()
                 
-                # Afficher les logs après le traitement
+                # Afficher les logs
                 if log_messages:
                     with st.expander("📋 Logs de traitement", expanded=False):
                         st.text_area(
@@ -463,68 +478,113 @@ def run_streamlit_app():
                             value="\n".join(log_messages),
                             height=200,
                             disabled=True,
-                            key=f"log_display_{time.time_ns()}"  # Clé unique basée sur les nanosecondes
+                            key=f"log_display_{time.time_ns()}"
                         )
                 
                 st.success("Traitement terminé avec succès!")
                 
-                # Créer un conteneur pour tous les résultats
-                results_container = st.container()
+                # Affichage des résultats
+                if os.path.exists('data/output/ranking_matrix.csv'):
+                    results = pd.read_csv('data/output/ranking_matrix.csv')
+                    st.write("Résultats de l'affectation :")
+                    st.dataframe(results)
                 
-                with results_container:
-                    # Affichage des résultats
-                    if os.path.exists('data/output/ranking_matrix.csv'):
-                        results = pd.read_csv('data/output/ranking_matrix.csv')
-                        st.write("Résultats de l'affectation :")
-                        st.dataframe(results)
+                # Affichage des résultats détaillés
+                if os.path.exists('data/output/ranking_results.txt'):
+                    with open('data/output/ranking_results.txt', 'r') as f:
+                        results_text = f.read()
                     
-                    # Affichage des résultats détaillés
-                    if os.path.exists('data/output/ranking_results.txt'):
-                        with open('data/output/ranking_results.txt', 'r') as f:
-                            results_text = f.read()
-                        
-                        with st.expander("📊 Résultats détaillés par activité", expanded=False):
-                            st.markdown(
-                                """
-                                <div style='background-color: #0066cc; padding: 10px; border-radius: 5px;'>
-                                    <h3 style='color: white; margin: 0;'>Classement détaillé des profils</h3>
-                                </div>
-                                """,
-                                unsafe_allow_html=True
-                            )
-                            st.text_area(
-                                "",
-                                value=results_text,
-                                height=300,
-                                disabled=True
-                            )
-                    
-                    # Affichage des graphiques
-                    if os.path.exists('data/output/figures'):
-                        st.write("## Visualisations des résultats")
-                        
-                        graph_files = os.listdir('data/output/figures')
-                        radar_graphs = sorted([f for f in graph_files if f.startswith('radar_pentagon_')])
-                        bar_graphs = sorted([f for f in graph_files if f.startswith('affectation_bar_')])
-                        
-                        # Graphiques radar dans un expander
-                        if radar_graphs:
-                            with st.expander("📊 Graphiques Radar", expanded=True):
-                                for radar_file in radar_graphs:
-                                    st.image(
-                                        f'data/output/figures/{radar_file}',
-                                        use_column_width=True
-                                    )
-                        
-                        # Graphiques en barres dans un expander
-                        if bar_graphs:
-                            with st.expander("📈 Graphiques en barres", expanded=True):
-                                for bar_file in bar_graphs:
-                                    st.image(
-                                        f'data/output/figures/{bar_file}',
-                                        use_column_width=True
-                                    )
+                    with st.expander("📊 Résultats détaillés par activité", expanded=False):
+                        st.markdown(
+                            """
+                            <div style='background-color: #0066cc; padding: 10px; border-radius: 5px;'>
+                                <h3 style='color: white; margin: 0;'>Classement détaillé des profils</h3>
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
+                        st.text_area(
+                            "",
+                            value=results_text,
+                            height=300,
+                            disabled=True,
+                            key=f"results_text_{time.time_ns()}"
+                        )
                 
+                # Affichage des graphiques
+                if os.path.exists('data/output/figures'):
+                    st.write("## Visualisations des résultats")
+                    
+                    graph_files = os.listdir('data/output/figures')
+                    radar_graphs = sorted([f for f in graph_files if f.startswith('radar_pentagon_')])
+                    bar_graphs = sorted([f for f in graph_files if f.startswith('affectation_bar_')])
+                    
+                    if radar_graphs:
+                        with st.expander("📊 Graphiques Radar", expanded=True):
+                            for radar_file in radar_graphs:
+                                st.image(
+                                    f'data/output/figures/{radar_file}',
+                                    use_column_width=True
+                                )
+                    
+                    if bar_graphs:
+                        with st.expander("📈 Graphiques en barres", expanded=True):
+                            for bar_file in bar_graphs:
+                                st.image(
+                                    f'data/output/figures/{bar_file}',
+                                    use_column_width=True
+                                )
+                
+                # Après l'affichage des graphiques
+                if os.path.exists('data/output/ranking_matrix.csv'):
+                    st.markdown("---")
+                    st.subheader("📥 Exporter les résultats")
+                    
+                    if st.button("📦 Exporter tous les résultats", key="export_all_results"):
+                        try:
+                            # Créer un dossier pour les exports
+                            export_dir = 'data/output/export_manual'
+                            os.makedirs(export_dir, exist_ok=True)
+                            
+                            # Timestamp pour les noms de fichiers
+                            timestamp = time.strftime("%Y%m%d-%H%M%S")
+                            
+                            # Copier les fichiers
+                            import shutil
+                            
+                            # Matrice de résultats
+                            shutil.copy2(
+                                'data/output/ranking_matrix.csv',
+                                f'{export_dir}/resultats_{timestamp}.csv'
+                            )
+                            
+                            # Résultats détaillés
+                            if os.path.exists('data/output/ranking_results.txt'):
+                                shutil.copy2(
+                                    'data/output/ranking_results.txt',
+                                    f'{export_dir}/details_{timestamp}.txt'
+                                )
+                            
+                            # Copier les graphiques
+                            figures_dir = f'{export_dir}/figures_{timestamp}'
+                            os.makedirs(figures_dir, exist_ok=True)
+                            
+                            for f in os.listdir('data/output/figures'):
+                                if f.endswith('.png'):
+                                    shutil.copy2(
+                                        f'data/output/figures/{f}',
+                                        f'{figures_dir}/{f}'
+                                    )
+                            
+                            st.success(f"""
+                            ✅ Résultats exportés avec succès dans :
+                            - {export_dir}/resultats_{timestamp}.csv
+                            - {export_dir}/details_{timestamp}.txt
+                            - {export_dir}/figures_{timestamp}/
+                            """)
+                        except Exception as e:
+                            st.error(f"Erreur lors de l'export : {str(e)}")
+
             except Exception as e:
                 st.error(f"Erreur lors du traitement : {str(e)}")
 

@@ -82,72 +82,72 @@ class McapProcessor:
         output_dir = os.path.abspath('data/output/figures')
         os.makedirs(output_dir, exist_ok=True)
         
-        # Limiter le nombre d'activités à afficher si trop nombreuses
+        # Limiter le nombre d'activités et profils
         max_activities = 10
-        if len(result_matrix.index) > max_activities:
-            self.logger.info(f"Limitation à {max_activities} activités pour les graphiques radar")
-            result_matrix = result_matrix.head(max_activities)
-        
-        # Limiter le nombre de profils à afficher si trop nombreux
         max_profiles = 8
+        if len(result_matrix.index) > max_activities:
+            result_matrix = result_matrix.head(max_activities)
         if len(result_matrix.columns) > max_profiles:
             top_profiles = result_matrix.mean().nlargest(max_profiles).index
             result_matrix = result_matrix[top_profiles]
-            self.logger.info(f"Limitation à {max_profiles} profils les plus pertinents")
         
-        # Paramètres pour le graphique radar
-        angles = np.linspace(0, 2*np.pi, 5, endpoint=False)
-        angles = np.concatenate((angles, [angles[0]]))
+        # S'assurer d'avoir au moins 3 points pour le radar
+        n_points = max(3, len(self.mca_matrix.columns))
+        angles = np.linspace(0, 2*np.pi, n_points, endpoint=False)
+        angles = np.concatenate((angles, [angles[0]]))  # Fermer le polygone
         
-        # Générer une palette de couleurs en utilisant les noms réels des profils
-        colors = {}
-        base_colors = [
-            '#e74c3c', '#2ecc71', '#3498db', '#f1c40f', '#9b59b6',
-            '#e67e22', '#1abc9c', '#34495e', '#d35400', '#27ae60'
-        ]
-        
-        for i, profile in enumerate(result_matrix.columns):
-            if i < len(base_colors):
-                colors[profile] = base_colors[i]
-            else:
-                # Générer des couleurs supplémentaires si nécessaire
-                hue = i / len(result_matrix.columns)
-                rgb = plt.cm.hsv(hue)[:3]
-                colors[profile] = rgb
-        
-        # Créer des groupes d'activités pour limiter le nombre de graphiques par groupe
-        activities = list(result_matrix.index)
-        group_size = 4
-        activity_groups = [activities[i:i + group_size] for i in range(0, len(activities), group_size)]
-        
-        for group_idx, activity_group in enumerate(activity_groups):
-            fig = plt.figure(figsize=(20, 15))
+        # Créer une figure pour chaque activité séparément
+        for activity in result_matrix.index:
+            fig, ax = plt.subplots(figsize=(10, 10), subplot_kw=dict(projection='polar'))
+            scores = result_matrix.loc[activity]
             
-            for idx, activity in enumerate(activity_group):
-                ax = fig.add_subplot(2, 2, idx + 1, projection='polar')
-                scores = result_matrix.loc[activity]
+            # Calculer les limites des axes avec une marge
+            min_val = scores.min()
+            max_val = scores.max()
+            margin = (max_val - min_val) * 0.1 if max_val != min_val else max_val * 0.1
+            ylim = (min_val - margin, max_val + margin)
+            
+            # Tracer le polygone pour chaque profil
+            for profile in result_matrix.columns:
+                # Répéter la valeur si nécessaire pour avoir au moins 3 points
+                if len(self.mca_matrix.columns) < 3:
+                    profile_score = np.full(3, scores[profile])
+                else:
+                    profile_score = np.full(n_points, scores[profile])
+                profile_score = np.concatenate((profile_score, [profile_score[0]]))
                 
-                # Tracer le pentagone pour chaque profil
-                for profile in result_matrix.columns:
-                    profile_score = np.full(5, scores[profile])
-                    profile_score = np.concatenate((profile_score, [profile_score[0]]))
-                    
-                    ax.plot(angles, profile_score, 'o-', 
-                           linewidth=1,
-                           markersize=3,
-                           label=f"{profile} ({scores[profile]:.2f})",
-                           color=colors[profile],
-                           alpha=0.7)
-                    ax.fill(angles, profile_score, 
-                           alpha=0.05,
-                           color=colors[profile])
-                
-                # Configuration de chaque sous-graphique
-                ax.set_title(f'Activité: {activity}', pad=20, size=10)
-                # ... reste de la configuration ...
+                ax.plot(angles, profile_score, 'o-', 
+                       linewidth=1,
+                       markersize=3,
+                       label=f"{profile} ({scores[profile]:.2f})")
+            
+            # Configuration du graphique
+            ax.set_title(f'Activité: {activity}', pad=20, size=10)
+            ax.set_xticks(angles[:-1])
+            
+            # Adapter les labels en fonction du nombre réel de compétences
+            if len(self.mca_matrix.columns) < 3:
+                competency_labels = [f'Comp{i+1}' for i in range(len(self.mca_matrix.columns))]
+                competency_labels.extend([''] * (3 - len(self.mca_matrix.columns)))
+            else:
+                competency_labels = [f'Comp{i+1}' for i in range(n_points)]
+            ax.set_xticklabels(competency_labels, size=8)
+            
+            # Configurer la grille et les limites
+            ax.grid(True, alpha=0.3)
+            ax.set_ylim(ylim)
+            
+            # Ajouter une légende avec des labels non vides
+            if ax.get_legend() is not None:
+                ax.get_legend().remove()
+            ax.legend(title='Profils',
+                     bbox_to_anchor=(1.2, 1),
+                     loc='upper left',
+                     fontsize=8,
+                     frameon=True)
             
             plt.tight_layout()
-            output_file = os.path.join(output_dir, f'radar_pentagon_group_{group_idx}_{uuid.uuid4()}.png')
+            output_file = os.path.join(output_dir, f'radar_pentagon_{activity}_{uuid.uuid4()}.png')
             plt.savefig(output_file, dpi=300, bbox_inches='tight')
             plt.close(fig)
 
