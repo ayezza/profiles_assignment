@@ -2,14 +2,91 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
+# Configuration de Matplotlib
+import matplotlib
+matplotlib.use('Agg')  # Utiliser le backend Agg qui est thread-safe
+import matplotlib.pyplot as plt
+plt.style.use('default')  # Utiliser le style par défaut
+
+# Configuration des polices
+matplotlib.rcParams['font.family'] = ['Arial']
+matplotlib.rcParams['font.sans-serif'] = ['Arial']
+matplotlib.rcParams['font.size'] = 10
+matplotlib.rcParams['axes.unicode_minus'] = False
+matplotlib.rcParams['axes.labelsize'] = 10
+matplotlib.rcParams['xtick.labelsize'] = 8
+matplotlib.rcParams['ytick.labelsize'] = 8
+matplotlib.rcParams['legend.fontsize'] = 8
+
 import streamlit as st
 import pandas as pd
 from src.core.mcap_processor import McapProcessor
 from src.models.model_functions import ModelFunctions
+from src.utils.logger import LoggerSetup
+import logging
+import logging.config
 import os
 import time
 
 def run_streamlit_app():
+    # Configuration du logger
+    root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    config_path = os.path.join(root_dir, 'config', 'mylogger.ini')
+    log_file_path = os.path.join(root_dir, 'data', 'output', 'mylog.log')
+    
+    def display_graphs(figures_dir):
+        """Fonction pour afficher les graphiques de manière cohérente"""
+        if os.path.exists(figures_dir) and os.listdir(figures_dir):
+            st.markdown("""
+            <div style='background-color: #f0f2f6; padding: 10px; border-radius: 5px; margin: 20px 0;'>
+                <h2 style='color: #0066cc; margin: 0; font-family: Arial, sans-serif;'>📊 Visualisations des résultats</h2>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            graph_files = os.listdir(figures_dir)
+            radar_graphs = sorted([f for f in graph_files if f.startswith('radar_pentagon_')])
+            bar_graphs = sorted([f for f in graph_files if f.startswith('affectation_bar_')])
+            
+            # Affichage des graphiques radar
+            if radar_graphs:
+                st.markdown("<h3 style='font-family: Arial, sans-serif;'>📊 Graphiques Radar</h3>", unsafe_allow_html=True)
+                cols = st.columns(min(len(radar_graphs), 2))
+                for idx, radar_file in enumerate(radar_graphs):
+                    with cols[idx % 2]:
+                        st.image(
+                            os.path.join(figures_dir, radar_file),
+                            use_column_width=True,
+                            caption=f"Radar - {radar_file.replace('radar_pentagon_', '').replace('.png', '')}"
+                        )
+            
+            # Affichage des graphiques en barres
+            if bar_graphs:
+                st.markdown("<h3 style='font-family: Arial, sans-serif;'>📈 Graphiques en barres</h3>", unsafe_allow_html=True)
+                cols = st.columns(min(len(bar_graphs), 2))
+                for idx, bar_file in enumerate(bar_graphs):
+                    with cols[idx % 2]:
+                        st.image(
+                            os.path.join(figures_dir, bar_file),
+                            use_column_width=True,
+                            caption=f"Graphique - {bar_file.replace('affectation_bar_', '').replace('.png', '')}"
+                        )
+    
+    try:
+        os.makedirs(os.path.join(root_dir, 'data', 'output'), exist_ok=True)
+        logger = LoggerSetup.setup_logger(config_path, 'myLogger', log_file_path)
+        if logger is None:
+            st.error(f"""
+            Erreur lors de la configuration du logger.
+            Vérifiez que :
+            1. Le fichier {config_path} existe
+            2. Le dossier data/output est accessible en écriture
+            3. Le fichier {log_file_path} est accessible en écriture
+            """)
+            return
+    except Exception as e:
+        st.error(f"Erreur inattendue lors de la configuration du logger : {str(e)}")
+        return
+
     # Configuration de la page en mode large
     st.set_page_config(
         page_title="Affectation des Profils",
@@ -226,16 +303,11 @@ def run_streamlit_app():
                     st.write("Colonnes avec des NaN dans MCP:", mcp_data.columns[mcp_data.isna().any()].tolist())
                     return
                 
-                # Configuration du logger
-                import logging
-                logger = logging.getLogger('streamlit_logger')
-                logger.setLevel(logging.INFO)
+                # Créer un conteneur pour les logs Streamlit
+                log_container = st.empty()
+                log_messages = []
                 
-                # Créer un conteneur pour les logs
-                log_container = st.empty()  # Conteneur vide pour les logs
-                log_messages = []  # Liste pour stocker les messages
-                
-                # Handler simplifié pour les logs
+                # Handler pour les logs Streamlit
                 class StreamlitHandler(logging.Handler):
                     def __init__(self, message_list):
                         super().__init__()
@@ -244,12 +316,12 @@ def run_streamlit_app():
                     def emit(self, record):
                         self.message_list.append(record.getMessage())
                 
-                # Créer un handler avec la liste de messages
-                logger.handlers = []
-                logger.addHandler(StreamlitHandler(log_messages))
+                # Ajouter le handler Streamlit au logger existant
+                streamlit_handler = StreamlitHandler(log_messages)
+                logger.addHandler(streamlit_handler)
                 
                 # Nettoyer le dossier des figures
-                figures_dir = 'data/output/figures'
+                figures_dir = os.path.join(root_dir, 'data', 'output', 'figures')
                 os.makedirs(figures_dir, exist_ok=True)
                 for f in os.listdir(figures_dir):
                     if f.endswith('.png'):
@@ -275,31 +347,34 @@ def run_streamlit_app():
                             value="\n".join(log_messages),
                             height=200,
                             disabled=True,
-                            key=f"log_display_{time.time_ns()}"  # Clé unique basée sur les nanosecondes
+                            key=f"log_display_{time.time_ns()}"
                         )
                 
                 st.success("Traitement terminé avec succès!")
                 
-                # Créer un conteneur pour tous les résultats
-                results_container = st.container()
+                # Affichage des résultats dans la page principale
+                ranking_matrix_path = os.path.join(root_dir, 'data', 'output', 'ranking_matrix.csv')
+                if os.path.exists(ranking_matrix_path):
+                    results = pd.read_csv(ranking_matrix_path)
+                    st.write("Résultats de l'affectation :")
+                    st.dataframe(results, use_container_width=True)
                 
-                with results_container:
-                    # Affichage des résultats
-                    if os.path.exists('data/output/ranking_matrix.csv'):
-                        results = pd.read_csv('data/output/ranking_matrix.csv')
-                        st.write("Résultats de l'affectation :")
-                        st.dataframe(results)
+                # Affichage des résultats détaillés
+                ranking_results_path = os.path.join(root_dir, 'data', 'output', 'ranking_results.txt')
+                if os.path.exists(ranking_results_path):
+                    try:
+                        try:
+                            with open(ranking_results_path, 'r', encoding='utf-8') as f:
+                                results_text = f.read()
+                        except UnicodeDecodeError:
+                            with open(ranking_results_path, 'r', encoding='cp1252') as f:
+                                results_text = f.read()
                     
-                    # Affichage des résultats détaillés
-                    if os.path.exists('data/output/ranking_results.txt'):
-                        with open('data/output/ranking_results.txt', 'r') as f:
-                            results_text = f.read()
-                        
                         with st.expander("📊 Résultats détaillés par activité", expanded=False):
                             st.markdown(
                                 """
-                                <div style='background-color: #0066cc; padding: 10px; border-radius: 5px;'>
-                                    <h3 style='color: white; margin: 0;'>Classement détaillé des profils</h3>
+                                <div style='background-color: #0066cc; padding: 10px; border-radius: 5px; margin-bottom: 10px;'>
+                                    <h3 style='color: white; margin: 0; font-family: Arial, sans-serif;'>Classement détaillé des profils</h3>
                                 </div>
                                 """,
                                 unsafe_allow_html=True
@@ -307,36 +382,67 @@ def run_streamlit_app():
                             st.text_area(
                                 "",
                                 value=results_text,
-                                height=300,
-                                disabled=True
+                                height=200,
+                                disabled=True,
+                                key=f"results_text_{time.time_ns()}"
                             )
-                    
-                    # Affichage des graphiques
-                    if os.path.exists('data/output/figures'):
-                        st.write("## Visualisations des résultats")
-                        
-                        graph_files = os.listdir('data/output/figures')
-                        radar_graphs = sorted([f for f in graph_files if f.startswith('radar_pentagon_')])
-                        bar_graphs = sorted([f for f in graph_files if f.startswith('affectation_bar_')])
-                        
-                        # Graphiques radar dans un expander
-                        if radar_graphs:
-                            with st.expander("📊 Graphiques Radar", expanded=True):
-                                for radar_file in radar_graphs:
-                                    st.image(
-                                        f'data/output/figures/{radar_file}',
-                                        use_column_width=True
-                                    )
-                        
-                        # Graphiques en barres dans un expander
-                        if bar_graphs:
-                            with st.expander("📈 Graphiques en barres", expanded=True):
-                                for bar_file in bar_graphs:
-                                    st.image(
-                                        f'data/output/figures/{bar_file}',
-                                        use_column_width=True
-                                    )
+                    except Exception as e:
+                        st.error(f"Erreur lors de la lecture du fichier de résultats : {str(e)}")
                 
+                # Affichage des graphiques
+                figures_dir = os.path.join(root_dir, 'data', 'output', 'figures')
+                display_graphs(figures_dir)
+                
+                # Après l'affichage des graphiques
+                if os.path.exists(ranking_matrix_path):
+                    st.markdown("---")
+                    st.subheader("📥 Exporter les résultats")
+                    
+                    if st.button("📦 Exporter tous les résultats", key="export_all_results"):
+                        try:
+                            # Créer un dossier pour les exports
+                            export_dir = os.path.join(root_dir, 'data', 'output', 'export_manual')
+                            os.makedirs(export_dir, exist_ok=True)
+                            
+                            # Timestamp pour les noms de fichiers
+                            timestamp = time.strftime("%Y%m%d-%H%M%S")
+                            
+                            # Copier les fichiers
+                            import shutil
+                            
+                            # Matrice de résultats
+                            shutil.copy2(
+                                ranking_matrix_path,
+                                os.path.join(export_dir, f'resultats_{timestamp}.csv')
+                            )
+                            
+                            # Résultats détaillés
+                            if os.path.exists(ranking_results_path):
+                                shutil.copy2(
+                                    ranking_results_path,
+                                    os.path.join(export_dir, f'details_{timestamp}.txt')
+                                )
+                            
+                            # Copier les graphiques
+                            figures_export_dir = os.path.join(export_dir, f'figures_{timestamp}')
+                            os.makedirs(figures_export_dir, exist_ok=True)
+                            
+                            for f in os.listdir(figures_dir):
+                                if f.endswith('.png'):
+                                    shutil.copy2(
+                                        os.path.join(figures_dir, f),
+                                        os.path.join(figures_export_dir, f)
+                                    )
+                            
+                            st.success(f"""
+                            ✅ Résultats exportés avec succès dans :
+                            - {os.path.join(export_dir, f'resultats_{timestamp}.csv')}
+                            - {os.path.join(export_dir, f'details_{timestamp}.txt')}
+                            - {figures_export_dir}/
+                            """)
+                        except Exception as e:
+                            st.error(f"Erreur lors de l'export : {str(e)}")
+
             except Exception as e:
                 st.error("Une erreur s'est produite pendant le traitement")
                 st.error(f"Détails de l'erreur : {str(e)}")
@@ -454,16 +560,11 @@ def run_streamlit_app():
                         """)
                         return
                 
-                # Configuration du logger
-                import logging
-                logger = logging.getLogger('streamlit_logger')
-                logger.setLevel(logging.INFO)
-                
-                # Créer un conteneur pour les logs
+                # Créer un conteneur pour les logs Streamlit
                 log_container = st.empty()
                 log_messages = []
                 
-                # Handler pour les logs
+                # Handler pour les logs Streamlit
                 class StreamlitHandler(logging.Handler):
                     def __init__(self, message_list):
                         super().__init__()
@@ -472,11 +573,12 @@ def run_streamlit_app():
                     def emit(self, record):
                         self.message_list.append(record.getMessage())
                 
-                logger.handlers = []
-                logger.addHandler(StreamlitHandler(log_messages))
+                # Ajouter le handler Streamlit au logger existant
+                streamlit_handler = StreamlitHandler(log_messages)
+                logger.addHandler(streamlit_handler)
                 
                 # Nettoyer le dossier des figures
-                figures_dir = 'data/output/figures'
+                figures_dir = os.path.join(root_dir, 'data', 'output', 'figures')
                 os.makedirs(figures_dir, exist_ok=True)
                 for f in os.listdir(figures_dir):
                     if f.endswith('.png'):
@@ -508,66 +610,55 @@ def run_streamlit_app():
                 st.success("Traitement terminé avec succès!")
                 
                 # Affichage des résultats
-                if os.path.exists('data/output/ranking_matrix.csv'):
-                    results = pd.read_csv('data/output/ranking_matrix.csv')
+                ranking_matrix_path = os.path.join(root_dir, 'data', 'output', 'ranking_matrix.csv')
+                if os.path.exists(ranking_matrix_path):
+                    results = pd.read_csv(ranking_matrix_path)
                     st.write("Résultats de l'affectation :")
                     st.dataframe(results)
                 
                 # Affichage des résultats détaillés
-                if os.path.exists('data/output/ranking_results.txt'):
-                    with open('data/output/ranking_results.txt', 'r') as f:
-                        results_text = f.read()
+                ranking_results_path = os.path.join(root_dir, 'data', 'output', 'ranking_results.txt')
+                if os.path.exists(ranking_results_path):
+                    try:
+                        try:
+                            with open(ranking_results_path, 'r', encoding='utf-8') as f:
+                                results_text = f.read()
+                        except UnicodeDecodeError:
+                            with open(ranking_results_path, 'r', encoding='cp1252') as f:
+                                results_text = f.read()
                     
-                    with st.expander("📊 Résultats détaillés par activité", expanded=False):
-                        st.markdown(
-                            """
-                            <div style='background-color: #0066cc; padding: 10px; border-radius: 5px;'>
-                                <h3 style='color: white; margin: 0;'>Classement détaillé des profils</h3>
-                            </div>
-                            """,
-                            unsafe_allow_html=True
-                        )
-                        st.text_area(
-                            "",
-                            value=results_text,
-                            height=300,
-                            disabled=True,
-                            key=f"results_text_{time.time_ns()}"
-                        )
+                        with st.expander("📊 Résultats détaillés par activité", expanded=False):
+                            st.markdown(
+                                """
+                                <div style='background-color: #0066cc; padding: 10px; border-radius: 5px; margin-bottom: 10px;'>
+                                    <h3 style='color: white; margin: 0; font-family: Arial, sans-serif;'>Classement détaillé des profils</h3>
+                                </div>
+                                """,
+                                unsafe_allow_html=True
+                            )
+                            st.text_area(
+                                "",
+                                value=results_text,
+                                height=200,
+                                disabled=True,
+                                key=f"results_text_{time.time_ns()}"
+                            )
+                    except Exception as e:
+                        st.error(f"Erreur lors de la lecture du fichier de résultats : {str(e)}")
                 
                 # Affichage des graphiques
-                if os.path.exists('data/output/figures'):
-                    st.write("## Visualisations des résultats")
-                    
-                    graph_files = os.listdir('data/output/figures')
-                    radar_graphs = sorted([f for f in graph_files if f.startswith('radar_pentagon_')])
-                    bar_graphs = sorted([f for f in graph_files if f.startswith('affectation_bar_')])
-                    
-                    if radar_graphs:
-                        with st.expander("📊 Graphiques Radar", expanded=True):
-                            for radar_file in radar_graphs:
-                                st.image(
-                                    f'data/output/figures/{radar_file}',
-                                    use_column_width=True
-                                )
-                    
-                    if bar_graphs:
-                        with st.expander("📈 Graphiques en barres", expanded=True):
-                            for bar_file in bar_graphs:
-                                st.image(
-                                    f'data/output/figures/{bar_file}',
-                                    use_column_width=True
-                                )
+                figures_dir = os.path.join(root_dir, 'data', 'output', 'figures')
+                display_graphs(figures_dir)
                 
                 # Après l'affichage des graphiques
-                if os.path.exists('data/output/ranking_matrix.csv'):
+                if os.path.exists(ranking_matrix_path):
                     st.markdown("---")
                     st.subheader("📥 Exporter les résultats")
                     
                     if st.button("📦 Exporter tous les résultats", key="export_all_results"):
                         try:
                             # Créer un dossier pour les exports
-                            export_dir = 'data/output/export_manual'
+                            export_dir = os.path.join(root_dir, 'data', 'output', 'export_manual')
                             os.makedirs(export_dir, exist_ok=True)
                             
                             # Timestamp pour les noms de fichiers
@@ -578,33 +669,33 @@ def run_streamlit_app():
                             
                             # Matrice de résultats
                             shutil.copy2(
-                                'data/output/ranking_matrix.csv',
-                                f'{export_dir}/resultats_{timestamp}.csv'
+                                ranking_matrix_path,
+                                os.path.join(export_dir, f'resultats_{timestamp}.csv')
                             )
                             
                             # Résultats détaillés
-                            if os.path.exists('data/output/ranking_results.txt'):
+                            if os.path.exists(ranking_results_path):
                                 shutil.copy2(
-                                    'data/output/ranking_results.txt',
-                                    f'{export_dir}/details_{timestamp}.txt'
+                                    ranking_results_path,
+                                    os.path.join(export_dir, f'details_{timestamp}.txt')
                                 )
                             
                             # Copier les graphiques
-                            figures_dir = f'{export_dir}/figures_{timestamp}'
-                            os.makedirs(figures_dir, exist_ok=True)
+                            figures_export_dir = os.path.join(export_dir, f'figures_{timestamp}')
+                            os.makedirs(figures_export_dir, exist_ok=True)
                             
-                            for f in os.listdir('data/output/figures'):
+                            for f in os.listdir(figures_dir):
                                 if f.endswith('.png'):
                                     shutil.copy2(
-                                        f'data/output/figures/{f}',
-                                        f'{figures_dir}/{f}'
+                                        os.path.join(figures_dir, f),
+                                        os.path.join(figures_export_dir, f)
                                     )
                             
                             st.success(f"""
                             ✅ Résultats exportés avec succès dans :
-                            - {export_dir}/resultats_{timestamp}.csv
-                            - {export_dir}/details_{timestamp}.txt
-                            - {export_dir}/figures_{timestamp}/
+                            - {os.path.join(export_dir, f'resultats_{timestamp}.csv')}
+                            - {os.path.join(export_dir, f'details_{timestamp}.txt')}
+                            - {figures_export_dir}/
                             """)
                         except Exception as e:
                             st.error(f"Erreur lors de l'export : {str(e)}")

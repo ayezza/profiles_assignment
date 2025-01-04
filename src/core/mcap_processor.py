@@ -12,6 +12,7 @@ from sklearn import preprocessing
 import matplotlib.pyplot as plt
 import uuid
 import os
+import math
 
 class McapProcessor:
     def __init__(self, logger, mca_matrix, mcp_matrix, model_function, normalize=True, 
@@ -26,6 +27,11 @@ class McapProcessor:
         self.copy = copy
         self.return_norm = return_norm
         self.scale_type = scale_type  # '0-1' ou 'free'
+        # Définir le chemin racine
+        self.root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        self.output_dir = os.path.join(self.root_dir, 'data', 'output')
+        self.figures_dir = os.path.join(self.output_dir, 'figures')
+        os.makedirs(self.figures_dir, exist_ok=True)
 
     def _normalize_matrix(self, matrix):
         """Normalise la matrice selon le type d'échelle"""
@@ -66,9 +72,9 @@ class McapProcessor:
         plt.grid(True, alpha=0.3)
         plt.tight_layout()
         
-        # Utiliser le même style de nom de fichier que pour le radar
-        plt.savefig(f'data/output/figures/affectation_bar_{uuid.uuid4()}.png', 
-                   dpi=300, bbox_inches='tight')
+        # Utiliser le chemin absolu pour sauvegarder
+        output_file = os.path.join(self.figures_dir, f'affectation_bar_{uuid.uuid4()}.png')
+        plt.savefig(output_file, dpi=300, bbox_inches='tight')
         plt.close()
 
     def plot_radar(self, result_matrix):
@@ -78,9 +84,6 @@ class McapProcessor:
             result_matrix = result_matrix.drop(['max_value'], axis=1)
         if 'first_best_profile' in result_matrix.columns:
             result_matrix = result_matrix.drop(['first_best_profile'], axis=1)
-        
-        output_dir = os.path.abspath('data/output/figures')
-        os.makedirs(output_dir, exist_ok=True)
         
         # Pour chaque activité
         for activity in result_matrix.index:
@@ -130,8 +133,8 @@ class McapProcessor:
             
             plt.tight_layout()
             
-            # Sauvegarder
-            output_file = os.path.join(output_dir, f'radar_pentagon_{activity}_{uuid.uuid4()}.png')
+            # Sauvegarder avec le chemin absolu
+            output_file = os.path.join(self.figures_dir, f'radar_pentagon_{activity}_{uuid.uuid4()}.png')
             plt.savefig(output_file, dpi=300, bbox_inches='tight')
             plt.close(fig)
 
@@ -173,15 +176,30 @@ class McapProcessor:
             )
             
             # Appliquer la fonction de modèle
+            #for i in range(self.mca_matrix.shape[0]):
+            #    for j in range(self.mcp_matrix.shape[0]):
+            #        score = 0
+            #        for k in range(self.mca_matrix.shape[1]):
+            #            score += self.model_function(
+            #                self.mcp_matrix.iloc[j, k],
+            #                self.mca_matrix.iloc[i, k]
+            #            )
+            #        result.iloc[i, j] = score
             for i in range(self.mca_matrix.shape[0]):
                 for j in range(self.mcp_matrix.shape[0]):
-                    score = 0
+                    score = []
                     for k in range(self.mca_matrix.shape[1]):
-                        score += self.model_function(
+                        score.append ( self.model_function(
                             self.mcp_matrix.iloc[j, k],
                             self.mca_matrix.iloc[i, k]
-                        )
-                    result.iloc[i, j] = score
+                        ) )
+                    res = np.sqrt( np.abs (  np.sum(np.array( score ) ) )) 
+                    if not np.isnan(res):
+                        result.iloc[i, j] = res
+                    else:
+                        result.iloc[i, j] = 0
+                    self.logger.info(f"Score pour l'activité {i} et le profil {j}: {result.iloc[i, j]}")    
+            
             
             # Ajouter les colonnes supplémentaires
             result['max_value'] = result.max(axis=1)
@@ -211,16 +229,15 @@ class McapProcessor:
                 ]
             
             # Sauvegarder la matrice de classement
-            output_dir = os.path.abspath('data/output')
-            os.makedirs(output_dir, exist_ok=True)
+            os.makedirs(self.output_dir, exist_ok=True)
             
             # Sauvegarder en CSV
-            ranking_file = os.path.join(output_dir, 'ranking_matrix.csv')
+            ranking_file = os.path.join(self.output_dir, 'ranking_matrix.csv')
             ranking_matrix.to_csv(ranking_file)
             self.logger.info(f"\nMatrice de classement sauvegardée dans: {ranking_file}")
             
             # Sauvegarder en format texte plus lisible
-            text_file = os.path.join(output_dir, 'ranking_results.txt')
+            text_file = os.path.join(self.output_dir, 'ranking_results.txt')
             with open(text_file, 'w') as f:
                 f.write("Classement des profils par activité\n")
                 f.write("==================================\n\n")
