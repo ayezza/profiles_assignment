@@ -49,8 +49,8 @@ Required CSV format:
 
 ```csv
 Activity,Comp1,Comp2,Comp3
-Act1,0.8,0.6,0.4
-Act2,0.5,0.9,0.3
+Act1,2,4,3
+Act2,3,2,5
 ```
 
 ### MCP (Competency-Profile Matrix)
@@ -59,8 +59,8 @@ Required CSV format:
 
 ```csv
 Profile,Comp1,Comp2,Comp3
-Prof1,0.9,0.5,0.3
-Prof2,0.4,0.8,0.6
+Prof1,2,5,3
+Prof2,3,1,4
 ```
 
 ## 📁 Project Structure

@@ -1,53 +1,39 @@
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
-from typing import List, Dict
-import pandas as pd
-from src.core.mcap_processor import McapProcessor
-from src.models.model_functions import ModelFunctions
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from typing import List
+from . import crud, models, schemas
+from .database import get_db
 
 router = APIRouter()
 
-class MatrixData(BaseModel):
-    mca: Dict[str, Dict[str, float]]
-    mcp: Dict[str, Dict[str, float]]
-    model: str
-    scale_type: str
+@router.post("/profiles/", response_model=schemas.Profile)
+def create_profile(profile: schemas.ProfileCreate, db: Session = Depends(get_db)):
+    return crud.create_profile(db=db, profile=profile)
 
-@router.post("/process")
-async def process_matrices(data: MatrixData):
-    try:
-        # Conversion des données en DataFrames
-        mca_df = pd.DataFrame.from_dict(data.mca, orient='index')
-        mcp_df = pd.DataFrame.from_dict(data.mcp, orient='index')
-        
-        # Récupération de la fonction du modèle
-        model_function = getattr(ModelFunctions, f"model_function{data.model[-1]}")
-        
-        # Création et exécution du processeur
-        processor = McapProcessor(
-            mca_matrix=mca_df,
-            mcp_matrix=mcp_df,
-            model_function=model_function,
-            scale_type=data.scale_type
-        )
-        
-        processor.process()
-        
-        # Récupération des résultats
-        results = pd.read_csv('data/output/ranking_matrix.csv')
-        with open('data/output/ranking_results.txt', 'r') as f:
-            details = f.read()
-        
-        return {
-            "results": results.to_dict(orient='index'),
-            "details": details,
-            "figures": {
-                "radar": [f for f in os.listdir('data/output/figures') 
-                         if f.startswith('radar_pentagon_')],
-                "bar": [f for f in os.listdir('data/output/figures') 
-                       if f.startswith('affectation_bar_')]
-            }
-        }
-        
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e)) 
+@router.get("/profiles/", response_model=List[schemas.Profile])
+def read_profiles(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    profiles = crud.get_profiles(db, skip=skip, limit=limit)
+    return profiles
+
+@router.get("/profiles/{profile_id}", response_model=schemas.Profile)
+def read_profile(profile_id: int, db: Session = Depends(get_db)):
+    db_profile = crud.get_profile(db, profile_id=profile_id)
+    if db_profile is None:
+        raise HTTPException(status_code=404, detail="Profile non trouvé")
+    return db_profile
+
+@router.post("/competencies/", response_model=schemas.Competency)
+def create_competency(competency: schemas.CompetencyCreate, db: Session = Depends(get_db)):
+    return crud.create_competency(db=db, competency=competency)
+
+@router.get("/competencies/", response_model=List[schemas.Competency])
+def read_competencies(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    competencies = crud.get_competencies(db, skip=skip, limit=limit)
+    return competencies
+
+@router.get("/competencies/{competency_id}", response_model=schemas.Competency)
+def read_competency(competency_id: int, db: Session = Depends(get_db)):
+    db_competency = crud.get_competency(db, competency_id=competency_id)
+    if db_competency is None:
+        raise HTTPException(status_code=404, detail="Compétence non trouvée")
+    return db_competency 

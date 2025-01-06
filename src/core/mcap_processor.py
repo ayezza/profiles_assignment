@@ -15,12 +15,13 @@ import os
 import math
 
 class McapProcessor:
-    def __init__(self, logger, mca_matrix, mcp_matrix, model_function, normalize=True, 
+    def __init__(self, logger, mca_matrix, mcp_matrix, model_function, mcap_function='mean', normalize=True, 
                  norm='l2', axis=1, copy=False, return_norm=False, scale_type='0-1'):
         self.logger = logger
         self.mca_matrix = pd.DataFrame(mca_matrix)
         self.mcp_matrix = pd.DataFrame(mcp_matrix)
         self.model_function = model_function
+        self.mcap_function = mcap_function
         self.normalize = normalize
         self.norm = norm
         self.axis = axis
@@ -138,6 +139,42 @@ class McapProcessor:
             plt.savefig(output_file, dpi=300, bbox_inches='tight')
             plt.close(fig)
 
+    def generate_mcap_matrix(self):
+        """
+        Génère la matrice MCAP en appliquant la fonction de modèle entre les matrices MCA et MCP
+        
+        Returns:
+            pd.DataFrame: Matrice MCAP résultante
+        """
+        # Initialiser la matrice de résultats
+        result = pd.DataFrame(
+            np.zeros((self.mca_matrix.shape[0], self.mcp_matrix.shape[0])),
+            index=self.mca_matrix.index,
+            columns=self.mcp_matrix.index
+        )
+        
+        # Pour chaque activité dans MCA
+        for i in range(self.mca_matrix.shape[0]):
+            # Pour chaque profil dans MCP
+            for j in range(self.mcp_matrix.shape[0]):
+                scores = []
+                # Pour chaque critère
+                for k in range(self.mca_matrix.shape[1]):
+                    score = self.model_function(
+                        self.mcp_matrix.iloc[j, k],
+                        self.mca_matrix.iloc[i, k]
+                    )
+                    scores.append(score)
+                # Calculer le score final comme la moyenne des scores individuels
+                if self.mcap_function == 'mean':
+                    result.iloc[i, j] = np.mean(scores)
+                elif self.mcap_function == 'sum':
+                    result.iloc[i, j] = np.sum(scores)
+                elif self.mcap_function == 'sqrt':
+                    result.iloc[i, j] = np.sqrt(np.sum(scores))
+                
+        return result
+
     def process(self):
         try:
             self.logger.info("Début du traitement MCAP")
@@ -185,22 +222,23 @@ class McapProcessor:
             #                self.mca_matrix.iloc[i, k]
             #            )
             #        result.iloc[i, j] = score
-            for i in range(self.mca_matrix.shape[0]):
-                for j in range(self.mcp_matrix.shape[0]):
-                    score = []
-                    for k in range(self.mca_matrix.shape[1]):
-                        score.append ( self.model_function(
-                            self.mcp_matrix.iloc[j, k],
-                            self.mca_matrix.iloc[i, k]
-                        ) )
-                    res = np.sqrt( np.abs (  np.sum(np.array( score ) ) )) 
-                    if not np.isnan(res):
-                        result.iloc[i, j] = res
-                    else:
-                        result.iloc[i, j] = 0
-                    self.logger.info(f"Score pour l'activité {i} et le profil {j}: {result.iloc[i, j]}")    
+            #for i in range(self.mca_matrix.shape[0]):
+            #    for j in range(self.mcp_matrix.shape[0]):
+            #        score = []
+            #        for k in range(self.mca_matrix.shape[1]):
+            #            score.append ( self.model_function(
+            #                self.mcp_matrix.iloc[j, k],
+            #                self.mca_matrix.iloc[i, k]
+            #            ) )
+            #        res = np.sqrt( np.abs (  np.sum(np.array( score ) ) )) 
+            #        if not np.isnan(res):
+            #            result.iloc[i, j] = res
+            #        else:
+            #            result.iloc[i, j] = 0
+            #        self.logger.info(f"Score pour l'activité {i} et le profil {j}: {result.iloc[i, j]}")    
             
-            
+            result = self.generate_mcap_matrix()
+
             # Ajouter les colonnes supplémentaires
             result['max_value'] = result.max(axis=1)
             result['first_best_profile'] = result.idxmax(axis=1)

@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.database import engine, Base
 from app.routes import router
 
-app = FastAPI(
-    title="Profiles Assignment API",
-    description="API for assigning profiles to activities based on competencies",
-    version="1.0.0"
-)
+# Création des tables dans la base de données
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(title="MCAP Profiles API")
 
 # Configuration CORS
 app.add_middleware(
@@ -17,4 +17,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(router) 
+# Inclusion des routes
+app.include_router(router, prefix="/api/v1")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True) 
