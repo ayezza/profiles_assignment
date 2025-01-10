@@ -171,7 +171,7 @@ class McapProcessor:
                 elif self.mcap_function == 'sum':
                     result.iloc[i, j] = np.sum(scores)
                 elif self.mcap_function == 'sqrt':
-                    result.iloc[i, j] = np.sqrt(np.sum(scores))
+                    result.iloc[i, j] = np.sqrt(np.sum(np.square(scores)))
                 
         return result
 
