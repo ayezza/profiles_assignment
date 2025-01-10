@@ -38,7 +38,7 @@ def get_model_function(model_name):
     }
     return model_mapping.get(model_name, ModelFunctions.model_function2)
 
-def main(mca_file=None, mcp_file=None, model_name='model2', scale_type='0-1'):
+def main(mca_file=None, mcp_file=None, model_name='model2', scale_type='0-1', mcap_function='sum'):
     # Obtenir les chemins par défaut
     paths = get_default_paths()
     
@@ -67,6 +67,7 @@ def main(mca_file=None, mcp_file=None, model_name='model2', scale_type='0-1'):
     logger.info(f'Fichier MCP: {paths["mcp_file"]}')
     logger.info(f'Modèle: {model_name}')
     logger.info(f'Type d\'échelle: {scale_type}')
+    logger.info(f'Fonction MCAP: {mcap_function}')
 
     # Vérification et chargement des fichiers
     try:
@@ -86,6 +87,7 @@ def main(mca_file=None, mcp_file=None, model_name='model2', scale_type='0-1'):
         mca_matrix=mca_csv,
         mcp_matrix=mcp_csv,
         model_function=model_function,
+        mcap_function=mcap_function,
         normalize=True,
         scale_type=scale_type
     )
@@ -99,6 +101,8 @@ if __name__ == '__main__':
     parser.add_argument('--model', default='model2', help='Nom du modèle à utiliser')
     parser.add_argument('--scale', default='0-1', choices=['0-1', 'free'], 
                         help='Type d\'échelle (0-1 ou libre)')
+    parser.add_argument('--mcap', default='sum', choices=['sum', 'mean', 'sqrt'],
+                        help='Fonction de calcul MCAP (sum, mean ou sqrt)')
     
     args = parser.parse_args()
     
@@ -106,5 +110,6 @@ if __name__ == '__main__':
         mca_file=args.mca,
         mcp_file=args.mcp,
         model_name=args.model,
-        scale_type=args.scale
+        scale_type=args.scale,
+        mcap_function=args.mcap
     ))
