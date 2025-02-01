@@ -79,7 +79,7 @@ class McapProcessor:
         plt.close()
 
     def plot_radar(self, result_matrix):
-        """Génère un graphique radar pour chaque activité"""
+        """Génère un graphique radar pentagonal pour chaque activité"""
         # Nettoyer result_matrix
         if 'max_value' in result_matrix.columns:
             result_matrix = result_matrix.drop(['max_value'], axis=1)
@@ -95,49 +95,59 @@ class McapProcessor:
             # Obtenir les scores pour cette activité
             scores = result_matrix.loc[activity]
             
-            # Forcer un minimum de 3 points en dupliquant les valeurs si nécessaire
-            if len(scores) < 3:
-                scores = pd.concat([scores] * (3 // len(scores) + 1)).head(3)
-                scores.index = [f'Point {i+1}' for i in range(3)]
+            # Sélectionner les 5 meilleurs scores pour le pentagone
+            scores = scores.nlargest(5)
             
-            # Nombre de points sur le radar (minimum 3)
-            num_vars = len(scores)
+            # Calculer la valeur maximale pour l'échelle
+            max_value = scores.max()
             
-            # Calculer les angles pour chaque point
+            # Nombre fixe de points pour le pentagone
+            num_vars = 5
+            
+            # Calculer les angles pour chaque point du pentagone
             angles = [n / float(num_vars) * 2 * np.pi for n in range(num_vars)]
-            angles += angles[:1]  # Compléter le cercle
+            angles += angles[:1]  # Fermer le pentagone en répétant le premier point
             
-            # Initialiser le graphique
-            ax.set_theta_offset(np.pi / 2)
-            ax.set_theta_direction(-1)
+            # Préparer les données pour le tracé
+            values = scores.values.flatten().tolist()
+            values += values[:1]  # Fermer le pentagone en répétant la première valeur
             
-            # Dessiner les axes
-            plt.xticks(angles[:-1], scores.index)
+            # Tracer les lignes de la grille pentagonale
+            for level in [0.2, 0.4, 0.6, 0.8, 1.0]:
+                pentagon_points = []
+                for angle in angles[:-1]:  # Ne pas inclure le point de fermeture
+                    x = level * max_value * np.cos(angle)
+                    y = level * max_value * np.sin(angle)
+                    pentagon_points.append((x, y))
+                
+                # Tracer les lignes du pentagone pour ce niveau
+                pentagon_points.append(pentagon_points[0])  # Fermer le pentagone
+                xs, ys = zip(*pentagon_points)
+                ax.plot(angles, [level * max_value] * len(angles), color='gray', alpha=0.2)
+                
+                # Ajouter des lignes du centre vers les sommets
+                for angle in angles[:-1]:
+                    ax.plot([0, angle], [0, max_value], color='gray', alpha=0.2)
             
-            # Tracer les données
-            values = scores.values
-            values = np.concatenate((values, [values[0]]))  # Compléter le cercle
-            ax.plot(angles, values, 'o-', linewidth=2, label=activity)
+            # Tracer le pentagone principal
+            ax.plot(angles, values, 'o-', linewidth=2, label=activity, color='b', alpha=0.25)
             ax.fill(angles, values, alpha=0.25)
             
-            # Ajouter les labels
-            ax.set_title(f"Scores pour l'activité: {activity}")
+            # Configurer les étiquettes
+            ax.set_xticks(angles[:-1])
+            ax.set_xticklabels(scores.index)
             
-            # Ajuster les limites
-            ax.set_ylim(0, max(values) * 1.1)
+            # Configurer les limites et le style
+            ax.set_ylim(0, max_value)
+            plt.title(f'Radar Plot - {activity}', y=1.05)
             
-            # Ajouter une grille
-            ax.grid(True)
+            # Supprimer les cercles de la grille polaire
+            ax.grid(False)
             
-            # Ajouter une légende
-            plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
-            
-            plt.tight_layout()
-            
-            # Sauvegarder avec le chemin absolu
+            # Sauvegarder le graphique
             output_file = os.path.join(self.figures_dir, f'radar_pentagon_{activity}_{uuid.uuid4()}.png')
             plt.savefig(output_file, dpi=300, bbox_inches='tight')
-            plt.close(fig)
+            plt.close()
 
     def generate_mcap_matrix(self):
         """

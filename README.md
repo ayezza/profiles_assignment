@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
-A sophisticated Python package designed for optimal profile-to-activity assignment based on skills matching, developed by Abdel YEZZA (Ph.D). This solution employs advanced algorithms to maximize the correspondence between required activity competencies and available profile skills.
+A Python package designed for optimal profile-to-activity assignment based on skills matching, developed by Abdel YEZZA (Ph.D). This solution employs advanced algorithms to maximize the correspondence between required activity competencies and available profile skills.
 
 ## 🎯 Key Features
 
@@ -13,7 +13,7 @@ A sophisticated Python package designed for optimal profile-to-activity assignme
 - **Web Interface**: Built-in web application using FastAPI and Streamlit
 - **Detailed Logging**: Comprehensive logging system for tracking operations
 - **Data Validation**: Robust input validation and error handling
-- **Customizable Processing**: Support for different MCAP functions (sum, custom)
+- **Customizable Processing**: Support for different MCAP functions (sum, euclidean custom)
 
 ## 🛠️ Installation
 
@@ -25,8 +25,11 @@ cd profiles_assignment
 
 2. Create and activate a virtual environment (recommended):
 ```bash
+# install venv on Linux/MacOS:
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate  
+# to activate on Windows: 
+venv\Scripts\activate
 ```
 
 3. Install dependencies:
@@ -66,7 +69,7 @@ python main.py --mca path/to/mca.csv --mcp path/to/mcp.csv --model model2 --scal
 - `--mcp`: Path to the MCP (Matrix Competency-Profile) file
 - `--model`: Model selection (model1, model2, model3, model4, model5)
 - `--scale`: Scale type (0-1 or free)
-- `--mcap`: MCAP function type (sum or custom)
+- `--mcap`: MCAP function type (sum, mean, sqrt custom)
 
 ## 📋 Input File Formats
 

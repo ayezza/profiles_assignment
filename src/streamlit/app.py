@@ -123,8 +123,8 @@ def run_streamlit_app():
                 Cette application permet d'affecter des profils à des activités en fonction de leurs compétences respectives.
                 Elle utilise deux matrices d'entrée :
                 <ul>
-                    <li><strong>MCA</strong> (Matrice des Compétences des Activités) : définit les compétences requises pour chaque activité</li>
-                    <li><strong>MCP</strong> (Matrice des Compétences des Profils) : définit les compétences acquises par chaque profil</li>
+                    <li><strong>MCA</strong> (Matrice des Compétences requises des Activités) : définit les compétences requises pour chaque activité</li>
+                    <li><strong>MCP</strong> (Matrice des Compétences acquises des Profils) : définit les compétences acquises par chaque profil</li>
                 </ul>
                 <br>
                 L'application propose 5 modèles différents d'affectation (modèle1, ..., modèle5) et deux types d'échelles de données (0-1, free).<br>
