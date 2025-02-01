@@ -1,119 +1,113 @@
-# MCAP Profiles 📊
+# MCAP Profiles - Profile-Activity Matching System 📊
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
-An innovative Python package for optimal profile-to-activity assignment based on skills matching. This solution leverages advanced algorithms to maximize the correspondence between required activity competencies and available profile skills.
+A sophisticated Python package designed for optimal profile-to-activity assignment based on skills matching, developed by Abdel YEZZA (Ph.D). This solution employs advanced algorithms to maximize the correspondence between required activity competencies and available profile skills.
 
-## ✨ Features
+## 🎯 Key Features
 
-- Skills matrix analysis
-- Automatic profile assignment
-- Multiple evaluation scale support
-- Detailed reporting generation
-- Intuitive command-line interface
-- Data-driven decision making
-- Customizable matching algorithms
+- **Skills Matrix Analysis**: Process and analyze competency-activity (MCA) and competency-profile (MCP) matrices
+- **Multiple Model Support**: Five different matching models available (model1 through model5)
+- **Flexible Scaling**: Support for different scale types (0-1, free)
+- **Web Interface**: Built-in web application using FastAPI and Streamlit
+- **Detailed Logging**: Comprehensive logging system for tracking operations
+- **Data Validation**: Robust input validation and error handling
+- **Customizable Processing**: Support for different MCAP functions (sum, custom)
 
-## 🚀 Installation
+## 🛠️ Installation
 
+1. Clone the repository:
 ```bash
-pip install mcap-profiles
+git clone [repository-url]
+cd profiles_assignment
 ```
 
-## 📖 Usage
-
-### Basic Usage
-
+2. Create and activate a virtual environment (recommended):
 ```bash
-mcap
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-### Advanced Usage
-
+3. Install dependencies:
 ```bash
-mcap --mca path/to/mca.csv --mcp path/to/mcp.csv --scale free
+pip install -r requirements.txt
 ```
 
-### Available Options
+## 📦 Dependencies
 
+- streamlit >= 1.24.0
+- pandas >= 1.5.0
+- scikit-learn
+- matplotlib
+- fastapi >= 0.104.0
+- uvicorn >= 0.24.0
+- python-dotenv >= 1.0.0
+- python-multipart >= 0.0.6
+- sqlalchemy >= 2.0.23
+
+## 🚀 Usage
+
+### Command Line Interface
+
+Basic usage:
 ```bash
-mcap --help
+python main.py
 ```
+
+Advanced usage with custom parameters:
+```bash
+python main.py --mca path/to/mca.csv --mcp path/to/mcp.csv --model model2 --scale 0-1 --mcap sum
+```
+
+### Command Line Arguments
+
+- `--mca`: Path to the MCA (Matrix Competency-Activity) file
+- `--mcp`: Path to the MCP (Matrix Competency-Profile) file
+- `--model`: Model selection (model1, model2, model3, model4, model5)
+- `--scale`: Scale type (0-1 or free)
+- `--mcap`: MCAP function type (sum or custom)
 
 ## 📋 Input File Formats
 
 ### MCA (Competency-Activity Matrix)
-
-Required CSV format:
-
 ```csv
 Activity,Comp1,Comp2,Comp3
-Act1,2,4,3
-Act2,3,2,5
+Activity1,0.8,0.6,0.7
+Activity2,0.5,0.9,0.4
 ```
 
 ### MCP (Competency-Profile Matrix)
-
-Required CSV format:
-
 ```csv
 Profile,Comp1,Comp2,Comp3
-Prof1,2,5,3
-Prof2,3,1,4
+Profile1,0.7,0.8,0.6
+Profile2,0.9,0.5,0.8
 ```
 
 ## 📁 Project Structure
 
-```
-mcap-profiles/
-├── LICENSE
-├── MANIFEST.in
-├── README.md
-├── setup.py
-├── .gitignore
-├── main.py
-├── config/
-│   └── mylogger.ini
-├── data/
-│   ├── input/
-│   │   ├── mca_01.csv
-│   │   └── mcp_01.csv
-│   └── output/
-└── src/
-    ├── __init__.py
-    ├── core/
-    ├── models/
-    └── utils/
-```
-
-## 🤝 Contributing
-
-Contributions are welcome! Here's how you can help:
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -am 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 🔍 Documentation
-
-For detailed documentation and examples, visit our [documentation page](https://github.com/yourusername/mcap-profiles/wiki).
+- `src/`: Core source code
+  - `core/`: Core processing logic
+  - `models/`: Matching model implementations
+  - `utils/`: Utility functions and helpers
+- `config/`: Configuration files
+- `data/`: Input and output data
+  - `input/`: Input CSV files
+  - `output/`: Generated outputs
+- `tests/`: Unit and integration tests
+- `web/`: Web interface components
 
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 📫 Contact & Support
+## 🔗 More Information
 
-- Create an issue for bug reports or feature requests
-- For major changes, please open an issue first to discuss what you would like to change
-- Join our [community discussions](https://github.com/yourusername/mcap-profiles/discussions)
+For more detailed examples and explanations, check out the author's article:
+[LinkedIn Article](https://www.linkedin.com/feed/update/urn:li:activity:6853567958246027265/)
 
-## 🙏 Acknowledgments
+## ✍️ Author
 
-- Thanks to all contributors who have helped shape MCAP Profiles
-- Special thanks to the open-source community for their invaluable tools and libraries
+**Abdel YEZZA (Ph.D)**
 
-
+*Note: This code is completely free and can be modified with only one condition: DO NOT REMOVE author's name*
