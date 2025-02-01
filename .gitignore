@@ -27,7 +27,7 @@ wheels/
 
 # Logs et données
 *.log
-data/output/*
+#data/output/*
 !data/output/.gitkeep
 
 # IDE
