@@ -175,6 +175,7 @@ class McapProcessor:
                         self.mca_matrix.iloc[i, k]
                     )
                     scores.append(score)
+
                 # Calculer le score final comme la moyenne des scores individuels
                 if self.mcap_function == 'mean':
                     result.iloc[i, j] = np.mean(scores)
@@ -182,6 +183,8 @@ class McapProcessor:
                     result.iloc[i, j] = np.sum(scores)
                 elif self.mcap_function == 'sqrt':
                     result.iloc[i, j] = np.sqrt(np.sum(np.square(scores)))
+                elif callable(self.mcap_function):
+                    result.iloc[i, j] = self.mcap_function(scores)
                 
         return result
 

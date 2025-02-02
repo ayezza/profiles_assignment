@@ -10,6 +10,9 @@ import pandas as pd
 import math
 
 class ModelFunctions:
+    def __init__(self, custom_model) -> None:
+        self.custom_model = custom_model
+
     @staticmethod
     def model_function1(profile_value, activity_value):
         """
@@ -52,3 +55,9 @@ class ModelFunctions:
             activity_weight: Poids pour l'activité (défaut: 0.3)
         """
         return profile_weight * profile_value + activity_weight * activity_value
+
+    def model_function_custom(self, profile_value, activity_value):
+        """
+        Implémente la fonction de modèle personnalisée pour le traitement MCAP
+        """
+        return self.custom_model(profile_value, activity_value) 

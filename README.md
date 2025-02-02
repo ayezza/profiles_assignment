@@ -1,4 +1,4 @@
-# MCAP Profiles - Profile-Activity Matching System 📊
+# MCAP - Profile-Activity Matching System 📊
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
@@ -10,7 +10,7 @@ It is designed to provide a comprehensive solution for profile-activity matching
 This project is built on the two following articles:
 
 1. [UN NOUVEAU MODELE POUR AFFECTER LES PROFILS ADEQUATS](https://www.linkedin.com/feed/update/urn:li:activity:7057629409758846976/)
-2. [Une nouvelle façon d'affectation des profils aux activités](https://www.linkedin.com/feed/update/urn:li:activity:6853567958246027265/)
+2. [UNE NOUVELLE FAÇON D'AFFECTATION DES PROFILS AUX ACTIVITES](https://www.linkedin.com/feed/update/urn:li:activity:6853567958246027265/)
 
 ## 🎯 Key Features
 
