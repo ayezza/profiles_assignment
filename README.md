@@ -9,8 +9,8 @@ It is designed to provide a comprehensive solution for profile-activity matching
 
 This project is built on the two following articles:
 
-1. [UN NOUVEAU MODELE POUR AFFECTER LES PROFILS ADEQUATS](https://www.linkedin.com/feed/update/urn:li:activity:7057629409758846976/)
-2. [UNE NOUVELLE FAÇON D'AFFECTATION DES PROFILS AUX ACTIVITES](https://www.linkedin.com/feed/update/urn:li:activity:6853567958246027265/)
+1. [UN NOUVEAU MODELE POUR AFFECTER LES PROFILS ADEQUATS](https://www.linkedin.com/feed/update/urn:li:activity:7057629409758846976/) - by Abdel YEZZA (Ph.D) - 2024
+2. [UNE NOUVELLE FAÇON D'AFFECTATION DES PROFILS AUX ACTIVITES](https://www.linkedin.com/feed/update/urn:li:activity:6853567958246027265/) - by Abdel YEZZA (Ph.D) - 2022
 
 ## 🎯 Key Features
 
