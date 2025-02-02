@@ -5,15 +5,19 @@
 
 A Python package designed for optimal profile-to-activity assignment based on skills matching, developed by Abdel YEZZA (Ph.D). This solution employs advanced algorithms to maximize the correspondence between required activity competencies and available profile skills.
 
+It is designed to provide a comprehensive solution for profile-activity matching, offering multiple models, flexible scaling options, streamlit web interface, a robust logging system, a detailed validation of input data, and a customizable processing of MCAP functions (sum, mean, euclidean and any custom function).
+
+![MCAP Profiles Screenshot](https://github.com/ayezza/profiles_assignment/raw/main/README_assets/screenshot.png)
+
 ## 🎯 Key Features
 
 - **Skills Matrix Analysis**: Process and analyze competency-activity (MCA) and competency-profile (MCP) matrices
-- **Multiple Model Support**: Five different matching models available (model1 through model5)
+- **Multiple Model Support**: Five different matching models available (model1 through model5 or any custom function)
 - **Flexible Scaling**: Support for different scale types (0-1, free)
 - **Web Interface**: Built-in web application using FastAPI and Streamlit
 - **Detailed Logging**: Comprehensive logging system for tracking operations
 - **Data Validation**: Robust input validation and error handling
-- **Customizable Processing**: Support for different MCAP functions (sum, euclidean custom)
+- **Customizable Processing**: Support for different MCAP functions (sum, mean, euclidean and any custom function)
 
 ## 🛠️ Installation
 
