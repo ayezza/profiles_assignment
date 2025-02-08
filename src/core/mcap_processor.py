@@ -225,31 +225,6 @@ class McapProcessor:
                 columns=self.mcp_matrix.index
             )
             
-            # Appliquer la fonction de modèle
-            #for i in range(self.mca_matrix.shape[0]):
-            #    for j in range(self.mcp_matrix.shape[0]):
-            #        score = 0
-            #        for k in range(self.mca_matrix.shape[1]):
-            #            score += self.model_function(
-            #                self.mcp_matrix.iloc[j, k],
-            #                self.mca_matrix.iloc[i, k]
-            #            )
-            #        result.iloc[i, j] = score
-            #for i in range(self.mca_matrix.shape[0]):
-            #    for j in range(self.mcp_matrix.shape[0]):
-            #        score = []
-            #        for k in range(self.mca_matrix.shape[1]):
-            #            score.append ( self.model_function(
-            #                self.mcp_matrix.iloc[j, k],
-            #                self.mca_matrix.iloc[i, k]
-            #            ) )
-            #        res = np.sqrt( np.abs (  np.sum(np.array( score ) ) )) 
-            #        if not np.isnan(res):
-            #            result.iloc[i, j] = res
-            #        else:
-            #            result.iloc[i, j] = 0
-            #        self.logger.info(f"Score pour l'activité {i} et le profil {j}: {result.iloc[i, j]}")    
-            
             result = self.generate_mcap_matrix()
 
             # Ajouter les colonnes supplémentaires
