@@ -106,7 +106,7 @@ cd web/backend
 pip install -r requirements.txt
 
 # Run the serveur with uvicorn
-uvicorn main:app --reload --log-level debug
+uvicorn main:app --reload --log-level debug --host 0.0.0.0 --port 8000
 ```
 
 ### 2. Frontend
