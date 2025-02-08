@@ -21,62 +21,39 @@ const FileUpload = ({ onFileSelect, models, scaleTypes, mcapFunctions }) => {
         console.log('MCAP functions received:', mcapFunctions);
     }, [models, scaleTypes, mcapFunctions]);
 
+    useEffect(() => {
+        onFileSelect({
+            files: selectedFiles,
+            model,
+            scaleType,
+            mcapFunction
+        });
+    }, [selectedFiles, model, scaleType, mcapFunction]);
+
     const handleFileChange = (type) => (event) => {
         const file = event.target.files[0];
         setSelectedFiles(prev => ({
             ...prev,
             [type]: file
         }));
-        
-        if (file) {
-            const newFiles = {
-                ...selectedFiles,
-                [type]: file
-            };
-            console.log('Sending files to parent:', newFiles);
-            onFileSelect({
-                files: newFiles,
-                model,
-                scaleType,
-                mcapFunction
-            });
-        }
     };
 
     const handleModelChange = (event) => {
         const newModel = event.target.value;
         console.log('Model changed to:', newModel);
         setModel(newModel);
-        onFileSelect({
-            files: selectedFiles,
-            model: newModel,
-            scaleType,
-            mcapFunction
-        });
     };
 
     const handleScaleTypeChange = (event) => {
         const newScaleType = event.target.value;
         console.log('Scale type changed to:', newScaleType);
         setScaleType(newScaleType);
-        onFileSelect({
-            files: selectedFiles,
-            model,
-            scaleType: newScaleType,
-            mcapFunction
-        });
     };
 
     const handleMcapFunctionChange = (event) => {
         const newMcapFunction = event.target.value;
         console.log('MCAP function changed to:', newMcapFunction);
         setMcapFunction(newMcapFunction);
-        onFileSelect({
-            files: selectedFiles,
-            model,
-            scaleType,
-            mcapFunction: newMcapFunction
-        });
     };
 
     return (

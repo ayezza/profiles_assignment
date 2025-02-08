@@ -1,11 +1,6 @@
-Activity,Top1,Top2,Top3
-Act1,Prof1 (1.674),Prof7 (1.573),Prof13 (1.534)
-Act2,Prof12 (1.667),Prof13 (1.653),Prof8 (1.628)
-Act3,Prof14 (1.614),Prof7 (1.575),Prof12 (1.548)
-Act4,Prof11 (1.839),Prof15 (1.823),Prof6 (1.502)
-Act5,Prof3 (1.829),Prof11 (1.616),Prof15 (1.599)
-Act6,Prof2 (2.176),Prof8 (1.583),Prof1 (1.548)
-Act7,Prof5 (1.541),Prof7 (1.436),Prof8 (1.423)
-Act8,Prof6 (1.546),Prof5 (1.486),Prof7 (1.434)
-Act9,Prof14 (1.614),Prof7 (1.575),Prof12 (1.548)
-Act10,Prof14 (1.591),Prof11 (1.552),Prof15 (1.536)
+,Top1,Top2,Top3
+Act1,Prof2 (0.514),Prof5 (0.499),Prof4 (0.438)
+Act2,Prof2 (0.522),Prof5 (0.508),Prof4 (0.447)
+Act3,Prof2 (0.539),Prof5 (0.524),Prof4 (0.463)
+Act4,Prof2 (0.496),Prof5 (0.481),Prof4 (0.420)
+Act5,Prof2 (0.526),Prof5 (0.511),Prof4 (0.450)

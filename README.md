@@ -70,7 +70,7 @@ Advanced usage with custom parameters:
 python main.py --mca path/to/mca.csv --mcp path/to/mcp.csv --model model2 --scale 0-1 --mcap sum
 ```
 
-### Command Line Arguments
+### Command Line Arguments (Console case)
 
 - `--mca`: Path to the MCA (Matrix Competency-Activity) file
 - `--mcp`: Path to the MCP (Matrix Competency-Profile) file
@@ -93,6 +93,18 @@ Profile,Comp1,Comp2,Comp3
 Profile1,0.7,0.8,0.6
 Profile2,0.9,0.5,0.8
 ```
+
+## Streamlit demo application
+
+```
+streamlit.cmd run .\src\streamlit\app.py
+```
+
+You should have three menu items:
+1. Start page
+2. Test application
+3. Interactive application
+
 
 ## Web application
 

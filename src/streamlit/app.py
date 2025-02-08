@@ -55,7 +55,8 @@ def run_streamlit_app():
                     with cols[idx % 2]:
                         st.image(
                             os.path.join(figures_dir, radar_file),
-                            use_column_width=True,
+                            # use_column_width=True,
+                            use_container_width = True,
                             caption=f"Radar - {radar_file.replace('radar_pentagon_', '').replace('.png', '')}"
                         )
             
@@ -67,7 +68,8 @@ def run_streamlit_app():
                     with cols[idx % 2]:
                         st.image(
                             os.path.join(figures_dir, bar_file),
-                            use_column_width=True,
+                            # use_column_width=True,
+                            use_container_width = True,
                             caption=f"Graphique - {bar_file.replace('affectation_bar_', '').replace('.png', '')}"
                         )
     
@@ -242,6 +244,17 @@ def run_streamlit_app():
             help="Choisissez 'free' si vos données ne sont pas déjà normalisées"
         )
         
+        # Sélection de la fonction MCAP
+        mcap_function_options = {
+            'Somme': 'sum',
+            'Moyenne': 'mean',
+            'Racine carrée': 'sqrt'
+        }
+        selected_mcap_function = st.sidebar.selectbox(
+            "Choisir la fonction MCAP",
+            options=list(mcap_function_options.keys())
+        )
+        
         if mca_file and mcp_file:
             try:
                 # Lecture des fichiers avec plus de paramètres
@@ -334,6 +347,7 @@ def run_streamlit_app():
                     mca_matrix=mca_data,
                     mcp_matrix=mcp_data,
                     model_function=model_function,
+                    mcap_function=mcap_function_options[selected_mcap_function],
                     scale_type=scale_type
                 )
                 
@@ -499,6 +513,17 @@ def run_streamlit_app():
             index=0
         )
         
+        # Sélection de la fonction MCAP
+        mcap_function_options = {
+            'Somme': 'sum',
+            'Moyenne': 'mean',
+            'Racine carrée': 'sqrt'
+        }
+        selected_mcap_function = st.sidebar.selectbox(
+            "Choisir la fonction MCAP",
+            options=list(mcap_function_options.keys())
+        )
+        
         # MCA
         st.subheader("Matrice MCA (Compétences des Activités)")
         mca_data = pd.DataFrame(
@@ -538,6 +563,9 @@ def run_streamlit_app():
             num_rows="fixed",
             key=f"mcp_editor_{n_profiles}_{n_competencies}"
         )
+        
+        st.write(f"Dimensions de la matrice MCA : {edited_mca.shape}")
+        st.write(f"Dimensions de la matrice MCP : {edited_mcp.shape}")
         
         # Bouton d'export MCP
         col_export_mcp1, col_export_mcp2 = st.columns([1, 3])
@@ -591,8 +619,15 @@ def run_streamlit_app():
                     mca_matrix=edited_mca,
                     mcp_matrix=edited_mcp,
                     model_function=model_function,
+                    mcap_function = mcap_function_options[selected_mcap_function],
                     scale_type=scale_type
                 )
+                st.write("Traitement en cours...")
+                #st.write("model_function:", model_function)
+                #st.write("scale_type:", scale_type)
+                #st.write("mcap_function:", mcap_function_options[selected_mcap_function])
+                
+                
                 
                 processor.process()
                 
