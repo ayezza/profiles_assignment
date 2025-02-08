@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import ResultsDisplay from './ResultsDisplay';
 
 const Input = styled('input')({
     display: 'none',
@@ -14,12 +15,7 @@ const FileUpload = ({ onFileSelect, models, scaleTypes, mcapFunctions }) => {
     const [model, setModel] = useState('model2');
     const [scaleType, setScaleType] = useState('0-1');
     const [mcapFunction, setMcapFunction] = useState('sum');
-
-    useEffect(() => {
-        console.log('Models received:', models);
-        console.log('Scale types received:', scaleTypes);
-        console.log('MCAP functions received:', mcapFunctions);
-    }, [models, scaleTypes, mcapFunctions]);
+    const [results, setResults] = useState(null); // État pour stocker les résultats
 
     useEffect(() => {
         onFileSelect({
@@ -40,20 +36,47 @@ const FileUpload = ({ onFileSelect, models, scaleTypes, mcapFunctions }) => {
 
     const handleModelChange = (event) => {
         const newModel = event.target.value;
-        console.log('Model changed to:', newModel);
         setModel(newModel);
     };
 
     const handleScaleTypeChange = (event) => {
         const newScaleType = event.target.value;
-        console.log('Scale type changed to:', newScaleType);
         setScaleType(newScaleType);
     };
 
     const handleMcapFunctionChange = (event) => {
         const newMcapFunction = event.target.value;
-        console.log('MCAP function changed to:', newMcapFunction);
         setMcapFunction(newMcapFunction);
+    };
+
+    const handleSubmit = async () => {
+        // Créer une constante pour les paramètres d'entrée
+        const params = {
+            model,
+            scaleType,
+            mcapFunction,
+            mcaFile: selectedFiles.mca,
+            mcpFile: selectedFiles.mcp
+        };
+
+        // Effectuer le calcul de la matrice MCAP ici
+        const calculatedResults = await calculateMcapMatrix(selectedFiles, model, scaleType, mcapFunction);
+        
+        // Mettre à jour l'état avec les résultats
+        setResults(calculatedResults);
+    };
+
+    
+
+    // Fonction fictive pour le calcul de la matrice MCAP
+    const calculateMcapMatrix = async (files, model, scaleType, mcapFunction) => {
+        // Logique de calcul ici
+        // Par exemple, vous pouvez lire les fichiers et effectuer des calculs
+        // Retournez les résultats sous forme d'objet ou de tableau
+        return {
+            message: "Calcul effectué avec succès",
+            // Ajoutez d'autres données de résultats ici
+        };
     };
 
     return (
@@ -61,7 +84,6 @@ const FileUpload = ({ onFileSelect, models, scaleTypes, mcapFunctions }) => {
             <Typography variant="h4" gutterBottom>
                 Configuration
             </Typography>
-            
             <Box sx={{ mb: 3 }}>
                 <label htmlFor="mca-file">
                     <Input
@@ -75,7 +97,6 @@ const FileUpload = ({ onFileSelect, models, scaleTypes, mcapFunctions }) => {
                     </Button>
                 </label>
             </Box>
-
             <Box sx={{ mb: 3 }}>
                 <label htmlFor="mcp-file">
                     <Input
@@ -89,7 +110,6 @@ const FileUpload = ({ onFileSelect, models, scaleTypes, mcapFunctions }) => {
                     </Button>
                 </label>
             </Box>
-
             <FormControl fullWidth sx={{ mb: 2 }}>
                 <InputLabel>Modèle</InputLabel>
                 <Select
@@ -104,7 +124,6 @@ const FileUpload = ({ onFileSelect, models, scaleTypes, mcapFunctions }) => {
                     ))}
                 </Select>
             </FormControl>
-
             <FormControl fullWidth sx={{ mb: 2 }}>
                 <InputLabel>Type d'échelle</InputLabel>
                 <Select
@@ -119,7 +138,6 @@ const FileUpload = ({ onFileSelect, models, scaleTypes, mcapFunctions }) => {
                     ))}
                 </Select>
             </FormControl>
-
             <FormControl fullWidth sx={{ mb: 2 }}>
                 <InputLabel>Fonction MCAP</InputLabel>
                 <Select
@@ -134,8 +152,25 @@ const FileUpload = ({ onFileSelect, models, scaleTypes, mcapFunctions }) => {
                     ))}
                 </Select>
             </FormControl>
+            <Button variant="contained" onClick={handleSubmit}>
+                Calculer la matrice MCAP
+            </Button>
+
+            {/* Affichage des résultats */}
+            {results && (
+                <ResultsDisplay 
+                    results={{
+                        message: results.message,
+                        model,
+                        scaleType,
+                        mcapFunction,
+                        mcaFile: selectedFiles.mca,
+                        mcpFile: selectedFiles.mcp
+                    }} 
+                />
+            )}
         </Box>
     );
 };
 
-export default FileUpload; 
+export default FileUpload;
