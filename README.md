@@ -94,6 +94,46 @@ Profile1,0.7,0.8,0.6
 Profile2,0.9,0.5,0.8
 ```
 
+## Web application
+
+### 1. Backend
+
+```
+# go to backend folder
+cd web/backend
+
+# Install dépendancies if any
+pip install -r requirements.txt
+
+# Run the serveur with uvicorn
+uvicorn main:app --reload --log-level debug
+```
+
+### 2. Frontend
+
+```
+# go to backend folder
+cd web/frontend
+
+# Install dépendancies if any
+npm install
+
+# Run the dev server
+npm start
+```
+
+You should get a message like:
+
+```
+You can now view mcap-frontend in the browser.
+  Local:            http://localhost:3001
+  On Your Network:  http://192.168.1.19:3001
+
+Note that the development build is not optimized.
+To create a production build, use npm run build.
+```
+
+
 ## 📁 Project Structure
 
 - `src/`: Core source code

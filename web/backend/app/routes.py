@@ -67,40 +67,56 @@ async def process_mcap(
     mcap_function: str = "sum"
 ):
     try:
-        logger.info(f"Starting process_mcap with model={model_name}, scale_type={scale_type}, mcap_function={mcap_function}")
+        logger.info("="*50)
+        logger.info("Début du traitement MCAP")
+        logger.info(f"Paramètres reçus:")
+        logger.info(f"- model_name: {model_name}")
+        logger.info(f"- scale_type: {scale_type}")
+        logger.info(f"- mcap_function: {mcap_function}")
+        logger.info(f"- mca_file: {mca_file.filename}")
+        logger.info(f"- mcp_file: {mcp_file.filename}")
         
         # Lecture des fichiers CSV
-        logger.info("Reading MCA file...")
+        logger.info("\nLecture du fichier MCA...")
         mca_content = await mca_file.read()
         try:
             mca_df = pd.read_csv(io.StringIO(mca_content.decode('utf-8')), index_col=0)
             logger.info(f"MCA file shape: {mca_df.shape}")
-            logger.debug(f"MCA columns: {mca_df.columns.tolist()}")
-            logger.debug(f"MCA index: {mca_df.index.tolist()}")
+            logger.info(f"MCA colonnes: {mca_df.columns.tolist()}")
+            logger.info(f"MCA index: {mca_df.index.tolist()}")
+            logger.debug(f"MCA premières lignes:\n{mca_df.head()}")
+            logger.debug(f"MCA types des colonnes:\n{mca_df.dtypes}")
         except Exception as e:
-            logger.error(f"Error reading MCA file: {str(e)}")
-            raise HTTPException(status_code=400, detail=f"Erreur de lecture du fichier MCA: {str(e)}")
+            logger.error(f"Erreur lecture MCA: {str(e)}")
+            logger.error(f"Contenu MCA reçu:\n{mca_content.decode('utf-8')[:500]}")
+            raise HTTPException(status_code=400, detail=f"Erreur lecture MCA: {str(e)}")
         
-        logger.info("Reading MCP file...")
+        logger.info("\nLecture du fichier MCP...")
         mcp_content = await mcp_file.read()
         try:
             mcp_df = pd.read_csv(io.StringIO(mcp_content.decode('utf-8')), index_col=0)
             logger.info(f"MCP file shape: {mcp_df.shape}")
-            logger.debug(f"MCP columns: {mcp_df.columns.tolist()}")
-            logger.debug(f"MCP index: {mcp_df.index.tolist()}")
+            logger.info(f"MCP colonnes: {mcp_df.columns.tolist()}")
+            logger.info(f"MCP index: {mcp_df.index.tolist()}")
+            logger.debug(f"MCP premières lignes:\n{mcp_df.head()}")
+            logger.debug(f"MCP types des colonnes:\n{mcp_df.dtypes}")
         except Exception as e:
-            logger.error(f"Error reading MCP file: {str(e)}")
-            raise HTTPException(status_code=400, detail=f"Erreur de lecture du fichier MCP: {str(e)}")
+            logger.error(f"Erreur lecture MCP: {str(e)}")
+            logger.error(f"Contenu MCP reçu:\n{mcp_content.decode('utf-8')[:500]}")
+            raise HTTPException(status_code=400, detail=f"Erreur lecture MCP: {str(e)}")
         
         # Vérification de la compatibilité des matrices
-        if not set(mca_df.columns).issubset(set(mcp_df.columns)):
-            missing_cols = set(mca_df.columns) - set(mcp_df.columns)
-            error_msg = f"Les colonnes suivantes sont manquantes dans MCP: {missing_cols}"
+        logger.info("\nVérification de la compatibilité des matrices...")
+        mca_cols = set(mca_df.columns)
+        mcp_cols = set(mcp_df.columns)
+        if not mca_cols.issubset(mcp_cols):
+            missing_cols = mca_cols - mcp_cols
+            error_msg = f"Colonnes manquantes dans MCP: {missing_cols}"
             logger.error(error_msg)
             raise HTTPException(status_code=400, detail=error_msg)
         
         # Configuration du logger MCAP
-        logger.info(f"Setting up MCAP logger with config_path={config_path}, log_path={log_path}")
+        logger.info("\nConfiguration du logger MCAP...")
         try:
             mcap_logger = LoggerSetup.setup_logger(
                 config_path,
@@ -110,11 +126,11 @@ async def process_mcap(
             if not mcap_logger:
                 raise Exception("Logger setup returned None")
         except Exception as e:
-            logger.error(f"Error setting up MCAP logger: {str(e)}")
-            raise HTTPException(status_code=500, detail=f"Erreur de configuration du logger MCAP: {str(e)}")
+            logger.error(f"Erreur configuration logger: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Erreur configuration logger: {str(e)}")
         
         # Obtention de la fonction de modèle
-        logger.info(f"Getting model function for {model_name}")
+        logger.info("\nObtention de la fonction de modèle...")
         model_mapping = {
             'model1': ModelFunctions.model_function1,
             'model2': ModelFunctions.model_function2,
@@ -129,8 +145,17 @@ async def process_mcap(
             logger.error(error_msg)
             raise HTTPException(status_code=400, detail=error_msg)
         
+        # Test de la fonction de modèle
+        logger.info("Test de la fonction de modèle...")
+        try:
+            test_result = model_function(0.5, 0.5)
+            logger.info(f"Test de la fonction réussi: {test_result}")
+        except Exception as e:
+            logger.error(f"Test de la fonction échoué: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Fonction de modèle invalide: {str(e)}")
+        
         # Traitement MCAP
-        logger.info("Initializing McapProcessor...")
+        logger.info("\nInitialisation du processeur MCAP...")
         try:
             processor = McapProcessor(
                 logger=mcap_logger,
@@ -142,41 +167,41 @@ async def process_mcap(
                 scale_type=scale_type
             )
         except Exception as e:
-            logger.error(f"Error initializing McapProcessor: {str(e)}")
-            raise HTTPException(status_code=500, detail=f"Erreur d'initialisation du processeur MCAP: {str(e)}")
+            logger.error(f"Erreur initialisation processeur: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Erreur initialisation: {str(e)}")
         
-        logger.info("Processing MCAP...")
+        logger.info("\nTraitement MCAP...")
         try:
             results = processor.process()
-            logger.debug(f"Results type: {type(results)}")
-            logger.debug(f"Results content: {results}")
+            logger.info(f"Type des résultats: {type(results)}")
+            logger.debug(f"Contenu des résultats: {results}")
             
             if not isinstance(results, dict):
-                logger.error(f"Invalid results type: {type(results)}")
-                raise ValueError(f"Format de résultats invalide: attendu dict, reçu {type(results)}")
+                logger.error(f"Type de résultats invalide: {type(results)}")
+                raise ValueError(f"Format invalide: attendu dict, reçu {type(results)}")
             
             if 'ranking_matrix' not in results:
-                logger.error("Missing ranking_matrix in results")
-                raise ValueError("Format de résultats invalide: ranking_matrix manquant")
+                logger.error("ranking_matrix manquant dans les résultats")
+                raise ValueError("ranking_matrix manquant")
             
             if not isinstance(results['ranking_matrix'], pd.DataFrame):
-                logger.error(f"Invalid ranking_matrix type: {type(results['ranking_matrix'])}")
-                raise ValueError(f"Format de résultats invalide: ranking_matrix doit être un DataFrame")
+                logger.error(f"Type de ranking_matrix invalide: {type(results['ranking_matrix'])}")
+                raise ValueError(f"ranking_matrix doit être un DataFrame")
             
             if results['ranking_matrix'].empty:
-                logger.warning("Empty ranking matrix")
+                logger.warning("Matrice de classement vide")
             else:
-                logger.info("MCAP processing completed successfully")
+                logger.info("Traitement terminé avec succès")
                 
         except Exception as e:
-            logger.error(f"Error in MCAP processing: {str(e)}")
-            raise HTTPException(status_code=500, detail=f"Erreur lors du traitement MCAP: {str(e)}")
+            logger.error(f"Erreur traitement MCAP: {str(e)}")
+            logger.exception("Traceback complet:")
+            raise HTTPException(status_code=500, detail=f"Erreur traitement: {str(e)}")
         
-        # Récupération des résultats et graphiques
-        logger.info("Generating figures...")
+        # Récupération des graphiques
+        logger.info("\nRécupération des graphiques...")
         figures_data = {}
         try:
-            # Parcourir les fichiers dans le répertoire des figures
             figures_dir = os.path.join(processor.output_dir, 'figures')
             if os.path.exists(figures_dir):
                 for filename in os.listdir(figures_dir):
@@ -186,18 +211,17 @@ async def process_mcap(
                             image_data = f.read()
                             figures_data[filename] = base64.b64encode(image_data).decode()
             else:
-                logger.warning("Figures directory does not exist")
+                logger.warning("Répertoire des figures inexistant")
         except Exception as e:
-            logger.error(f"Error generating figures: {str(e)}")
-            raise HTTPException(status_code=500, detail=f"Erreur lors de la génération des graphiques: {str(e)}")
+            logger.error(f"Erreur récupération graphiques: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Erreur graphiques: {str(e)}")
         
-        logger.info("Process completed successfully")
+        logger.info("\nPréparation de la réponse...")
         response_data = {
             "success": True,
             "figures": figures_data
         }
         
-        # Ajouter les résultats s'ils existent
         try:
             response_data.update({
                 "ranking_matrix": results['ranking_matrix'].to_dict() if not results['ranking_matrix'].empty else {},
@@ -205,9 +229,11 @@ async def process_mcap(
                 "result_matrix": results['result_matrix'].to_dict() if not results['result_matrix'].empty else {}
             })
         except Exception as e:
-            logger.error(f"Error formatting results: {str(e)}")
-            raise HTTPException(status_code=500, detail=f"Erreur lors du formatage des résultats: {str(e)}")
+            logger.error(f"Erreur formatage résultats: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Erreur formatage: {str(e)}")
         
+        logger.info("Traitement terminé avec succès")
+        logger.info("="*50)
         return JSONResponse(response_data)
         
     except HTTPException as he:
@@ -217,7 +243,7 @@ async def process_mcap(
             "error": str(he.detail)
         }, status_code=he.status_code)
     except Exception as e:
-        error_msg = f"Error in process_mcap: {str(e)}\n{traceback.format_exc()}"
+        error_msg = f"Erreur générale: {str(e)}\n{traceback.format_exc()}"
         logger.error(error_msg)
         return JSONResponse({
             "success": False,

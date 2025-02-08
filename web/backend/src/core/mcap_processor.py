@@ -59,8 +59,8 @@ class McapProcessor:
         
         # Initialiser les attributs pour les résultats
         self.figures = {}
-        self.ranking_matrix = None
-        self.ranking_results = None
+        self.ranking_matrix = pd.DataFrame()
+        self.ranking_results = ""
         
         # Valider les matrices
         if self.mca_matrix.empty or self.mcp_matrix.empty:
@@ -114,14 +114,17 @@ class McapProcessor:
             matrix (pd.DataFrame): Matrice à normaliser
             
         Returns:
-            pd.DataFrame: Matrice normalisée ou DataFrame vide en cas d'erreur
+            pd.DataFrame: Matrice normalisée
+            
+        Raises:
+            ValueError: Si la normalisation échoue
         """
         try:
             if self.scale_type == '0-1':
                 # Vérifier si les valeurs sont entre 0 et 1
                 if (matrix.values < 0).any() or (matrix.values > 1).any():
                     self.logger.error("Les valeurs doivent être entre 0 et 1 pour l'échelle 0-1")
-                    return pd.DataFrame()
+                    raise ValueError("Les valeurs doivent être entre 0 et 1 pour l'échelle 0-1")
                 
                 if self.normalize:
                     self.logger.info("Normalisation avec l'échelle 0-1")
@@ -135,7 +138,7 @@ class McapProcessor:
                         return normalized
                     except Exception as e:
                         self.logger.error(f"Erreur lors de la normalisation 0-1: {str(e)}")
-                        return pd.DataFrame()
+                        raise ValueError(f"Erreur lors de la normalisation 0-1: {str(e)}")
                 return matrix
             else:  # 'free'
                 self.logger.info("Normalisation avec l'échelle libre")
@@ -159,11 +162,11 @@ class McapProcessor:
                     return normalized
                 except Exception as e:
                     self.logger.error(f"Erreur lors de la normalisation libre: {str(e)}")
-                    return pd.DataFrame()
+                    raise ValueError(f"Erreur lors de la normalisation libre: {str(e)}")
                 
         except Exception as e:
             self.logger.error(f"Erreur lors de la normalisation de la matrice: {str(e)}")
-            return pd.DataFrame()  # Retourner un DataFrame vide en cas d'erreur
+            raise ValueError(f"Erreur lors de la normalisation de la matrice: {str(e)}")
 
     def plot_results(self, result_matrix, kind="bar"):
         """Génère un graphique des résultats"""
@@ -259,6 +262,12 @@ class McapProcessor:
     def generate_mcap_matrix(self):
         """
         Génère la matrice MCAP en appliquant la fonction de modèle entre les matrices MCA et MCP
+        
+        Returns:
+            pd.DataFrame: Matrice MCAP résultante
+            
+        Raises:
+            ValueError: Si la génération échoue
         """
         try:
             result = pd.DataFrame(
@@ -279,8 +288,7 @@ class McapProcessor:
                         
                         score = self._apply_model_function(mcp_value, mca_value)
                         if score is None:
-                            self.logger.error(f"Échec du calcul pour {activity}/{profile}")
-                            return pd.DataFrame()
+                            raise ValueError(f"Échec du calcul pour {activity}/{profile}")
                         scores.append(score)
                     
                     # Calculer le score final
@@ -292,24 +300,21 @@ class McapProcessor:
                         elif self.mcap_function == 'sqrt':
                             final_score = float(np.sqrt(np.sum(np.square(scores))))
                         else:
-                            self.logger.error(f"Fonction MCAP non reconnue: {self.mcap_function}")
-                            return pd.DataFrame()
+                            raise ValueError(f"Fonction MCAP non reconnue: {self.mcap_function}")
                         
                         if not math.isfinite(final_score):
-                            self.logger.error(f"Score final non fini pour {activity}/{profile}")
-                            return pd.DataFrame()
+                            raise ValueError(f"Score final non fini pour {activity}/{profile}")
                             
                         result.iloc[i, j] = final_score
                         
                     except Exception as e:
-                        self.logger.error(f"Erreur lors du calcul final pour {activity}/{profile}: {str(e)}")
-                        return pd.DataFrame()
+                        raise ValueError(f"Erreur lors du calcul final pour {activity}/{profile}: {str(e)}")
             
             return result
             
         except Exception as e:
             self.logger.error(f"Erreur lors de la génération de la matrice MCAP: {str(e)}")
-            return pd.DataFrame()
+            raise ValueError(f"Erreur lors de la génération de la matrice MCAP: {str(e)}")
 
     def process(self):
         """
@@ -319,7 +324,10 @@ class McapProcessor:
                 - ranking_matrix (pd.DataFrame): Matrice de classement
                 - ranking_results (str): Résultats détaillés au format texte
                 - result_matrix (pd.DataFrame): Matrice de résultats complète
+        Raises:
+            ValueError: Si le traitement échoue
         """
+        result = None
         try:
             self.logger.info("Début du traitement MCAP")
             
@@ -339,22 +347,14 @@ class McapProcessor:
             # Normalisation
             if self.normalize:
                 self.logger.info("Normalisation des matrices")
-                normalized_mca = self._normalize_matrix(self.mca_matrix)
-                if normalized_mca.empty:
-                    raise ValueError("La normalisation de la matrice MCA a échoué")
-                self.mca_matrix = normalized_mca
-                
-                normalized_mcp = self._normalize_matrix(self.mcp_matrix)
-                if normalized_mcp.empty:
-                    raise ValueError("La normalisation de la matrice MCP a échoué")
-                self.mcp_matrix = normalized_mcp
+                self.mca_matrix = self._normalize_matrix(self.mca_matrix)
+                self.mcp_matrix = self._normalize_matrix(self.mcp_matrix)
             
             # Génération de la matrice MCAP
             self.logger.info("Génération de la matrice MCAP")
             result = self.generate_mcap_matrix()
-            
-            if result.empty:
-                raise ValueError("La génération de la matrice MCAP a échoué")
+            if result is None or result.empty:
+                raise ValueError("Échec de la génération de la matrice MCAP")
             
             # Traitement des résultats
             result['max_value'] = result.max(axis=1)
@@ -417,4 +417,10 @@ class McapProcessor:
         except Exception as e:
             self.logger.error(f"Erreur lors du traitement MCAP: {str(e)}")
             self.logger.exception(e)
-            raise  # Propager l'exception au lieu de retourner default_results 
+            # Créer un dictionnaire de résultats vide mais valide
+            empty_results = {
+                'ranking_matrix': pd.DataFrame(),
+                'ranking_results': str(e),
+                'result_matrix': pd.DataFrame() if result is None else result
+            }
+            raise ValueError(f"Erreur lors du traitement MCAP: {str(e)}") 
