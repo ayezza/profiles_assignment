@@ -176,7 +176,7 @@ class McapProcessor:
                     )
                     scores.append(score)
 
-                # Calculer le score final comme la moyenne des scores individuels
+                # Calculer le score final comme la moyenne/somme/euclideane ou custom function des scores individuels
                 if self.mcap_function == 'mean':
                     result.iloc[i, j] = np.mean(scores)
                 elif self.mcap_function == 'sum':
@@ -279,12 +279,21 @@ class McapProcessor:
             self.logger.info(f"Résultats détaillés sauvegardés dans: {text_file}")
             
             # Générer les graphiques
+            try:
+                os.makedirs(self.figures_dir, exist_ok=True)
+            except Exception as e:
+                self.logger.error(f"Erreur lors de la création du dossier: {self.figures_dir}")
+                raise
             self.logger.info("\nGénération des graphiques...")
             result_without_stats = result.drop(['max_value', 'first_best_profile'], axis=1)
+
+            self.logger.info(f"Données passées à plot_results: {result_without_stats}")
             self.plot_results(result_without_stats)
+
+            self.logger.info(f"Données passées à plot_radar: {result_without_stats}")
             self.plot_radar(result_without_stats)
             
-            return 0
+            return {'ranking_matrix': ranking_matrix, 'result_matrix': result_without_stats}
             
         except Exception as e:
             self.logger.error(f"Erreur lors du traitement MCAP: {str(e)}")

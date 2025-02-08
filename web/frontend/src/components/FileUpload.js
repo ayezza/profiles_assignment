@@ -81,7 +81,7 @@ const FileUpload = ({ onFileSelect, models, scaleTypes, mcapFunctions }) => {
 
     return (
         <Box sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h4" gutterBottom>
                 Configuration
             </Typography>
             
