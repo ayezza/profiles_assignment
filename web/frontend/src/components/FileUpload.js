@@ -43,49 +43,56 @@ const FileUpload = ({ onFileSelect, models, scaleTypes, mcapFunctions }) => {
     };
 
     const handleSubmit = async () => {
-        // Reset results before new calculation
-        setResults(null);
+        setResults(null); // Clear previous results
+        console.log('Submitting with parameters:', { model, scaleType, mcapFunction });
 
         if (!selectedFiles.mca || !selectedFiles.mcp) {
             setResults({
                 message: "Les fichiers MCA et MCP doivent être sélectionnés",
                 resultMatrix: [],
-                model,
-                scaleType,
-                mcapFunction
             });
             return;
         }
 
+        // Create fresh FormData for each submission
         const formData = new FormData();
         formData.append('mca_file', selectedFiles.mca);
         formData.append('mcp_file', selectedFiles.mcp);
-        formData.append('model_name', model);
-        formData.append('scale_type', scaleType);
-        formData.append('mcap_function', mcapFunction);
+        formData.append('model_name', model);  // Make sure this matches backend parameter name
+        formData.append('scale_type', scaleType);  // Make sure this matches backend parameter name
+        formData.append('mcap_function', mcapFunction);  // Make sure this matches backend parameter name
+        formData.append('request_id', Date.now().toString());
 
         try {
             const response = await mcapService.processMcap(formData);
-            // Force a new state update with a unique timestamp
-            setResults({
+            
+            if (!response.success) {
+                throw new Error(response.error || 'Processing failed');
+            }
+
+            // Create new results object with current parameters
+            const newResults = {
                 ...response,
                 model,
                 scaleType,
                 mcapFunction,
                 mcaFile: selectedFiles.mca.name,
                 mcpFile: selectedFiles.mcp.name,
-                timestamp: Date.now() // Add timestamp to force re-render
-            });
+                timestamp: Date.now()
+            };
+
+            console.log('Calculation results:', newResults);
+            setResults(newResults);
+
         } catch (error) {
+            console.error('Calculation error:', error);
             setResults({
                 message: error.message || "Une erreur est survenue lors du traitement",
                 resultMatrix: [],
                 model,
                 scaleType,
                 mcapFunction,
-                mcaFile: selectedFiles.mca ? selectedFiles.mca.name : "Aucun fichier chargé",
-                mcpFile: selectedFiles.mcp ? selectedFiles.mcp.name : "Aucun fichier chargé",
-                timestamp: Date.now() // Add timestamp to force re-render
+                timestamp: Date.now()
             });
         }
     };

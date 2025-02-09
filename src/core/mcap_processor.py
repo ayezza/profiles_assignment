@@ -15,20 +15,23 @@ import os
 import math
 
 class McapProcessor:
-    def __init__(self, logger, mca_matrix, mcp_matrix, model_function, mcap_function='mean', normalize=True, 
-                 norm='l2', axis=1, copy=False, return_norm=False, scale_type='0-1'):
+    def __init__(self, logger, mca_matrix, mcp_matrix, model_function, mcap_function='sum', 
+                 normalize=True, scale_type='0-1'):
         self.logger = logger
         self.mca_matrix = pd.DataFrame(mca_matrix)
         self.mcp_matrix = pd.DataFrame(mcp_matrix)
         self.model_function = model_function
         self.mcap_function = mcap_function
         self.normalize = normalize
-        self.norm = norm
-        self.axis = axis
-        self.copy = copy
-        self.return_norm = return_norm
-        self.scale_type = scale_type  # '0-1' ou 'free'
-        # Définir le chemin racine
+        self.scale_type = scale_type
+
+        # Log initialization parameters
+        self.logger.info(f"Initializing MCAP processor with:")
+        self.logger.info(f"- MCAP function: {mcap_function}")
+        self.logger.info(f"- Scale type: {scale_type}")
+        self.logger.info(f"- Model function: {model_function.__name__}")
+        
+        # Set up directories
         self.root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         self.output_dir = os.path.join(self.root_dir, 'data', 'output')
         self.figures_dir = os.path.join(self.output_dir, 'figures')
@@ -150,42 +153,38 @@ class McapProcessor:
             plt.close()
 
     def generate_mcap_matrix(self):
-        """
-        Génère la matrice MCAP en appliquant la fonction de modèle entre les matrices MCA et MCP
+        """Generate MCAP matrix using current parameters"""
+        self.logger.info(f"Generating MCAP matrix with function: {self.mcap_function}")
         
-        Returns:
-            pd.DataFrame: Matrice MCAP résultante
-        """
-        # Initialiser la matrice de résultats
         result = pd.DataFrame(
             np.zeros((self.mca_matrix.shape[0], self.mcp_matrix.shape[0])),
             index=self.mca_matrix.index,
             columns=self.mcp_matrix.index
         )
         
-        # Pour chaque activité dans MCA
-        for i in range(self.mca_matrix.shape[0]):
-            # Pour chaque profil dans MCP
-            for j in range(self.mcp_matrix.shape[0]):
+        # Apply scaling if needed
+        if self.scale_type == '0-1':
+            self.mca_matrix = (self.mca_matrix - self.mca_matrix.min()) / (self.mca_matrix.max() - self.mca_matrix.min())
+            self.mcp_matrix = (self.mcp_matrix - self.mcp_matrix.min()) / (self.mcp_matrix.max() - self.mcp_matrix.min())
+
+        for i in self.mca_matrix.index:
+            for j in self.mcp_matrix.index:
                 scores = []
-                # Pour chaque critère
-                for k in range(self.mca_matrix.shape[1]):
+                for comp in self.mca_matrix.columns:
                     score = self.model_function(
-                        self.mcp_matrix.iloc[j, k],
-                        self.mca_matrix.iloc[i, k]
+                        float(self.mcp_matrix.loc[j, comp]),
+                        float(self.mca_matrix.loc[i, comp])
                     )
                     scores.append(score)
-
-                # Calculer le score final comme la moyenne/somme/euclideane ou custom function des scores individuels
-                if self.mcap_function == 'mean':
-                    result.iloc[i, j] = np.mean(scores)
-                elif self.mcap_function == 'sum':
-                    result.iloc[i, j] = np.sum(scores)
-                elif self.mcap_function == 'sqrt':
-                    result.iloc[i, j] = np.sqrt(np.sum(np.square(scores)))
-                elif callable(self.mcap_function):
-                    result.iloc[i, j] = self.mcap_function(scores)
                 
+                # Apply selected MCAP function
+                if self.mcap_function == 'mean':
+                    result.loc[i, j] = np.mean(scores)
+                elif self.mcap_function == 'sum':
+                    result.loc[i, j] = np.sum(scores)
+                elif self.mcap_function == 'sqrt':
+                    result.loc[i, j] = np.sqrt(np.sum(np.square(scores)))
+
         return result
 
     def process(self):
@@ -297,4 +296,4 @@ class McapProcessor:
             
         except Exception as e:
             self.logger.error(f"Erreur lors du traitement MCAP: {str(e)}")
-            raise  # Propager l'erreur pour plus de détails 
+            raise  # Propager l'erreur pour plus de détails
