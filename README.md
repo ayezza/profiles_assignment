@@ -94,6 +94,7 @@ Profile1,0.7,0.8,0.6
 Profile2,0.9,0.5,0.8
 ```
 
+
 ## Streamlit demo application
 
 ```
@@ -104,7 +105,6 @@ You should have three menu items:
 1. Start page
 2. Test application
 3. Interactive application
-
 
 ## Web application
 
@@ -118,13 +118,13 @@ cd web/backend
 pip install -r requirements.txt
 
 # Run the serveur with uvicorn
-uvicorn main:app --reload --log-level debug --host 0.0.0.0 --port 8000
+uvicorn main:app --reload --log-level debug
 ```
 
 ### 2. Frontend
 
 ```
-# go to backend folder
+# go to frontend folder
 cd web/frontend
 
 # Install dépendancies if any
@@ -140,9 +140,6 @@ You should get a message like:
 You can now view mcap-frontend in the browser.
   Local:            http://localhost:3001
   On Your Network:  http://192.168.1.19:3001
-
-Note that the development build is not optimized.
-To create a production build, use npm run build.
 ```
 
 

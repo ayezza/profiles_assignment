@@ -1,0 +1,40 @@
+<form method="POST">
+    <select id="modelSelect" name="model">
+        // ...existing code...
+    </select>
+
+    <select id="scaleSelect" name="scale">
+        // ...existing code...
+    </select>
+
+    <select id="functionSelect" name="function">
+        // ...existing code...
+    </select>
+
+    <button type="button" id="calculateBtn">Calculer la matrice MCAP</button>
+</form>
+
+<script>
+document.getElementById('calculateBtn').addEventListener('click', function() {
+    const model = document.getElementById('modelSelect').value;
+    const scale = document.getElementById('scaleSelect').value;
+    const mcapFunction = document.getElementById('functionSelect').value;
+
+    fetch('/calculate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            model: model,
+            scale: scale,
+            function: mcapFunction
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Mettre à jour l'affichage des résultats
+        document.getElementById('results').innerHTML = data.results;
+    });
+});
+</script>

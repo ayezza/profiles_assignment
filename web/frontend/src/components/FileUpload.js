@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import ResultsDisplay from './ResultsDisplay';
+import mcapService from '../services/mcapService';
 
 const Input = styled('input')({
     display: 'none',
@@ -15,16 +16,8 @@ const FileUpload = ({ onFileSelect, models, scaleTypes, mcapFunctions }) => {
     const [model, setModel] = useState('model2');
     const [scaleType, setScaleType] = useState('0-1');
     const [mcapFunction, setMcapFunction] = useState('sum');
-    const [results, setResults] = useState(null); // État pour stocker les résultats
-
-    useEffect(() => {
-        onFileSelect({
-            files: selectedFiles,
-            model,
-            scaleType,
-            mcapFunction
-        });
-    }, [selectedFiles, model, scaleType, mcapFunction]);
+    const [results, setResults] = useState(null);
+    const [showFileUpload, setShowFileUpload] = useState(true);
 
     const handleFileChange = (type) => (event) => {
         const file = event.target.files[0];
@@ -50,33 +43,51 @@ const FileUpload = ({ onFileSelect, models, scaleTypes, mcapFunctions }) => {
     };
 
     const handleSubmit = async () => {
-        // Créer une constante pour les paramètres d'entrée
-        const params = {
-            model,
-            scaleType,
-            mcapFunction,
-            mcaFile: selectedFiles.mca,
-            mcpFile: selectedFiles.mcp
-        };
+        // Reset results before new calculation
+        setResults(null);
 
-        // Effectuer le calcul de la matrice MCAP ici
-        const calculatedResults = await calculateMcapMatrix(selectedFiles, model, scaleType, mcapFunction);
-        
-        // Mettre à jour l'état avec les résultats
-        setResults(calculatedResults);
-    };
+        if (!selectedFiles.mca || !selectedFiles.mcp) {
+            setResults({
+                message: "Les fichiers MCA et MCP doivent être sélectionnés",
+                resultMatrix: [],
+                model,
+                scaleType,
+                mcapFunction
+            });
+            return;
+        }
 
-    
+        const formData = new FormData();
+        formData.append('mca_file', selectedFiles.mca);
+        formData.append('mcp_file', selectedFiles.mcp);
+        formData.append('model_name', model);
+        formData.append('scale_type', scaleType);
+        formData.append('mcap_function', mcapFunction);
 
-    // Fonction fictive pour le calcul de la matrice MCAP
-    const calculateMcapMatrix = async (files, model, scaleType, mcapFunction) => {
-        // Logique de calcul ici
-        // Par exemple, vous pouvez lire les fichiers et effectuer des calculs
-        // Retournez les résultats sous forme d'objet ou de tableau
-        return {
-            message: "Calcul effectué avec succès",
-            // Ajoutez d'autres données de résultats ici
-        };
+        try {
+            const response = await mcapService.processMcap(formData);
+            // Force a new state update with a unique timestamp
+            setResults({
+                ...response,
+                model,
+                scaleType,
+                mcapFunction,
+                mcaFile: selectedFiles.mca.name,
+                mcpFile: selectedFiles.mcp.name,
+                timestamp: Date.now() // Add timestamp to force re-render
+            });
+        } catch (error) {
+            setResults({
+                message: error.message || "Une erreur est survenue lors du traitement",
+                resultMatrix: [],
+                model,
+                scaleType,
+                mcapFunction,
+                mcaFile: selectedFiles.mca ? selectedFiles.mca.name : "Aucun fichier chargé",
+                mcpFile: selectedFiles.mcp ? selectedFiles.mcp.name : "Aucun fichier chargé",
+                timestamp: Date.now() // Add timestamp to force re-render
+            });
+        }
     };
 
     return (
@@ -84,32 +95,36 @@ const FileUpload = ({ onFileSelect, models, scaleTypes, mcapFunctions }) => {
             <Typography variant="h4" gutterBottom>
                 Configuration
             </Typography>
-            <Box sx={{ mb: 3 }}>
-                <label htmlFor="mca-file">
-                    <Input
-                        accept=".csv"
-                        id="mca-file"
-                        type="file"
-                        onChange={handleFileChange('mca')}
-                    />
-                    <Button variant="contained" component="span" fullWidth>
-                        {selectedFiles.mca ? selectedFiles.mca.name : 'Charger le fichier MCA'}
-                    </Button>
-                </label>
-            </Box>
-            <Box sx={{ mb: 3 }}>
-                <label htmlFor="mcp-file">
-                    <Input
-                        accept=".csv"
-                        id="mcp-file"
-                        type="file"
-                        onChange={handleFileChange('mcp')}
-                    />
-                    <Button variant="contained" component="span" fullWidth>
-                        {selectedFiles.mcp ? selectedFiles.mcp.name : 'Charger le fichier MCP'}
-                    </Button>
-                </label>
-            </Box>
+            {showFileUpload && (
+                <>
+                    <Box sx={{ mb: 3 }}>
+                        <label htmlFor="mca-file">
+                            <Input
+                                accept=".csv"
+                                id="mca-file"
+                                type="file"
+                                onChange={handleFileChange('mca')}
+                            />
+                            <Button variant="contained" component="span" fullWidth>
+                                {selectedFiles.mca ? selectedFiles.mca.name : 'Charger le fichier MCA'}
+                            </Button>
+                        </label>
+                    </Box>
+                    <Box sx={{ mb: 3 }}>
+                        <label htmlFor="mcp-file">
+                            <Input
+                                accept=".csv"
+                                id="mcp-file"
+                                type="file"
+                                onChange={handleFileChange('mcp')}
+                            />
+                            <Button variant="contained" component="span" fullWidth>
+                                {selectedFiles.mcp ? selectedFiles.mcp.name : 'Charger le fichier MCP'}
+                            </Button>
+                        </label>
+                    </Box>
+                </>
+            )}
             <FormControl fullWidth sx={{ mb: 2 }}>
                 <InputLabel>Modèle</InputLabel>
                 <Select
@@ -156,17 +171,9 @@ const FileUpload = ({ onFileSelect, models, scaleTypes, mcapFunctions }) => {
                 Calculer la matrice MCAP
             </Button>
 
-            {/* Affichage des résultats */}
             {results && (
                 <ResultsDisplay 
-                    results={{
-                        message: results.message,
-                        model,
-                        scaleType,
-                        mcapFunction,
-                        mcaFile: selectedFiles.mca,
-                        mcpFile: selectedFiles.mcp
-                    }} 
+                    results={results} 
                 />
             )}
         </Box>

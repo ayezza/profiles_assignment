@@ -16,6 +16,8 @@ const theme = createTheme({
     },
 });
 
+const API_URL = 'http://localhost:8000/api/v1';
+
 function App() {
     const [models, setModels] = useState([]);
     const [scaleTypes, setScaleTypes] = useState([]);
@@ -31,7 +33,6 @@ function App() {
                 setError(null);
                 console.log('Fetching initial data...');
 
-                // Appel séquentiel pour mieux gérer les erreurs
                 const modelsData = await mcapService.getModels();
                 console.log('Models data:', modelsData);
                 setModels(modelsData);
@@ -128,4 +129,4 @@ function App() {
     );
 }
 
-export default App; 
+export default App;
