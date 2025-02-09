@@ -24,46 +24,34 @@ class McapProcessor:
         self.mcap_function = mcap_function
         self.normalize = normalize
         self.scale_type = scale_type
-
-        # Log initialization parameters
-        self.logger.info(f"Initializing MCAP processor with:")
-        self.logger.info(f"- MCAP function: {mcap_function}")
-        self.logger.info(f"- Scale type: {scale_type}")
-        self.logger.info(f"- Model function: {model_function.__name__}")
         
-        # Set up directories
+        # Add missing attributes
+        self.norm = 'l2'  # Default normalization method
+        self.axis = 1     # Default axis for normalization
+
+        # Setup directories
         self.root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         self.output_dir = os.path.join(self.root_dir, 'data', 'output')
         self.figures_dir = os.path.join(self.output_dir, 'figures')
         os.makedirs(self.figures_dir, exist_ok=True)
 
+        self.logger.info(f"Initialized processor: mcap={mcap_function}, scale={scale_type}, norm={self.norm}")
+
     def _normalize_matrix(self, matrix):
-        """Normalise la matrice selon le type d'échelle"""
+        """Normalize matrix based on scale type"""
         if self.scale_type == '0-1':
-            # Vérifier si les valeurs sont entre 0 et 1
-            if (matrix.values < 0).any() or (matrix.values > 1).any():
-                raise ValueError("Pour l'échelle 0-1, toutes les valeurs doivent être entre 0 et 1")
-            if self.normalize:
-                return pd.DataFrame(
-                    preprocessing.normalize(matrix, norm=self.norm, axis=self.axis),
-                    index=matrix.index,
-                    columns=matrix.columns
-                )
-            return matrix
+            # Min-max scaling to [0,1]
+            return (matrix - matrix.min()) / (matrix.max() - matrix.min())
         else:  # 'free'
-            # Normalisation min-max pour ramener à l'échelle [0,1]
-            normalized = pd.DataFrame(
-                preprocessing.MinMaxScaler().fit_transform(matrix),
-                index=matrix.index,
-                columns=matrix.columns
-            )
             if self.normalize:
-                normalized = pd.DataFrame(
+                # Standard normalization
+                normalized = (matrix - matrix.mean()) / matrix.std()
+                return pd.DataFrame(
                     preprocessing.normalize(normalized, norm=self.norm, axis=self.axis),
                     index=matrix.index,
                     columns=matrix.columns
                 )
-            return normalized
+            return matrix
 
     def plot_results(self, result_matrix, kind="bar"):
         """Génère un graphique des résultats"""

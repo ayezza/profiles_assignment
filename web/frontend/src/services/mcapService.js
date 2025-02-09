@@ -28,7 +28,7 @@ const getScaleTypes = async () => {
     } catch (error) {
         console.error('Error fetching scale types:', error);
         console.error('Error details:', error.response?.data);
-        throw new Error('Impossible de récupérer les types d\'échelle');
+        throw new Error('Impossible de recuperer les types d\'echelle');  // Fixed apostrophe
     }
 };
 
@@ -47,12 +47,31 @@ const getMcapFunctions = async () => {
 
 const processMcap = async (formData) => {
     try {
-        console.log('Sending request to:', `${API_URL}/process-mcap/`);
-        const response = await axios.post(`${API_URL}/process-mcap/`, formData, {
+        // Add cache-busting timestamp
+        const timestamp = Date.now();
+        formData.append('cache_buster', timestamp);
+
+        const config = {
             headers: {
-                'Content-Type': 'multipart/form-data'
+                'Content-Type': 'multipart/form-data',
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            },
+            // Add timestamp to URL to prevent caching
+            params: {
+                t: timestamp
             }
+        };
+
+        console.log('Sending request with params:', {
+            model: formData.get('model_name'),
+            scale: formData.get('scale_type'),
+            mcap: formData.get('mcap_function'),
+            timestamp
         });
+
+        const response = await axios.post(`${API_URL}/process-mcap/`, formData, config);
         console.log('Process MCAP response:', response.data);
         return response.data;
     } catch (error) {
