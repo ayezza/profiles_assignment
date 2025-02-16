@@ -1,14 +1,10 @@
-# Environnement virtuel
-venv/
-env/
-ENV/
-
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+env/
 build/
 develop-eggs/
 dist/
@@ -20,23 +16,25 @@ lib64/
 parts/
 sdist/
 var/
-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 
-# Logs et données
-*.log
-#data/output/*
-!data/output/.gitkeep
+# Virtual Environment
+venv/
+ENV/
 
 # IDE
 .idea/
 .vscode/
 *.swp
 *.swo
-.project
-.pydevproject
+
+# Project specific
+data/output/*
+!data/output/.gitkeep
+logs/*
+!logs/.gitkeep
 
 # Système d'exploitation
 .DS_Store
@@ -52,3 +50,11 @@ Thumbs.db
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Allow Copilot to access all project files
+!*.py
+!*.js
+!*.html
+!*.css
+!*.json
+!*.md

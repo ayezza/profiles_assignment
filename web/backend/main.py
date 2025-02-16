@@ -20,7 +20,7 @@ output_dir = os.path.join(data_dir, 'output')
 os.makedirs(config_dir, exist_ok=True)
 os.makedirs(output_dir, exist_ok=True)
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
 from app.routes import router
@@ -85,6 +85,63 @@ async def test_mcap_functions():
             {"id": "sqrt", "name": "Racine carrée"}
         ]
     }
+
+@app.post("/process")
+async def process_files(
+    request: Request,
+    mca_file: UploadFile = File(...),
+    mcp_file: UploadFile = File(...),
+    model: str = Form(...),
+    scale_type: str = Form(...),
+    mcap_function: str = Form(...)
+):
+    try:
+        # Save files temporarily
+        temp_dir = os.path.join(os.getcwd(), 'temp')
+        os.makedirs(temp_dir, exist_ok=True)
+        
+        mca_path = os.path.join(temp_dir, f'mca_{uuid.uuid4()}.csv')
+        mcp_path = os.path.join(temp_dir, f'mcp_{uuid.uuid4()}.csv')
+        
+        async with aiofiles.open(mca_path, 'wb') as f:
+            await f.write(await mca_file.read())
+        async with aiofiles.open(mcp_path, 'wb') as f:
+            await f.write(await mcp_file.read())
+
+        # Initialize processor with explicit parameters
+        processor = McapProcessor(
+            logger=logger,
+            mca_path=mca_path,
+            mcp_path=mcp_path,
+            model_function=get_model_function(model),
+            mcap_function=mcap_function,
+            scale_type=scale_type,
+            is_web_request=True  # Always True for web requests
+        )
+        
+        result = processor.process()
+        
+        # Validate result structure
+        if not isinstance(result, dict) or 'status' not in result or 'data' not in result:
+            raise ValueError("Invalid response format from processor")
+            
+        if result['status'] != 'success':
+            raise ValueError(result.get('error', 'Unknown processing error'))
+            
+        return {
+            'status': 'success',
+            'data': {
+                'ranking': result['data']['ranking'],
+                'result': result['data']['result']
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Processing error: {str(e)}")
+        return {
+            'status': 'error',
+            'error': str(e)
+        }
 
 # Inclusion des routes
 app.include_router(router, prefix="/api/v1")

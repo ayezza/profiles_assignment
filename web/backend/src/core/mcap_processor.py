@@ -13,18 +13,23 @@ import uuid
 import os
 import math
 import logging
+from models.mcap_functions import McapFunctions
 
 # Configuration du logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 class McapProcessor:
-    def __init__(self, logger, mca_matrix, mcp_matrix, model_function, mcap_function='mean', normalize=True, 
-                 norm='l2', axis=1, copy=False, return_norm=False, scale_type='0-1'):
+    def __init__(self, logger, mca_matrix, mcp_matrix, model_function, mcap_function='mean', 
+                 custom_mcap_function=None, normalize=True, norm='l2', axis=1, 
+                 copy=False, return_norm=False, scale_type='0-1', is_web_request=False):
         """
         Initialise le processeur MCAP
         Args:
             model_function: Fonction qui prend deux paramètres (mcp_value, mca_value) et retourne un float
+            mcap_function: Nom de la fonction MCAP ('sum', 'sqrt', 'mean', 'custom')
+            custom_mcap_function: Fonction personnalisée à utiliser si mcap_function est 'custom'
+            is_web_request: Boolean indiquant si l'appel vient de l'API web
         """
         self.logger = logger
         self.mca_matrix = pd.DataFrame(mca_matrix)
@@ -44,15 +49,21 @@ class McapProcessor:
             raise ValueError(f"model_function invalide: {str(e)}")
             
         self.mcap_function = mcap_function
+        self.custom_mcap_function = custom_mcap_function
         self.normalize = normalize
         self.norm = norm
         self.axis = axis
         self.copy = copy
         self.return_norm = return_norm
         self.scale_type = scale_type
+        self.is_web_request = is_web_request
         
-        # Définir le chemin racine
-        self.root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        # Adapter le chemin racine selon le contexte (web ou local)
+        if is_web_request:
+            self.root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))) 
+        else:
+            self.root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            
         self.output_dir = os.path.join(self.root_dir, 'data', 'output')
         self.figures_dir = os.path.join(self.output_dir, 'figures')
         os.makedirs(self.figures_dir, exist_ok=True)
@@ -276,6 +287,12 @@ class McapProcessor:
                 columns=self.mcp_matrix.index
             )
             
+            # Obtenir la fonction MCAP
+            mcap_fun = McapFunctions.get_mcap_function(
+                self.mcap_function, 
+                custom_function=self.custom_mcap_function
+            )
+
             for i in range(self.mca_matrix.shape[0]):
                 activity = self.mca_matrix.index[i]
                 for j in range(self.mcp_matrix.shape[0]):
@@ -293,14 +310,7 @@ class McapProcessor:
                     
                     # Calculer le score final
                     try:
-                        if self.mcap_function == 'mean':
-                            final_score = float(np.mean(scores))
-                        elif self.mcap_function == 'sum':
-                            final_score = float(np.sum(scores))
-                        elif self.mcap_function == 'sqrt':
-                            final_score = float(np.sqrt(np.sum(np.square(scores))))
-                        else:
-                            raise ValueError(f"Fonction MCAP non reconnue: {self.mcap_function}")
+                        final_score = mcap_fun(scores)
                         
                         if not math.isfinite(final_score):
                             raise ValueError(f"Score final non fini pour {activity}/{profile}")
@@ -423,4 +433,4 @@ class McapProcessor:
                 'ranking_results': str(e),
                 'result_matrix': pd.DataFrame() if result is None else result
             }
-            raise ValueError(f"Erreur lors du traitement MCAP: {str(e)}") 
+            raise ValueError(f"Erreur lors du traitement MCAP: {str(e)}")

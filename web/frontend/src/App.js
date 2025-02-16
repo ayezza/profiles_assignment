@@ -4,6 +4,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import FileUpload from './components/FileUpload';
 import Results from './components/Results';
 import mcapService from './services/mcapService';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const theme = createTheme({
     palette: {

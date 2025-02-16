@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Request, Form
 from sqlalchemy.orm import Session
 from typing import List
 import pandas as pd
@@ -76,23 +76,94 @@ def read_competency(competency_id: int, db: Session = Depends(get_db)):
 async def process_mcap(
     mca_file: UploadFile = File(...),
     mcp_file: UploadFile = File(...),
-    model_name: str = "model2",
-    scale_type: str = "0-1",
-    mcap_function: str = "sum"
+    model_name: str = Form(...),  # Changed to required
+    scale_type: str = Form(...),  # Changed to required
+    mcap_function: str = Form(...) # Changed to required
 ):
     try:
         logger.info("="*50)
-        logger.info("Début du traitement MCAP")
-        logger.info(f"Paramètres reçus:")
+        logger.info("Processing MCAP request")
+        logger.info(f"Parameters received:")
         logger.info(f"- model_name: {model_name}")
         logger.info(f"- scale_type: {scale_type}")
         logger.info(f"- mcap_function: {mcap_function}")
+
+        # Validate parameters
+        if not model_name or not scale_type or not mcap_function:
+            raise ValueError("Missing required parameters")
+
+        # Read files
+        mca_content = await mca_file.read()
+        mcp_content = await mcp_file.read()
+        
+        # Convert to dataframes
+        mca_df = pd.read_csv(io.StringIO(mca_content.decode('utf-8')), index_col=0)
+        mcp_df = pd.read_csv(io.StringIO(mcp_content.decode('utf-8')), index_col=0)
+        
+        # Get model function with provided model name
+        model_function = ModelFunctions.get_model_function(model_name)
+        if not model_function:
+            raise ValueError(f"Invalid model name: {model_name}")
+            
+        # Initialize processor with validated parameters
+        processor = McapProcessor(
+            logger=mcap_logger,
+            mca_matrix=mca_df,
+            mcp_matrix=mcp_df,
+            model_function=model_function,
+            mcap_function=mcap_function,  # Use received parameter
+            scale_type=scale_type,        # Use received parameter
+            normalize=True,
+            is_web_request=True
+        )
+        
+        result = processor.process()
+        
+        # Format the response with received parameters
+        response_data = {
+            'status': 'success',
+            'data': {
+                'ranking_matrix': result['ranking_matrix'].to_dict('index'),
+                'ranking_results': result['ranking_results'],
+                'result_matrix': result['result_matrix'].drop(['max_value', 'first_best_profile'], axis=1).to_dict('index'),
+                'parameters_used': {
+                    'model_name': model_name,        # Include actual parameters used
+                    'mcap_function': mcap_function,
+                    'scale_type': scale_type
+                }
+            }
+        }
+        
+        logger.info("Successfully formatted response")
+        return response_data
+
+    except Exception as e:
+        logger.error(f"Process error: {str(e)}")
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        return JSONResponse(
+            status_code=400,
+            content={
+                'status': 'error',
+                'error': str(e),
+                'traceback': traceback.format_exc()
+            }
+        )
+
+@router.post("/process")
+async def process_files(request: Request):
+    try:
+        logger.info("="*50)
+        logger.info("Début du traitement des fichiers")
         
         # Process files
-        await mca_file.seek(0)
-        await mcp_file.seek(0)
-        mca_df = pd.read_csv(io.StringIO((await mca_file.read()).decode('utf-8')), index_col=0)
-        mcp_df = pd.read_csv(io.StringIO((await mcp_file.read()).decode('utf-8')), index_col=0)
+        mca_file = request.files['mca_file']
+        mcp_file = request.files['mcp_file']
+        model_name = request.form.get('model_name', 'model2')
+        scale_type = request.form.get('scale_type', '0-1')
+        mcap_function = request.form.get('mcap_function', 'sum')
+        
+        mca_df = pd.read_csv(io.StringIO(mca_file.read().decode('utf-8')), index_col=0)
+        mcp_df = pd.read_csv(io.StringIO(mcp_file.read().decode('utf-8')), index_col=0)
         
         # Create processor with global mcap_logger
         processor = McapProcessor(
@@ -105,24 +176,34 @@ async def process_mcap(
             scale_type=scale_type
         )
         
-        results = processor.process()
+        result = processor.process()
         
-        response_data = {
-            "success": True,
-            "ranking_matrix": results['ranking_matrix'].to_dict(),
-            "result_matrix": results['result_matrix'].to_dict()
+        if not isinstance(result, dict) or 'status' not in result:
+            raise ValueError("Invalid processor response")
+            
+        if result['status'] != 'success':
+            raise ValueError(result.get('error', 'Unknown error'))
+            
+        # Ensure we have the correct data structure
+        if 'data' not in result or 'ranking' not in result['data'] or 'result' not in result['data']:
+            raise ValueError("Missing required data in processor response")
+            
+        return {
+            'status': 'success',
+            'data': {
+                'ranking': result['data']['ranking'],
+                'result': result['data']['result']
+            }
         }
         
-        return JSONResponse(response_data)
-
     except Exception as e:
         logger.error(f"Error: {str(e)}")
-        return JSONResponse({
-            "success": False,
-            "error": str(e)
-        }, status_code=500)
+        return {
+            'status': 'error',
+            'error': str(e)
+        }
 
-@router.get("/models/")
+@router.get("/models")  # Remove trailing slash
 def get_available_models():
     return {
         "models": [
@@ -134,7 +215,7 @@ def get_available_models():
         ]
     }
 
-@router.get("/scale-types/")
+@router.get("/scale-types")  # Remove trailing slash
 def get_scale_types():
     return {
         "scale_types": [
@@ -143,7 +224,7 @@ def get_scale_types():
         ]
     }
 
-@router.get("/mcap-functions/")
+@router.get("/mcap-functions")  # Remove trailing slash
 def get_mcap_functions():
     return {
         "mcap_functions": [

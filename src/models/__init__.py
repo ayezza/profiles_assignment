@@ -1,1 +1,4 @@
-# Fichier vide pour marquer le répertoire comme package Python 
+"""
+Package contenant les modèles et fonctions de calcul
+"""
+from .mcap_functions import McapFunctions

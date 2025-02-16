@@ -1,0 +1,29 @@
+project:
+  name: profiles_assignment
+  root: /d:/PythonProjects/profiles_assignment
+  paths:
+    src: src
+    web:
+      backend: web/backend
+      frontend: web/frontend
+    data:
+      input: data/input
+      output: data/output
+  
+  # File patterns to include for Copilot analysis
+  include:
+    - "**/*.py"
+    - "**/*.js"
+    - "**/*.html"
+    - "**/*.css"
+    - "**/*.json"
+    - "**/*.md"
+
+  # Ensure these directories are accessible
+  permissions:
+    - path: "src/**/*"
+      access: read-write
+    - path: "web/**/*" 
+      access: read-write
+    - path: "data/**/*"
+      access: read-write

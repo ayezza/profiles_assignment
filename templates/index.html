@@ -1,4 +1,4 @@
-<form method="POST">
+<form id="uploadForm" method="POST" enctype="multipart/form-data">
     <select id="modelSelect" name="model">
         // ...existing code...
     </select>
@@ -7,8 +7,10 @@
         // ...existing code...
     </select>
 
-    <select id="functionSelect" name="function">
-        // ...existing code...
+    <select name="mcap" id="mcap">
+        <option value="sum">Sum</option>
+        <option value="sqrt">Square Root</option>
+        <!-- Add other MCAP functions as needed -->
     </select>
 
     <button type="button" id="calculateBtn">Calculer la matrice MCAP</button>
@@ -16,20 +18,11 @@
 
 <script>
 document.getElementById('calculateBtn').addEventListener('click', function() {
-    const model = document.getElementById('modelSelect').value;
-    const scale = document.getElementById('scaleSelect').value;
-    const mcapFunction = document.getElementById('functionSelect').value;
-
-    fetch('/calculate', {
+    const formData = new FormData(document.getElementById('uploadForm'));
+    
+    fetch('/process', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            model: model,
-            scale: scale,
-            function: mcapFunction
-        })
+        body: formData
     })
     .then(response => response.json())
     .then(data => {

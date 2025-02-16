@@ -1,1 +1,3 @@
-# Fichier vide pour marquer le répertoire comme package Python 
+"""
+Package principal pour le projet profiles_assignment
+"""

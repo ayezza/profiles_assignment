@@ -1,94 +1,152 @@
 import React from 'react';
-import { Box, Paper, Typography, Grid } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+import { 
+    Box, 
+    Paper, 
+    Typography, 
+    Table, 
+    TableBody, 
+    TableCell, 
+    TableContainer, 
+    TableHead, 
+    TableRow,
+    CircularProgress
+} from '@mui/material';
 
-const Results = ({ results }) => {
-    if (!results) return null;
+const Results = ({ results, loading }) => {
+    console.log('Results props:', { results, loading });
 
-    const { ranking_matrix, ranking_results, figures } = results;
+    if (loading) {
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+                <CircularProgress />
+            </Box>
+        );
+    }
 
-    // Conversion de la matrice de classement en format DataGrid
-    const rows = Object.entries(ranking_matrix).map(([activity, profiles], index) => ({
-        id: index,
-        activity,
-        ...profiles
-    }));
+    if (!results || !results.data) {
+        console.log('No results to display');
+        return (
+            <Box sx={{ mt: 2 }}>
+                <Typography color="error">No results available</Typography>
+            </Box>
+        );
+    }
 
-    const columns = [
-        { field: 'activity', headerName: 'Activité', width: 150 },
-        ...Object.keys(ranking_matrix[Object.keys(ranking_matrix)[0]] || {}).map(profile => ({
-            field: profile,
-            headerName: profile,
-            width: 130,
-            type: 'number'
-        }))
-    ];
+    const { ranking_matrix, result_matrix, ranking_results, parameters_used } = results.data;
+
+    const renderParameters = () => {
+        if (!parameters_used) return null;
+
+        return (
+            <Box sx={{ mb: 4 }}>
+                <Typography variant="h6">Parameters Used</Typography>
+                <Paper sx={{ p: 2 }}>
+                    <Typography>Model: {parameters_used.model_name}</Typography>
+                    <Typography>Scale Type: {parameters_used.scale_type}</Typography>
+                    <Typography>MCAP Function: {parameters_used.mcap_function}</Typography>
+                </Paper>
+            </Box>
+        );
+    };
+
+    const renderRankingMatrix = () => {
+        if (!ranking_matrix) return null;
+
+        const activities = Object.keys(ranking_matrix);
+        
+        return (
+            <TableContainer component={Paper} sx={{ mb: 4 }}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Activity</TableCell>
+                            <TableCell>Top 1</TableCell>
+                            <TableCell>Top 2</TableCell>
+                            <TableCell>Top 3</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {activities.map(activity => (
+                            <TableRow key={activity}>
+                                <TableCell>{activity}</TableCell>
+                                <TableCell>{ranking_matrix[activity].Top1}</TableCell>
+                                <TableCell>{ranking_matrix[activity].Top2}</TableCell>
+                                <TableCell>{ranking_matrix[activity].Top3}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        );
+    };
+
+    const renderResultMatrix = () => {
+        if (!result_matrix) return null;
+
+        const activities = Object.keys(result_matrix);
+        if (!activities.length) return null;
+
+        const profiles = Object.keys(result_matrix[activities[0]] || {});
+        if (!profiles.length) return null;
+
+        return (
+            <TableContainer component={Paper} sx={{ mb: 4 }}>
+                <Table size="small">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Activity</TableCell>
+                            {profiles.map(profile => (
+                                <TableCell key={profile}>{profile}</TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {activities.map(activity => (
+                            <TableRow key={activity}>
+                                <TableCell>{activity}</TableCell>
+                                {profiles.map(profile => (
+                                    <TableCell key={`${activity}-${profile}`}>
+                                        {Number(result_matrix[activity][profile]).toFixed(3)}
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        );
+    };
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ mt: 4 }}>
             <Typography variant="h4" gutterBottom>
-                Résultats
+                MCAP Analysis Results
             </Typography>
-
-            <Grid container spacing={3}>
-                {/* Matrice de classement */}
-                <Grid item xs={12}>
-                    <Paper sx={{ p: 2, mb: 3 }}>
-                        <Typography variant="h6" gutterBottom>
-                            Matrice de classement
-                        </Typography>
-                        <div style={{ height: 400, width: '100%' }}>
-                            <DataGrid
-                                rows={rows}
-                                columns={columns}
-                                pageSize={5}
-                                rowsPerPageOptions={[5]}
-                                disableSelectionOnClick
-                            />
-                        </div>
-                    </Paper>
-                </Grid>
-
-                {/* Résultats détaillés */}
-                <Grid item xs={12}>
-                    <Paper sx={{ p: 2, mb: 3 }}>
-                        <Typography variant="h6" gutterBottom>
-                            Résultats détaillés
-                        </Typography>
-                        <Typography component="pre" sx={{ whiteSpace: 'pre-wrap' }}>
-                            {ranking_results}
-                        </Typography>
-                    </Paper>
-                </Grid>
-
-                {/* Graphiques */}
-                <Grid item xs={12}>
+            
+            {renderParameters()}
+            
+            <Box sx={{ mb: 4 }}>
+                <Typography variant="h5" gutterBottom>Profile Rankings by Activity</Typography>
+                {renderRankingMatrix()}
+            </Box>
+            
+            <Box sx={{ mb: 4 }}>
+                <Typography variant="h5" gutterBottom>Detailed Results Matrix</Typography>
+                {renderResultMatrix()}
+            </Box>
+            
+            {ranking_results && (
+                <Box sx={{ mb: 4 }}>
+                    <Typography variant="h5" gutterBottom>Detailed Results</Typography>
                     <Paper sx={{ p: 2 }}>
-                        <Typography variant="h6" gutterBottom>
-                            Visualisations
-                        </Typography>
-                        <Grid container spacing={2}>
-                            {Object.entries(figures).map(([name, data]) => (
-                                <Grid item xs={12} md={6} key={name}>
-                                    <Typography variant="subtitle1" gutterBottom>
-                                        {name}
-                                    </Typography>
-                                    <img
-                                        src={`data:image/png;base64,${data}`}
-                                        alt={name}
-                                        style={{
-                                            maxWidth: '100%',
-                                            height: 'auto'
-                                        }}
-                                    />
-                                </Grid>
-                            ))}
-                        </Grid>
+                        <pre style={{ whiteSpace: 'pre-wrap', overflow: 'auto' }}>
+                            {ranking_results}
+                        </pre>
                     </Paper>
-                </Grid>
-            </Grid>
+                </Box>
+            )}
         </Box>
     );
 };
 
-export default Results; 
+export default Results;
