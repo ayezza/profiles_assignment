@@ -28,35 +28,31 @@ const mcapService = {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            
-            // Log detailed response
-            console.log('Raw axios response:', {
-                status: response.status,
-                statusText: response.statusText,
-                headers: response.headers,
-                data: response.data
-            });
+
+            if (response.status !== 200) {
+                throw new Error('Server error: ' + response.statusText);
+            }
 
             if (!response.data || !response.data.data) {
                 throw new Error('Invalid response format');
             }
 
-            // Transform response data to match expected format
-            const transformedResponse = {
-                status: response.data.status,
-                data: {
-                    ...response.data.data,
-                    ranking_matrix: this._ensureObject(response.data.data.ranking_matrix),
-                    result_matrix: this._ensureObject(response.data.data.result_matrix)
-                }
+            return {
+                status: 'success',
+                data: response.data.data
             };
 
-            console.log('Transformed response:', transformedResponse);
-            return transformedResponse;
-
         } catch (error) {
-            console.error('MCAP service error:', error);
-            throw error;
+            if (error.response?.data?.error) {
+                // Server provided error message
+                throw new Error(error.response.data.error);
+            } else if (error.response?.status === 400) {
+                // Scale type error handling
+                throw new Error('Invalid scale type for input data. Try using "free" scale type.');
+            } else {
+                // Generic error
+                throw new Error('Failed to process files: ' + error.message);
+            }
         }
     },
 

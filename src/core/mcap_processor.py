@@ -13,19 +13,22 @@ import matplotlib.pyplot as plt
 import uuid
 import os
 import math
+from src.models.mcap_functions import McapFunctions  # Add this import at the top
 
 class McapProcessor:
-    def __init__(self, logger, mca_matrix, mcp_matrix, model_function, mcap_function='sum', 
-                 normalize=True, scale_type='0-1', norm='l2', axis=1):
+    def __init__(self, logger, mca_matrix, mcp_matrix, model_function, mcap_function='mean', 
+                 normalize=True, norm='l2', axis=1, copy=False, return_norm=False, 
+                 scale_type='0-1', is_web_request=False):  # Add is_web_request parameter with default False
         self.logger = logger
         self.mca_matrix = pd.DataFrame(mca_matrix)
         self.mcp_matrix = pd.DataFrame(mcp_matrix)
         self.model_function = model_function
-        self.mcap_function = mcap_function.lower()  # Normaliser la valeur
+        self.mcap_function = mcap_function.lower()
         self.normalize = normalize
-        self.scale_type = scale_type.lower()  # Normaliser la valeur
+        self.scale_type = scale_type.lower()
         self.norm = norm
         self.axis = axis
+        self.is_web_request = is_web_request  # Store the flag
 
         # Validation des paramètres
         valid_mcap_functions = ['sum', 'mean', 'sqrt']
@@ -36,11 +39,18 @@ class McapProcessor:
         if self.scale_type not in valid_scale_types:
             raise ValueError(f"scale_type doit être l'un des suivants: {valid_scale_types}")
 
-        # Setup directories
-        self.root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        # Adjust root directory based on request type
+        if is_web_request:
+            self.root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        else:
+            self.root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
         self.output_dir = os.path.join(self.root_dir, 'data', 'output')
         self.figures_dir = os.path.join(self.output_dir, 'figures')
         os.makedirs(self.figures_dir, exist_ok=True)
+
+        # Initialize figures dictionary
+        self.figures = {}  # Add this line to initialize the figures attribute
 
         self.logger.info(f"Initialized processor with parameters:")
         self.logger.info(f"- mcap_function: {self.mcap_function}")
@@ -48,6 +58,7 @@ class McapProcessor:
         self.logger.info(f"- normalize: {self.normalize}")
         self.logger.info(f"- norm: {self.norm}")
         self.logger.info(f"- axis: {self.axis}")
+        self.logger.info(f"- is_web_request: {self.is_web_request}")
 
     def _normalize_matrix(self, matrix):
         """Normalize matrix based on scale type"""
@@ -80,22 +91,43 @@ class McapProcessor:
 
     def plot_results(self, result_matrix, kind="bar"):
         """Génère un graphique des résultats"""
-        plt.figure(figsize=(12, 7))
+        # Create figure with larger size and tighter layout
+        fig = plt.figure(figsize=(15, 8))
+        ax = fig.add_subplot(111)
         
-        # La matrice est déjà dans le bon format (Activities x Profiles)
-        # Mais le plot de pandas inverse par défaut, donc on transpose pour contrecarrer cet effet
-        result_matrix.T.plot(kind=kind, stacked=False)
+        # Plot transposed data for better visualization
+        result_matrix.T.plot(kind=kind, ax=ax, stacked=False)
         
         plt.title("Matrice d'affectation - Poids des profils par activité")
-        plt.xlabel('Profils')  # Changé car on a transposé
+        plt.xlabel('Profils')
         plt.ylabel('Poids')
-        plt.legend(title='Activités', bbox_to_anchor=(1.05, 1), loc='upper left')  # Modifié le titre de la légende
+        
+        # Adjust legend position and size
+        plt.legend(
+            title='Activités',
+            bbox_to_anchor=(1.05, 1),
+            loc='upper left',
+            borderaxespad=0,
+            fontsize='small'
+        )
+        
+        # Add grid and adjust layout
         plt.grid(True, alpha=0.3)
         plt.tight_layout()
         
-        # Utiliser le chemin absolu pour sauvegarder
+        # Store figure in figures dictionary with specific layout adjustments
+        fig.subplots_adjust(right=0.85)  # Make room for legend
+        self.figures['bar_plot'] = fig
+        
+        # Save to file with high quality settings
         output_file = os.path.join(self.figures_dir, f'affectation_bar_{uuid.uuid4()}.png')
-        plt.savefig(output_file, dpi=300, bbox_inches='tight')
+        plt.savefig(
+            output_file,
+            dpi=150,  # Lower DPI for better web display
+            bbox_inches='tight',
+            pad_inches=0.5,
+            format='png'
+        )
         plt.close()
 
     def plot_radar(self, result_matrix):
@@ -164,6 +196,9 @@ class McapProcessor:
             # Supprimer les cercles de la grille polaire
             ax.grid(False)
             
+            # Store the figure in the figures dictionary
+            self.figures[f'radar_plot_{activity}'] = fig  # Add this line to store each radar plot
+            
             # Sauvegarder le graphique
             output_file = os.path.join(self.figures_dir, f'radar_pentagon_{activity}_{uuid.uuid4()}.png')
             plt.savefig(output_file, dpi=300, bbox_inches='tight')
@@ -171,47 +206,55 @@ class McapProcessor:
 
     def generate_mcap_matrix(self):
         """Generate MCAP matrix using current parameters"""
-        self.logger.info("=== MCAP Matrix Generation ===")
-        self.logger.info(f"Using model function: {self.model_function.__name__ if hasattr(self.model_function, '__name__') else 'lambda'}")
-        self.logger.info(f"Using MCAP function: {self.mcap_function}")
-        self.logger.info(f"Using scale type: {self.scale_type}")
+        try:
+            self.logger.info("=== MCAP Matrix Generation ===")
+            self.logger.info(f"Using model function: {self.model_function.__name__ if hasattr(self.model_function, '__name__') else 'lambda'}")
+            self.logger.info(f"Using MCAP function: {self.mcap_function}")
+            self.logger.info(f"Using scale type: {self.scale_type}")
 
-        # Créer la matrice avec Activities en lignes et Profiles en colonnes
-        result = pd.DataFrame(
-            index=self.mca_matrix.index,     # Activities en lignes
-            columns=self.mcp_matrix.index,    # Profiles en colonnes
-            dtype=float
-        )
+            # Créer la matrice avec Activities en lignes et Profiles en colonnes
+            result = pd.DataFrame(
+                index=self.mca_matrix.index,     # Activities en lignes
+                columns=self.mcp_matrix.index,    # Profiles en colonnes
+                dtype=float
+            )
 
-        # Normaliser les matrices si nécessaire
-        mca_normalized = self._normalize_matrix(self.mca_matrix.copy())
-        mcp_normalized = self._normalize_matrix(self.mcp_matrix.copy())
+            # Normaliser les matrices si nécessaire
+            mca_normalized = self._normalize_matrix(self.mca_matrix.copy())
+            mcp_normalized = self._normalize_matrix(self.mcp_matrix.copy())
 
-        # Pour chaque activité (lignes)
-        for activity in mca_normalized.index:
-            # Pour chaque profil (colonnes)
-            for profile in mcp_normalized.index:
-                scores = []
-                # Pour chaque compétence
-                for comp in mca_normalized.columns:
-                    mcp_value = float(mcp_normalized.loc[profile, comp])
-                    mca_value = float(mca_normalized.loc[activity, comp])
-                    score = self.model_function(mcp_value, mca_value)
-                    scores.append(score)
-                
-                # Calculer le score final selon la fonction MCAP choisie
-                if self.mcap_function == 'mean':
-                    result.loc[activity, profile] = np.mean(scores)
-                elif self.mcap_function == 'sum':
-                    result.loc[activity, profile] = np.sum(scores)
-                elif self.mcap_function == 'sqrt':
-                    result.loc[activity, profile] = np.sqrt(np.sum(np.square(scores)))
-                else:
-                    result.loc[activity, profile] = self.model_function(scores)
+            # Use McapFunctions directly
+            mcap_fun = McapFunctions.get_mcap_function(self.mcap_function)
 
-        self.logger.info(f"Generated matrix shape: {result.shape}")
-        self.logger.info(f"Matrix orientation: Activities (rows) x Profiles (columns)")
-        return result
+            # Pour chaque activité (lignes)
+            for activity in mca_normalized.index:
+                # Pour chaque profil (colonnes)
+                for profile in mcp_normalized.index:
+                    scores = []
+                    # Pour chaque compétence
+                    for comp in mca_normalized.columns:
+                        mcp_value = float(mcp_normalized.loc[profile, comp])
+                        mca_value = float(mca_normalized.loc[activity, comp])
+                        score = self.model_function(mcp_value, mca_value)
+                        scores.append(score)
+                    
+                    # Calculer le score final selon la fonction MCAP choisie
+                    if self.mcap_function == 'mean':
+                        result.loc[activity, profile] = np.mean(scores)
+                    elif self.mcap_function == 'sum':
+                        result.loc[activity, profile] = np.sum(scores)
+                    elif self.mcap_function == 'sqrt':
+                        result.loc[activity, profile] = np.sqrt(np.sum(np.square(scores)))
+                    else:
+                        result.loc[activity, profile] = self.model_function(scores)
+
+            self.logger.info(f"Generated matrix shape: {result.shape}")
+            self.logger.info(f"Matrix orientation: Activities (rows) x Profiles (columns)")
+            return result
+
+        except Exception as e:
+            self.logger.error(f"Error generating MCAP matrix: {str(e)}", exc_info=True)
+            raise
 
     def process(self):
         try:
@@ -285,10 +328,31 @@ class McapProcessor:
             self.plot_results(result_without_stats)
             self.plot_radar(result_without_stats)
             
-            # Retourner la matrice dans le format Activities x Profiles
+            # Create detailed ranking results string
+            ranking_results = []
+            for activity in result.index:
+                scores = pd.to_numeric(result.loc[activity, result.columns[:-2]])
+                sorted_scores = scores.sort_values(ascending=False)
+                
+                activity_results = [
+                    f"Activité: {activity}",
+                    "-" * 40
+                ]
+                activity_results.extend(
+                    f"{rank}. {profile}: {score:.3f}"
+                    for rank, (profile, score) in enumerate(sorted_scores.items(), 1)
+                )
+                activity_results.append("")
+                ranking_results.append("\n".join(activity_results))
+            
+            # Final formatted string
+            ranking_results_str = "\n".join(ranking_results)
+            
+            # Return all results including ranking_results
             return {
                 'ranking_matrix': ranking_matrix,
-                'result_matrix': result_without_stats  # Format Activities x Profiles
+                'result_matrix': result_without_stats,
+                'ranking_results': ranking_results_str  # Add this line
             }
             
         except Exception as e:

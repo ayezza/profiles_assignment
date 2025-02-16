@@ -7045,3 +7045,335 @@ Prof.5         4       4       2       0       3       4       1       2       4
 2025-02-16 15:06:18 - myLogger - INFO - Génération de la matrice MCAP
 2025-02-16 15:06:19 - myLogger - INFO - Bar plot generated successfully
 2025-02-16 15:06:23 - myLogger - INFO - Traitement MCAP terminé avec succès
+2025-02-16 15:08:58 - myLogger - INFO - ==================================================
+2025-02-16 15:08:58 - myLogger - INFO - Début du traitement MCAP
+2025-02-16 15:08:58 - myLogger - INFO - Paramètres utilisés:
+2025-02-16 15:08:58 - myLogger - INFO - - Model: <lambda>
+2025-02-16 15:08:58 - myLogger - INFO - - Scale type: free
+2025-02-16 15:08:58 - myLogger - INFO - - MCAP function: sum
+2025-02-16 15:08:58 - myLogger - INFO - - Normalize: True
+2025-02-16 15:08:58 - myLogger - INFO - Dimensions MCA: (10, 30)
+2025-02-16 15:08:58 - myLogger - INFO - Dimensions MCP: (5, 30)
+2025-02-16 15:08:58 - myLogger - DEBUG - Aperçu MCA:
+2025-02-16 15:08:58 - myLogger - DEBUG - 
+          Comp.1  Comp.2  Comp.3  Comp.4  Comp.5  Comp.6  Comp.7  Comp.8  Comp.9  Comp.10  Comp.11  ...  Comp.20  Comp.21  Comp.22  Comp.23  Comp.24  Comp.25  Comp.26  Comp.27  Comp.28  Comp.29  Comp.30
+Activity                                                                                            ...                                                                                                   
+Activ.1        3       0       4       2       0       3       0       1       4        0        1  ...        2        2        0        3        4        2        0        3        1        2        4
+Activ.2        1       1       3       3       2       4       0       4       1        3        4  ...        0        3        0        3        4        4        2        3        3        0        0
+Activ.3        2       3       3       2       3       4       3       4       4        1        4  ...        0        3        4        4        0        1        2        2        1        4        1
+Activ.4        4       3       1       2       1       1       0       2       4        3        3  ...        1        0        1        1        2        2        2        4        3        2        2
+Activ.5        4       3       4       2       2       2       3       0       0        1        1  ...        2        0        2        0        4        0        3        3        2        4        3
+
+[5 rows x 30 columns]
+2025-02-16 15:08:58 - myLogger - DEBUG - Aperçu MCP:
+2025-02-16 15:08:58 - myLogger - DEBUG - 
+          Comp.1  Comp.2  Comp.3  Comp.4  Comp.5  Comp.6  Comp.7  Comp.8  Comp.9  Comp.10  Comp.11  ...  Comp.20  Comp.21  Comp.22  Comp.23  Comp.24  Comp.25  Comp.26  Comp.27  Comp.28  Comp.29  Comp.30
+Profiles                                                                                            ...                                                                                                   
+Prof.1         3       2       0       2       3       0       0       4       4        4        3  ...        3        1        1        2        4        3        0        0        3        3        1
+Prof.2         1       2       1       4       2       0       3       0       3        1        1  ...        1        3        4        4        1        1        1        1        4        0        3
+Prof.3         3       3       0       2       1       0       3       2       4        0        2  ...        0        0        2        0        1        0        0        0        2        4        4
+Prof.4         3       2       3       4       0       3       2       4       4        2        0  ...        2        2        3        1        3        3        2        4        1        0        2
+Prof.5         4       4       2       0       3       4       1       2       4        2        2  ...        3        2        4        3        0        2        0        2        1        2        3
+
+[5 rows x 30 columns]
+2025-02-16 15:08:58 - myLogger - INFO - Dimensions MCA: (10, 30)
+2025-02-16 15:08:58 - myLogger - INFO - Dimensions MCP: (5, 30)
+2025-02-16 15:08:58 - myLogger - INFO - Début normalisation des matrices
+2025-02-16 15:08:58 - myLogger - INFO - MCA avant normalisation - min: 0.000, max: 4.000
+2025-02-16 15:08:58 - myLogger - INFO - Normalisation avec l'échelle libre
+2025-02-16 15:08:58 - myLogger - INFO - Application de la normalisation supplémentaire
+2025-02-16 15:08:58 - myLogger - DEBUG - Matrice normalisée avec succès. Shape: (10, 30)
+2025-02-16 15:08:58 - myLogger - INFO - MCA après normalisation - min: 0.000, max: 0.331
+2025-02-16 15:08:58 - myLogger - INFO - MCP avant normalisation - min: 0.000, max: 4.000
+2025-02-16 15:08:58 - myLogger - INFO - Normalisation avec l'échelle libre
+2025-02-16 15:08:58 - myLogger - INFO - Application de la normalisation supplémentaire
+2025-02-16 15:08:58 - myLogger - DEBUG - Matrice normalisée avec succès. Shape: (5, 30)
+2025-02-16 15:08:58 - myLogger - INFO - MCP après normalisation - min: 0.000, max: 0.360
+2025-02-16 15:08:58 - myLogger - INFO - Génération de la matrice MCAP
+2025-02-16 15:08:58 - myLogger - INFO - Bar plot generated successfully
+2025-02-16 15:09:02 - myLogger - INFO - Traitement MCAP terminé avec succès
+2025-02-16 15:09:55 - myLogger - INFO - ==================================================
+2025-02-16 15:09:55 - myLogger - INFO - Début du traitement MCAP
+2025-02-16 15:09:55 - myLogger - INFO - Paramètres utilisés:
+2025-02-16 15:09:55 - myLogger - INFO - - Model: <lambda>
+2025-02-16 15:09:55 - myLogger - INFO - - Scale type: 0-1
+2025-02-16 15:09:55 - myLogger - INFO - - MCAP function: sum
+2025-02-16 15:09:55 - myLogger - INFO - - Normalize: True
+2025-02-16 15:09:55 - myLogger - INFO - Dimensions MCA: (10, 10)
+2025-02-16 15:09:55 - myLogger - INFO - Dimensions MCP: (15, 10)
+2025-02-16 15:09:55 - myLogger - DEBUG - Aperçu MCA:
+2025-02-16 15:09:55 - myLogger - DEBUG - 
+          Comp1  Comp2  Comp3  Comp4  Comp5  Comp6  Comp7  Comp8  Comp9  Comp10
+Activity                                                                       
+Act1        0.8    0.6    0.4    0.7    0.5    0.9    0.3    0.6    0.8     0.4
+Act2        0.5    0.9    0.3    0.6    0.8    0.4    0.7    0.5    0.3     0.8
+Act3        0.7    0.4    0.8    0.5    0.6    0.3    0.9    0.4    0.7     0.5
+Act4        0.6    0.8    0.5    0.9    0.3    0.7    0.4    0.8    0.5     0.6
+Act5        0.9    0.3    0.7    0.4    0.8    0.5    0.6    0.3    0.9     0.7
+2025-02-16 15:09:55 - myLogger - DEBUG - Aperçu MCP:
+2025-02-16 15:09:55 - myLogger - DEBUG - 
+         Comp1  Comp2  Comp3  Comp4  Comp5  Comp6  Comp7  Comp8  Comp9  Comp10
+Profile                                                                       
+Prof1      0.9    0.5    0.3    0.8    0.6    0.7    0.4    0.8    0.5     0.6
+Prof2      0.4    0.8    0.6    0.5    0.7    0.9    0.3    0.7    0.4     0.8
+Prof3      0.6    0.4    0.9    0.7    0.5    0.8    0.6    0.4    0.9     0.3
+Prof4      0.8    0.7    0.4    0.9    0.3    0.6    0.8    0.5    0.7     0.4
+Prof5      0.5    0.9    0.7    0.4    0.8    0.3    0.7    0.6    0.8     0.5
+2025-02-16 15:09:55 - myLogger - INFO - Dimensions MCA: (10, 10)
+2025-02-16 15:09:55 - myLogger - INFO - Dimensions MCP: (15, 10)
+2025-02-16 15:09:55 - myLogger - INFO - Début normalisation des matrices
+2025-02-16 15:09:55 - myLogger - INFO - MCA avant normalisation - min: 0.300, max: 0.900
+2025-02-16 15:09:55 - myLogger - INFO - Normalisation avec l'échelle 0-1
+2025-02-16 15:09:55 - myLogger - DEBUG - Matrice normalisée avec succès. Shape: (10, 10)
+2025-02-16 15:09:55 - myLogger - INFO - MCA après normalisation - min: 0.147, max: 0.468
+2025-02-16 15:09:55 - myLogger - INFO - MCP avant normalisation - min: 0.300, max: 0.900
+2025-02-16 15:09:55 - myLogger - INFO - Normalisation avec l'échelle 0-1
+2025-02-16 15:09:55 - myLogger - DEBUG - Matrice normalisée avec succès. Shape: (15, 10)
+2025-02-16 15:09:55 - myLogger - INFO - MCP après normalisation - min: 0.141, max: 0.449
+2025-02-16 15:09:55 - myLogger - INFO - Génération de la matrice MCAP
+2025-02-16 15:09:56 - myLogger - INFO - Bar plot generated successfully
+2025-02-16 15:10:00 - myLogger - INFO - Traitement MCAP terminé avec succès
+2025-02-16 15:15:48 - myLogger - INFO - ==================================================
+2025-02-16 15:15:48 - myLogger - INFO - Début du traitement MCAP
+2025-02-16 15:15:48 - myLogger - INFO - Paramètres utilisés:
+2025-02-16 15:15:48 - myLogger - INFO - - Model: <lambda>
+2025-02-16 15:15:48 - myLogger - INFO - - Scale type: 0-1
+2025-02-16 15:15:48 - myLogger - INFO - - MCAP function: sum
+2025-02-16 15:15:48 - myLogger - INFO - - Normalize: True
+2025-02-16 15:15:48 - myLogger - INFO - Dimensions MCA: (15, 10)
+2025-02-16 15:15:48 - myLogger - INFO - Dimensions MCP: (10, 10)
+2025-02-16 15:15:48 - myLogger - DEBUG - Aperçu MCA:
+2025-02-16 15:15:48 - myLogger - DEBUG - 
+         Comp1  Comp2  Comp3  Comp4  Comp5  Comp6  Comp7  Comp8  Comp9  Comp10
+Profile                                                                       
+Prof1      0.9    0.5    0.3    0.8    0.6    0.7    0.4    0.8    0.5     0.6
+Prof2      0.4    0.8    0.6    0.5    0.7    0.9    0.3    0.7    0.4     0.8
+Prof3      0.6    0.4    0.9    0.7    0.5    0.8    0.6    0.4    0.9     0.3
+Prof4      0.8    0.7    0.4    0.9    0.3    0.6    0.8    0.5    0.7     0.4
+Prof5      0.5    0.9    0.7    0.4    0.8    0.3    0.7    0.6    0.8     0.5
+2025-02-16 15:15:48 - myLogger - DEBUG - Aperçu MCP:
+2025-02-16 15:15:48 - myLogger - DEBUG - 
+          Comp1  Comp2  Comp3  Comp4  Comp5  Comp6  Comp7  Comp8  Comp9  Comp10
+Activity                                                                       
+Act1        0.8    0.6    0.4    0.7    0.5    0.9    0.3    0.6    0.8     0.4
+Act2        0.5    0.9    0.3    0.6    0.8    0.4    0.7    0.5    0.3     0.8
+Act3        0.7    0.4    0.8    0.5    0.6    0.3    0.9    0.4    0.7     0.5
+Act4        0.6    0.8    0.5    0.9    0.3    0.7    0.4    0.8    0.5     0.6
+Act5        0.9    0.3    0.7    0.4    0.8    0.5    0.6    0.3    0.9     0.7
+2025-02-16 15:15:48 - myLogger - INFO - Dimensions MCA: (15, 10)
+2025-02-16 15:15:48 - myLogger - INFO - Dimensions MCP: (10, 10)
+2025-02-16 15:15:48 - myLogger - INFO - Début normalisation des matrices
+2025-02-16 15:15:48 - myLogger - INFO - MCA avant normalisation - min: 0.300, max: 0.900
+2025-02-16 15:15:48 - myLogger - INFO - Normalisation avec l'échelle 0-1
+2025-02-16 15:15:48 - myLogger - DEBUG - Matrice normalisée avec succès. Shape: (15, 10)
+2025-02-16 15:15:48 - myLogger - INFO - MCA après normalisation - min: 0.141, max: 0.449
+2025-02-16 15:15:48 - myLogger - INFO - MCP avant normalisation - min: 0.300, max: 0.900
+2025-02-16 15:15:48 - myLogger - INFO - Normalisation avec l'échelle 0-1
+2025-02-16 15:15:48 - myLogger - DEBUG - Matrice normalisée avec succès. Shape: (10, 10)
+2025-02-16 15:15:48 - myLogger - INFO - MCP après normalisation - min: 0.147, max: 0.468
+2025-02-16 15:15:48 - myLogger - INFO - Génération de la matrice MCAP
+2025-02-16 15:15:48 - myLogger - INFO - Bar plot generated successfully
+2025-02-16 15:15:55 - myLogger - INFO - Traitement MCAP terminé avec succès
+2025-02-16 15:23:52 - myLogger - INFO - Initialized processor with parameters:
+2025-02-16 15:23:52 - myLogger - INFO - - mcap_function: sqrt
+2025-02-16 15:23:52 - myLogger - INFO - - scale_type: 0-1
+2025-02-16 15:23:52 - myLogger - INFO - - normalize: True
+2025-02-16 15:23:52 - myLogger - INFO - - norm: l2
+2025-02-16 15:23:52 - myLogger - INFO - - axis: 1
+2025-02-16 15:23:52 - myLogger - INFO - - is_web_request: True
+2025-02-16 15:23:52 - myLogger - INFO - Starting MCAP processing
+2025-02-16 15:23:52 - myLogger - INFO - Using parameters:
+2025-02-16 15:23:52 - myLogger - INFO - - MCAP function: sqrt
+2025-02-16 15:23:52 - myLogger - INFO - - Scale type: 0-1
+2025-02-16 15:23:52 - myLogger - INFO - - Normalization: True
+2025-02-16 15:23:52 - myLogger - INFO - Dimensions MCA: (10, 10)
+2025-02-16 15:23:52 - myLogger - INFO - Dimensions MCP: (15, 10)
+2025-02-16 15:23:52 - myLogger - INFO - Type d'échelle: 0-1
+2025-02-16 15:23:52 - myLogger - INFO - Plage de valeurs MCA: [0.30, 0.90]
+2025-02-16 15:23:52 - myLogger - INFO - Plage de valeurs MCP: [0.30, 0.90]
+2025-02-16 15:23:52 - myLogger - INFO - Normalisation des matrices
+2025-02-16 15:23:52 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:23:52 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:23:52 - myLogger - INFO - === MCAP Matrix Generation ===
+2025-02-16 15:23:52 - myLogger - INFO - Using model function: <lambda>
+2025-02-16 15:23:52 - myLogger - INFO - Using MCAP function: sqrt
+2025-02-16 15:23:52 - myLogger - INFO - Using scale type: 0-1
+2025-02-16 15:23:52 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:23:52 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:23:52 - myLogger - INFO - Generated matrix shape: (10, 15)
+2025-02-16 15:23:52 - myLogger - INFO - Matrix orientation: Activities (rows) x Profiles (columns)
+2025-02-16 15:23:52 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-16 15:24:12 - myLogger - INFO - Initialized processor with parameters:
+2025-02-16 15:24:12 - myLogger - INFO - - mcap_function: sum
+2025-02-16 15:24:12 - myLogger - INFO - - scale_type: 0-1
+2025-02-16 15:24:12 - myLogger - INFO - - normalize: True
+2025-02-16 15:24:12 - myLogger - INFO - - norm: l2
+2025-02-16 15:24:12 - myLogger - INFO - - axis: 1
+2025-02-16 15:24:12 - myLogger - INFO - - is_web_request: True
+2025-02-16 15:24:12 - myLogger - INFO - Starting MCAP processing
+2025-02-16 15:24:12 - myLogger - INFO - Using parameters:
+2025-02-16 15:24:12 - myLogger - INFO - - MCAP function: sum
+2025-02-16 15:24:12 - myLogger - INFO - - Scale type: 0-1
+2025-02-16 15:24:12 - myLogger - INFO - - Normalization: True
+2025-02-16 15:24:12 - myLogger - INFO - Dimensions MCA: (10, 10)
+2025-02-16 15:24:12 - myLogger - INFO - Dimensions MCP: (15, 10)
+2025-02-16 15:24:12 - myLogger - INFO - Type d'échelle: 0-1
+2025-02-16 15:24:12 - myLogger - INFO - Plage de valeurs MCA: [0.30, 0.90]
+2025-02-16 15:24:12 - myLogger - INFO - Plage de valeurs MCP: [0.30, 0.90]
+2025-02-16 15:24:12 - myLogger - INFO - Normalisation des matrices
+2025-02-16 15:24:12 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:24:12 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:24:12 - myLogger - INFO - === MCAP Matrix Generation ===
+2025-02-16 15:24:12 - myLogger - INFO - Using model function: <lambda>
+2025-02-16 15:24:12 - myLogger - INFO - Using MCAP function: sum
+2025-02-16 15:24:12 - myLogger - INFO - Using scale type: 0-1
+2025-02-16 15:24:12 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:24:12 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:24:12 - myLogger - INFO - Generated matrix shape: (10, 15)
+2025-02-16 15:24:12 - myLogger - INFO - Matrix orientation: Activities (rows) x Profiles (columns)
+2025-02-16 15:24:12 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-16 15:24:40 - myLogger - INFO - Initialized processor with parameters:
+2025-02-16 15:24:40 - myLogger - INFO - - mcap_function: sum
+2025-02-16 15:24:40 - myLogger - INFO - - scale_type: 0-1
+2025-02-16 15:24:40 - myLogger - INFO - - normalize: True
+2025-02-16 15:24:40 - myLogger - INFO - - norm: l2
+2025-02-16 15:24:40 - myLogger - INFO - - axis: 1
+2025-02-16 15:24:40 - myLogger - INFO - - is_web_request: True
+2025-02-16 15:24:40 - myLogger - INFO - Starting MCAP processing
+2025-02-16 15:24:40 - myLogger - INFO - Using parameters:
+2025-02-16 15:24:40 - myLogger - INFO - - MCAP function: sum
+2025-02-16 15:24:40 - myLogger - INFO - - Scale type: 0-1
+2025-02-16 15:24:40 - myLogger - INFO - - Normalization: True
+2025-02-16 15:24:40 - myLogger - INFO - Dimensions MCA: (10, 10)
+2025-02-16 15:24:40 - myLogger - INFO - Dimensions MCP: (15, 10)
+2025-02-16 15:24:40 - myLogger - INFO - Type d'échelle: 0-1
+2025-02-16 15:24:40 - myLogger - INFO - Plage de valeurs MCA: [0.30, 0.90]
+2025-02-16 15:24:40 - myLogger - INFO - Plage de valeurs MCP: [0.30, 0.90]
+2025-02-16 15:24:40 - myLogger - INFO - Normalisation des matrices
+2025-02-16 15:24:40 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:24:40 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:24:40 - myLogger - INFO - === MCAP Matrix Generation ===
+2025-02-16 15:24:40 - myLogger - INFO - Using model function: <lambda>
+2025-02-16 15:24:40 - myLogger - INFO - Using MCAP function: sum
+2025-02-16 15:24:40 - myLogger - INFO - Using scale type: 0-1
+2025-02-16 15:24:40 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:24:40 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:24:40 - myLogger - INFO - Generated matrix shape: (10, 15)
+2025-02-16 15:24:40 - myLogger - INFO - Matrix orientation: Activities (rows) x Profiles (columns)
+2025-02-16 15:24:40 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-16 15:27:04 - myLogger - INFO - Initialized processor with parameters:
+2025-02-16 15:27:04 - myLogger - INFO - - mcap_function: sum
+2025-02-16 15:27:04 - myLogger - INFO - - scale_type: 0-1
+2025-02-16 15:27:04 - myLogger - INFO - - normalize: True
+2025-02-16 15:27:04 - myLogger - INFO - - norm: l2
+2025-02-16 15:27:04 - myLogger - INFO - - axis: 1
+2025-02-16 15:27:04 - myLogger - INFO - - is_web_request: True
+2025-02-16 15:27:04 - myLogger - INFO - Starting MCAP processing
+2025-02-16 15:27:04 - myLogger - INFO - Using parameters:
+2025-02-16 15:27:04 - myLogger - INFO - - MCAP function: sum
+2025-02-16 15:27:04 - myLogger - INFO - - Scale type: 0-1
+2025-02-16 15:27:04 - myLogger - INFO - - Normalization: True
+2025-02-16 15:27:04 - myLogger - INFO - Dimensions MCA: (10, 10)
+2025-02-16 15:27:04 - myLogger - INFO - Dimensions MCP: (15, 10)
+2025-02-16 15:27:04 - myLogger - INFO - Type d'échelle: 0-1
+2025-02-16 15:27:04 - myLogger - INFO - Plage de valeurs MCA: [0.30, 0.90]
+2025-02-16 15:27:04 - myLogger - INFO - Plage de valeurs MCP: [0.30, 0.90]
+2025-02-16 15:27:04 - myLogger - INFO - Normalisation des matrices
+2025-02-16 15:27:04 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:27:04 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:27:04 - myLogger - INFO - === MCAP Matrix Generation ===
+2025-02-16 15:27:04 - myLogger - INFO - Using model function: <lambda>
+2025-02-16 15:27:04 - myLogger - INFO - Using MCAP function: sum
+2025-02-16 15:27:04 - myLogger - INFO - Using scale type: 0-1
+2025-02-16 15:27:04 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:27:04 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:27:04 - myLogger - INFO - Generated matrix shape: (10, 15)
+2025-02-16 15:27:04 - myLogger - INFO - Matrix orientation: Activities (rows) x Profiles (columns)
+2025-02-16 15:27:04 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-16 15:28:08 - myLogger - INFO - Initialized processor with parameters:
+2025-02-16 15:28:08 - myLogger - INFO - - mcap_function: sum
+2025-02-16 15:28:08 - myLogger - INFO - - scale_type: 0-1
+2025-02-16 15:28:08 - myLogger - INFO - - normalize: True
+2025-02-16 15:28:08 - myLogger - INFO - - norm: l2
+2025-02-16 15:28:08 - myLogger - INFO - - axis: 1
+2025-02-16 15:28:08 - myLogger - INFO - - is_web_request: True
+2025-02-16 15:28:08 - myLogger - INFO - Starting MCAP processing
+2025-02-16 15:28:08 - myLogger - INFO - Using parameters:
+2025-02-16 15:28:08 - myLogger - INFO - - MCAP function: sum
+2025-02-16 15:28:08 - myLogger - INFO - - Scale type: 0-1
+2025-02-16 15:28:08 - myLogger - INFO - - Normalization: True
+2025-02-16 15:28:08 - myLogger - INFO - Dimensions MCA: (10, 10)
+2025-02-16 15:28:08 - myLogger - INFO - Dimensions MCP: (15, 10)
+2025-02-16 15:28:08 - myLogger - INFO - Type d'échelle: 0-1
+2025-02-16 15:28:08 - myLogger - INFO - Plage de valeurs MCA: [0.30, 0.90]
+2025-02-16 15:28:08 - myLogger - INFO - Plage de valeurs MCP: [0.30, 0.90]
+2025-02-16 15:28:08 - myLogger - INFO - Normalisation des matrices
+2025-02-16 15:28:08 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:28:08 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:28:08 - myLogger - INFO - === MCAP Matrix Generation ===
+2025-02-16 15:28:08 - myLogger - INFO - Using model function: <lambda>
+2025-02-16 15:28:08 - myLogger - INFO - Using MCAP function: sum
+2025-02-16 15:28:08 - myLogger - INFO - Using scale type: 0-1
+2025-02-16 15:28:08 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:28:08 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:28:08 - myLogger - INFO - Generated matrix shape: (10, 15)
+2025-02-16 15:28:08 - myLogger - INFO - Matrix orientation: Activities (rows) x Profiles (columns)
+2025-02-16 15:28:08 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-16 15:30:32 - myLogger - INFO - Initialized processor with parameters:
+2025-02-16 15:30:32 - myLogger - INFO - - mcap_function: sum
+2025-02-16 15:30:32 - myLogger - INFO - - scale_type: 0-1
+2025-02-16 15:30:32 - myLogger - INFO - - normalize: True
+2025-02-16 15:30:32 - myLogger - INFO - - norm: l2
+2025-02-16 15:30:32 - myLogger - INFO - - axis: 1
+2025-02-16 15:30:32 - myLogger - INFO - - is_web_request: True
+2025-02-16 15:30:32 - myLogger - INFO - Starting MCAP processing
+2025-02-16 15:30:32 - myLogger - INFO - Using parameters:
+2025-02-16 15:30:32 - myLogger - INFO - - MCAP function: sum
+2025-02-16 15:30:32 - myLogger - INFO - - Scale type: 0-1
+2025-02-16 15:30:32 - myLogger - INFO - - Normalization: True
+2025-02-16 15:30:32 - myLogger - INFO - Dimensions MCA: (10, 10)
+2025-02-16 15:30:32 - myLogger - INFO - Dimensions MCP: (15, 10)
+2025-02-16 15:30:32 - myLogger - INFO - Type d'échelle: 0-1
+2025-02-16 15:30:32 - myLogger - INFO - Plage de valeurs MCA: [0.30, 0.90]
+2025-02-16 15:30:32 - myLogger - INFO - Plage de valeurs MCP: [0.30, 0.90]
+2025-02-16 15:30:32 - myLogger - INFO - Normalisation des matrices
+2025-02-16 15:30:32 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:30:32 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:30:32 - myLogger - INFO - === MCAP Matrix Generation ===
+2025-02-16 15:30:32 - myLogger - INFO - Using model function: <lambda>
+2025-02-16 15:30:32 - myLogger - INFO - Using MCAP function: sum
+2025-02-16 15:30:32 - myLogger - INFO - Using scale type: 0-1
+2025-02-16 15:30:32 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:30:32 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:30:32 - myLogger - INFO - Generated matrix shape: (10, 15)
+2025-02-16 15:30:32 - myLogger - INFO - Matrix orientation: Activities (rows) x Profiles (columns)
+2025-02-16 15:30:32 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-16 15:32:47 - myLogger - INFO - Initialized processor with parameters:
+2025-02-16 15:32:47 - myLogger - INFO - - mcap_function: sum
+2025-02-16 15:32:47 - myLogger - INFO - - scale_type: 0-1
+2025-02-16 15:32:47 - myLogger - INFO - - normalize: True
+2025-02-16 15:32:47 - myLogger - INFO - - norm: l2
+2025-02-16 15:32:47 - myLogger - INFO - - axis: 1
+2025-02-16 15:32:47 - myLogger - INFO - - is_web_request: True
+2025-02-16 15:32:47 - myLogger - INFO - Starting MCAP processing
+2025-02-16 15:32:47 - myLogger - INFO - Using parameters:
+2025-02-16 15:32:47 - myLogger - INFO - - MCAP function: sum
+2025-02-16 15:32:47 - myLogger - INFO - - Scale type: 0-1
+2025-02-16 15:32:47 - myLogger - INFO - - Normalization: True
+2025-02-16 15:32:47 - myLogger - INFO - Dimensions MCA: (10, 10)
+2025-02-16 15:32:47 - myLogger - INFO - Dimensions MCP: (15, 10)
+2025-02-16 15:32:47 - myLogger - INFO - Type d'échelle: 0-1
+2025-02-16 15:32:47 - myLogger - INFO - Plage de valeurs MCA: [0.30, 0.90]
+2025-02-16 15:32:47 - myLogger - INFO - Plage de valeurs MCP: [0.30, 0.90]
+2025-02-16 15:32:47 - myLogger - INFO - Normalisation des matrices
+2025-02-16 15:32:47 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:32:47 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:32:47 - myLogger - INFO - === MCAP Matrix Generation ===
+2025-02-16 15:32:47 - myLogger - INFO - Using model function: <lambda>
+2025-02-16 15:32:47 - myLogger - INFO - Using MCAP function: sum
+2025-02-16 15:32:47 - myLogger - INFO - Using scale type: 0-1
+2025-02-16 15:32:47 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:32:47 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 15:32:47 - myLogger - INFO - Generated matrix shape: (10, 15)
+2025-02-16 15:32:47 - myLogger - INFO - Matrix orientation: Activities (rows) x Profiles (columns)
+2025-02-16 15:32:47 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt

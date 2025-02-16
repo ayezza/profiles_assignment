@@ -120,7 +120,7 @@ async def process_mcap(
             mcap_function=mcap_function,  # Use received parameter
             scale_type=scale_type,        # Use received parameter
             normalize=True,
-            is_web_request=True
+            is_web_request=True  # Explicitly set for web requests
         )
         
         logger.info("Processing data...")
@@ -133,14 +133,28 @@ async def process_mcap(
         if 'first_best_profile' in result_matrix.columns:
             result_matrix = result_matrix.drop(['first_best_profile'], axis=1)
 
-        # Convert figures to base64 with higher DPI for bar plot
+        # Convert figures to base64 with optimized settings for each type
         figure_data = {}
         for name, fig in processor.figures.items():
             try:
                 buf = io.BytesIO()
-                # Use higher DPI for bar plot
-                dpi = 300 if name != 'bar_plot' else 150
-                fig.savefig(buf, format='png', bbox_inches='tight', dpi=dpi)
+                if name == 'bar_plot':
+                    # Special handling for bar plot
+                    fig.savefig(
+                        buf,
+                        format='png',
+                        dpi=150,
+                        bbox_inches='tight',
+                        pad_inches=0.5
+                    )
+                else:
+                    # Regular handling for radar plots
+                    fig.savefig(
+                        buf,
+                        format='png',
+                        dpi=300,
+                        bbox_inches='tight'
+                    )
                 buf.seek(0)
                 img_base64 = base64.b64encode(buf.getvalue()).decode('utf-8')
                 figure_data[name] = f'data:image/png;base64,{img_base64}'
@@ -156,12 +170,16 @@ async def process_mcap(
         logger.info(f"- Has ranking results: {bool(result.get('ranking_results'))}")
         logger.info(f"- Number of figures: {len(figure_data)}")
         
+        # Ensure all required keys exist
+        if not all(key in result for key in ['ranking_matrix', 'result_matrix', 'ranking_results']):
+            raise ValueError("Missing required result data")
+
         response_data = {
             'status': 'success',
             'data': {
                 'ranking_matrix': result['ranking_matrix'].to_dict('index'),
-                'ranking_results': result['ranking_results'],
-                'result_matrix': result_matrix.to_dict('index'),  # Use cleaned result_matrix
+                'ranking_results': result['ranking_results'],  # This will now exist
+                'result_matrix': result_matrix.to_dict('index'),
                 'parameters_used': {
                     'model_name': model_name,
                     'mcap_function': mcap_function,
