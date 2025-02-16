@@ -145,4 +145,5 @@ You can now view mcap-frontend in the browser.
 
 ## 📁 Project Structure
 ```
-<copilot-edited-file>````
+profiles_assignment/ ├── src/ # Source code │ ├── core/ # Core processing logic │ │ ├── init.py │ │ └── mcap_processor.py │ ├── models/ # Model implementations │ │ ├── init.py │ │ ├── mcap_functions.py │ │ └── model_functions.py │ ├── utils/ # Utility functions │ │ ├── init.py │ │ └── logger.py │ └── streamlit/ # Streamlit app components │ └── app.py ├── web/ # Web application │ ├── backend/ # FastAPI backend │ │ ├── app/ │ │ │ ├── routes.py │ │ │ ├── models.py │ │ │ └── database.py │ │ ├── config/ │ │ └── main.py │ └── frontend/ # React frontend │ ├── public/ │ └── src/ ├── config/ # Configuration files │ └── mylogger.ini # Logging configuration ├── data/ # Data files │ ├── input/ # Input CSV files │ └── output/ # Generated outputs │ └── figures/ # Generated plots ├── tests/ # Test suite ├── requirements.txt # Python dependencies ├── main.py # CLI entry point └── README.md # Project documentation
+```
