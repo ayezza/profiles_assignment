@@ -67,8 +67,18 @@ python main.py
 
 Advanced usage with custom parameters:
 ```bash
-python main.py --mca path/to/mca.csv --mcp path/to/mcp.csv --model model2 --scale 0-1 --mcap sum
+python main.py --mca path/to/mca.csv --mcp path/to/mcp.csv --model model_name --scale scale_type --mcap mcap_function
 ```
+**NOTE**
+
+You can define your own **model function** as well as **mcap_function** and call ***McapProcessor*** class with appropriate methods
+
+Example:
+
+```bash
+python main.py --mca .\data\input\mca.csv --mcp .\data\input\mcp.csv --model model5 --scale 0-1 --mcap sqrt
+```
+
 
 ### Command Line Arguments (Console case)
 
