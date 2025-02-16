@@ -275,6 +275,35 @@ class McapProcessor:
             self.logger.error(f"Error saving MCAP matrix: {str(e)}")
             raise
 
+    def _save_ranking_matrix(self, mcap_matrix):
+        """Generate and save ranking matrix showing top 3 profiles for each activity"""
+        try:
+            # Get top 3 profiles for each activity
+            ranking_data = []
+            for idx, activity in enumerate(mcap_matrix.index):
+                row = mcap_matrix.loc[activity]
+                # Sort profiles by score in descending order
+                top_profiles = row.sort_values(ascending=False).head(3)
+                
+                # Format data for this activity
+                activity_data = {
+                    'Activity': activity,
+                    'Rank 1': f"{top_profiles.index[0]} ({top_profiles.values[0]:.3f})",
+                    'Rank 2': f"{top_profiles.index[1]} ({top_profiles.values[1]:.3f})",
+                    'Rank 3': f"{top_profiles.index[2]} ({top_profiles.values[2]:.3f})"
+                }
+                ranking_data.append(activity_data)
+            
+            # Create DataFrame and save
+            ranking_df = pd.DataFrame(ranking_data)
+            ranking_df.to_csv(self.ranking_matrix_path, index=False)
+            self.logger.info(f"Ranking matrix saved to: {self.ranking_matrix_path}")
+            
+            return ranking_df
+        except Exception as e:
+            self.logger.error(f"Error saving ranking matrix: {str(e)}")
+            raise
+
     def process(self):
         try:
             self.logger.info("Starting MCAP processing")
@@ -288,6 +317,10 @@ class McapProcessor:
             # Create plots using the raw matrix
             self.plot_results(mcap_matrix)
             self.plot_radar(mcap_matrix)
+            
+            # Save matrices
+            mcap_matrix.to_csv(self.mcap_matrix_path)
+            self._save_ranking_matrix(mcap_matrix)
             
             return {
                 'mcap_matrix': mcap_matrix,

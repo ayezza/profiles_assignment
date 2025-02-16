@@ -1,3 +1,13 @@
+import streamlit as st
+
+# Must be the very first Streamlit command
+st.set_page_config(
+    page_title="Affectation des Profils",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -18,14 +28,12 @@ matplotlib.rcParams['xtick.labelsize'] = 8
 matplotlib.rcParams['ytick.labelsize'] = 8
 matplotlib.rcParams['legend.fontsize'] = 8
 
-import streamlit as st
 import pandas as pd
 from src.core.mcap_processor import McapProcessor
 from src.models.model_functions import ModelFunctions
 from src.utils.logger import LoggerSetup
 import logging
 import logging.config
-import os
 import time
 
 def run_streamlit_app():
@@ -70,6 +78,37 @@ def run_streamlit_app():
                             width=None,  # Let Streamlit determine the width
                             caption=f"Graphique - {bar_file.replace('affectation_bar_', '').replace('.png', '')}"
                         )
+
+    def display_ranking_matrix(ranking_matrix_path):
+        """Display ranking matrix with proper formatting"""
+        if os.path.exists(ranking_matrix_path):
+            try:
+                results = pd.read_csv(ranking_matrix_path)
+                # Apply custom formatting
+                st.dataframe(
+                    results,
+                    use_container_width=True,
+                    column_config={
+                        "Activity": st.column_config.TextColumn(
+                            "Activity",
+                            width="medium",
+                        ),
+                        "Rank 1": st.column_config.TextColumn(
+                            "1st Place",
+                            width="large",
+                        ),
+                        "Rank 2": st.column_config.TextColumn(
+                            "2nd Place",
+                            width="large",
+                        ),
+                        "Rank 3": st.column_config.TextColumn(
+                            "3rd Place",
+                            width="large",
+                        )
+                    }
+                )
+            except Exception as e:
+                st.error(f"Error reading ranking matrix: {str(e)}")
     
     try:
         os.makedirs(os.path.join(root_dir, 'data', 'output'), exist_ok=True)
@@ -87,14 +126,6 @@ def run_streamlit_app():
         st.error(f"Erreur inattendue lors de la configuration du logger : {str(e)}")
         return
 
-    # Configuration de la page en mode large
-    st.set_page_config(
-        page_title="Affectation des Profils",
-        page_icon="📊",
-        layout="wide",
-        initial_sidebar_state="expanded"
-    )
-    
     st.cache_data.clear()
     
     # Titre dans la sidebar
@@ -373,9 +404,7 @@ def run_streamlit_app():
                 
                 with col1:
                     st.subheader("TOP 3 par Activité")
-                    if os.path.exists(ranking_matrix_path):
-                        results = pd.read_csv(ranking_matrix_path)
-                        st.dataframe(results, use_container_width=True)
+                    display_ranking_matrix(ranking_matrix_path)
                 
                 with col2:
                     st.subheader("Matrice MCAP (Activités x Profils)")
@@ -755,55 +784,3 @@ def run_streamlit_app():
 
 if __name__ == "__main__":
     run_streamlit_app()
-
-def create_model_selector(col):
-    """Create model selection dropdown with proper naming"""
-    model_options = {
-        'Model 1': 'model1',
-        'Model 2': 'model2',
-        'Model 3': 'model3',
-        'Model 4': 'model4',
-        'Model 5': 'model5'
-    }
-    selected_model = col.selectbox(
-        'Select Model Function',
-        options=list(model_options.keys()),
-        key=f'model_select_{st.session_state.get("counter", 0)}'
-    )
-    
-    model_name = model_options[selected_model]
-    # Get model function with proper name
-    model_func = get_model_function(model_name)
-    
-    # Log model selection
-    logger.info(f"Selected model: {selected_model} ({model_name})")
-    
-    return model_func, model_name, selected_model
-
-def main():
-    # ...existing code...
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        model_func, model_name, selected_model = create_model_selector(col1)
-        st.sidebar.write(f"Selected Model: {selected_model}")
-
-    # ...existing code...
-    
-    if should_process:
-        with st.spinner('Processing data...'):
-            processor = McapProcessor(
-                logger=logger,
-                mca_matrix=st.session_state.mca_matrix,
-                mcp_matrix=st.session_state.mcp_matrix,
-                model_function=model_func,
-                model_name=model_name,  # Pass model name to processor
-                mcap_function=mcap_function,
-                scale_type=scale_type,
-                normalize=True,
-                is_web_request=True
-            )
-            
-            results = processor.process()
-            # ...existing code...

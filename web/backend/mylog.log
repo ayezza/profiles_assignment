@@ -7692,3 +7692,107 @@ max       1.844135   1.897659   1.875426   1.861749   1.849850   1.853600   1.96
 2025-02-16 21:52:59 - myLogger - INFO - Using scale type: 0-1
 2025-02-16 21:52:59 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
 2025-02-16 21:52:59 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-16 22:01:51 - myLogger - INFO - Initialized processor with parameters:
+2025-02-16 22:01:51 - myLogger - INFO - - mcap_function: sqrt
+2025-02-16 22:01:51 - myLogger - INFO - - scale_type: 0-1
+2025-02-16 22:01:51 - myLogger - INFO - - normalize: True
+2025-02-16 22:01:51 - myLogger - INFO - - norm: l2
+2025-02-16 22:01:51 - myLogger - INFO - - axis: 1
+2025-02-16 22:01:51 - myLogger - INFO - - is_web_request: True
+2025-02-16 22:01:51 - myLogger - INFO - Starting MCAP processing
+2025-02-16 22:01:51 - myLogger - INFO - Using parameters:
+2025-02-16 22:01:51 - myLogger - INFO - - MCAP function: sqrt
+2025-02-16 22:01:51 - myLogger - INFO - - Scale type: 0-1
+2025-02-16 22:01:51 - myLogger - INFO - - Normalization: True
+2025-02-16 22:01:51 - myLogger - INFO - Dimensions MCA: (10, 10)
+2025-02-16 22:01:51 - myLogger - INFO - Dimensions MCP: (15, 10)
+2025-02-16 22:01:51 - myLogger - INFO - Type d'échelle: 0-1
+2025-02-16 22:01:51 - myLogger - INFO - Plage de valeurs MCA: [0.30, 0.90]
+2025-02-16 22:01:51 - myLogger - INFO - Plage de valeurs MCP: [0.30, 0.90]
+2025-02-16 22:01:51 - myLogger - INFO - Normalisation des matrices
+2025-02-16 22:01:51 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 22:01:51 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 22:01:51 - myLogger - INFO - === MCAP Matrix Generation ===
+2025-02-16 22:01:51 - myLogger - INFO - Using model function: model5
+2025-02-16 22:01:51 - myLogger - INFO - Using MCAP function: sqrt
+2025-02-16 22:01:51 - myLogger - INFO - Using scale type: 0-1
+2025-02-16 22:01:51 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-16 22:01:51 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-16 22:02:12 - myLogger - INFO - Initialized processor with parameters:
+2025-02-16 22:02:12 - myLogger - INFO - - mcap_function: sqrt
+2025-02-16 22:02:12 - myLogger - INFO - - scale_type: 0-1
+2025-02-16 22:02:12 - myLogger - INFO - - normalize: True
+2025-02-16 22:02:12 - myLogger - INFO - - norm: l2
+2025-02-16 22:02:12 - myLogger - INFO - - axis: 1
+2025-02-16 22:02:12 - myLogger - INFO - - is_web_request: True
+2025-02-16 22:02:12 - myLogger - INFO - Starting MCAP processing
+2025-02-16 22:02:12 - myLogger - INFO - Using parameters:
+2025-02-16 22:02:12 - myLogger - INFO - - MCAP function: sqrt
+2025-02-16 22:02:12 - myLogger - INFO - - Scale type: 0-1
+2025-02-16 22:02:12 - myLogger - INFO - - Normalization: True
+2025-02-16 22:02:12 - myLogger - INFO - Dimensions MCA: (5, 10)
+2025-02-16 22:02:12 - myLogger - INFO - Dimensions MCP: (5, 10)
+2025-02-16 22:02:12 - myLogger - INFO - Type d'échelle: 0-1
+2025-02-16 22:02:12 - myLogger - INFO - Plage de valeurs MCA: [0.30, 0.90]
+2025-02-16 22:02:12 - myLogger - INFO - Plage de valeurs MCP: [0.30, 0.90]
+2025-02-16 22:02:12 - myLogger - INFO - Normalisation des matrices
+2025-02-16 22:02:12 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 22:02:12 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 22:02:12 - myLogger - INFO - === MCAP Matrix Generation ===
+2025-02-16 22:02:12 - myLogger - INFO - Using model function: model5
+2025-02-16 22:02:12 - myLogger - INFO - Using MCAP function: sqrt
+2025-02-16 22:02:12 - myLogger - INFO - Using scale type: 0-1
+2025-02-16 22:02:12 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-16 22:02:12 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-16 22:10:36 - myLogger - INFO - Initialized processor with parameters:
+2025-02-16 22:10:36 - myLogger - INFO - - mcap_function: sqrt
+2025-02-16 22:10:36 - myLogger - INFO - - scale_type: 0-1
+2025-02-16 22:10:36 - myLogger - INFO - - normalize: True
+2025-02-16 22:10:36 - myLogger - INFO - - norm: l2
+2025-02-16 22:10:36 - myLogger - INFO - - axis: 1
+2025-02-16 22:10:36 - myLogger - INFO - - is_web_request: True
+2025-02-16 22:10:36 - myLogger - INFO - Starting MCAP processing
+2025-02-16 22:10:36 - myLogger - INFO - Using parameters:
+2025-02-16 22:10:36 - myLogger - INFO - - MCAP function: sqrt
+2025-02-16 22:10:36 - myLogger - INFO - - Scale type: 0-1
+2025-02-16 22:10:36 - myLogger - INFO - - Normalization: True
+2025-02-16 22:10:36 - myLogger - INFO - Dimensions MCA: (5, 10)
+2025-02-16 22:10:36 - myLogger - INFO - Dimensions MCP: (5, 10)
+2025-02-16 22:10:36 - myLogger - INFO - Type d'échelle: 0-1
+2025-02-16 22:10:36 - myLogger - INFO - Plage de valeurs MCA: [0.30, 0.90]
+2025-02-16 22:10:36 - myLogger - INFO - Plage de valeurs MCP: [0.30, 0.90]
+2025-02-16 22:10:36 - myLogger - INFO - Normalisation des matrices
+2025-02-16 22:10:36 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 22:10:36 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 22:10:36 - myLogger - INFO - === MCAP Matrix Generation ===
+2025-02-16 22:10:36 - myLogger - INFO - Using model function: model1
+2025-02-16 22:10:36 - myLogger - INFO - Using MCAP function: sqrt
+2025-02-16 22:10:36 - myLogger - INFO - Using scale type: 0-1
+2025-02-16 22:10:36 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-16 22:10:36 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-16 22:10:58 - myLogger - INFO - Initialized processor with parameters:
+2025-02-16 22:10:58 - myLogger - INFO - - mcap_function: sqrt
+2025-02-16 22:10:58 - myLogger - INFO - - scale_type: 0-1
+2025-02-16 22:10:58 - myLogger - INFO - - normalize: True
+2025-02-16 22:10:58 - myLogger - INFO - - norm: l2
+2025-02-16 22:10:58 - myLogger - INFO - - axis: 1
+2025-02-16 22:10:58 - myLogger - INFO - - is_web_request: True
+2025-02-16 22:10:58 - myLogger - INFO - Starting MCAP processing
+2025-02-16 22:10:58 - myLogger - INFO - Using parameters:
+2025-02-16 22:10:58 - myLogger - INFO - - MCAP function: sqrt
+2025-02-16 22:10:58 - myLogger - INFO - - Scale type: 0-1
+2025-02-16 22:10:58 - myLogger - INFO - - Normalization: True
+2025-02-16 22:10:58 - myLogger - INFO - Dimensions MCA: (5, 10)
+2025-02-16 22:10:58 - myLogger - INFO - Dimensions MCP: (5, 10)
+2025-02-16 22:10:58 - myLogger - INFO - Type d'échelle: 0-1
+2025-02-16 22:10:58 - myLogger - INFO - Plage de valeurs MCA: [0.30, 0.90]
+2025-02-16 22:10:58 - myLogger - INFO - Plage de valeurs MCP: [0.30, 0.90]
+2025-02-16 22:10:58 - myLogger - INFO - Normalisation des matrices
+2025-02-16 22:10:58 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 22:10:58 - myLogger - INFO - Applying 0-1 scaling
+2025-02-16 22:10:58 - myLogger - INFO - === MCAP Matrix Generation ===
+2025-02-16 22:10:58 - myLogger - INFO - Using model function: model2
+2025-02-16 22:10:58 - myLogger - INFO - Using MCAP function: sqrt
+2025-02-16 22:10:58 - myLogger - INFO - Using scale type: 0-1
+2025-02-16 22:10:58 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-16 22:10:58 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
