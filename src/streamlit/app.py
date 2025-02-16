@@ -55,8 +55,7 @@ def run_streamlit_app():
                     with cols[idx % 2]:
                         st.image(
                             os.path.join(figures_dir, radar_file),
-                            # use_column_width=True,
-                            use_container_width = True,
+                            width=None,  # Let Streamlit determine the width
                             caption=f"Radar - {radar_file.replace('radar_pentagon_', '').replace('.png', '')}"
                         )
             
@@ -68,8 +67,7 @@ def run_streamlit_app():
                     with cols[idx % 2]:
                         st.image(
                             os.path.join(figures_dir, bar_file),
-                            # use_column_width=True,
-                            use_container_width = True,
+                            width=None,  # Let Streamlit determine the width
                             caption=f"Graphique - {bar_file.replace('affectation_bar_', '').replace('.png', '')}"
                         )
     
@@ -341,7 +339,7 @@ def run_streamlit_app():
                         os.remove(os.path.join(figures_dir, f))
                 
                 # Traitement MCAP
-                model_function = getattr(ModelFunctions, f"model_function{selected_model[-1]}")
+                model_function = ModelFunctions.get_model_function(model_options[selected_model])
                 processor = McapProcessor(
                     logger=logger,
                     mca_matrix=mca_data,
@@ -368,10 +366,27 @@ def run_streamlit_app():
                 
                 # Affichage des résultats dans la page principale
                 ranking_matrix_path = os.path.join(root_dir, 'data', 'output', 'ranking_matrix.csv')
-                if os.path.exists(ranking_matrix_path):
-                    results = pd.read_csv(ranking_matrix_path)
-                    st.write("Résultats de l'affectation :")
-                    st.dataframe(results, use_container_width=True)
+                mcap_matrix_path = os.path.join(root_dir, 'data', 'output', 'mcap_matrix.txt')
+                
+                # Create columns for matrices
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.subheader("TOP 3 par Activité")
+                    if os.path.exists(ranking_matrix_path):
+                        results = pd.read_csv(ranking_matrix_path)
+                        st.dataframe(results, use_container_width=True)
+                
+                with col2:
+                    st.subheader("Matrice MCAP (Activités x Profils)")
+                    if os.path.exists(mcap_matrix_path):
+                        try:
+                            mcap_matrix = pd.read_csv(mcap_matrix_path, index_col=0)
+                            # Round values to 3 decimals for better display
+                            mcap_matrix = mcap_matrix.round(3)
+                            st.dataframe(mcap_matrix, use_container_width=True)
+                        except Exception as e:
+                            st.error(f"Erreur lors de la lecture de la matrice MCAP : {str(e)}")
                 
                 # Affichage des résultats détaillés
                 ranking_results_path = os.path.join(root_dir, 'data', 'output', 'ranking_results.txt')
@@ -613,7 +628,7 @@ def run_streamlit_app():
                         os.remove(os.path.join(figures_dir, f))
                 
                 # Traitement MCAP
-                model_function = getattr(ModelFunctions, f"model_function{selected_model[-1]}")
+                model_function = ModelFunctions.get_model_function(model_options[selected_model])
                 processor = McapProcessor(
                     logger=logger,
                     mca_matrix=edited_mca,
