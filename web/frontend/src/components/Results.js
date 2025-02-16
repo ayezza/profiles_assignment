@@ -204,12 +204,11 @@ const Results = ({ results, loading }) => {
             return null;
         }
 
-        console.log('Available figures:', Object.keys(figures));
-
         return (
             <Box sx={{ mb: 4 }}>
                 <Typography variant="h5" gutterBottom>Graphiques</Typography>
                 
+                {/* Bar plot section */}
                 {figures.bar_plot && (
                     <Box sx={{ mb: 3 }}>
                         <Typography variant="h6" gutterBottom>Distribution des poids</Typography>
@@ -220,7 +219,7 @@ const Results = ({ results, loading }) => {
                                 style={{ 
                                     maxWidth: 'none', 
                                     height: 'auto',
-                                    minWidth: '800px' // Ensure minimum width for readability
+                                    minWidth: '800px'
                                 }}
                                 onError={(e) => {
                                     console.error('Error loading bar plot');
@@ -231,20 +230,34 @@ const Results = ({ results, loading }) => {
                     </Box>
                 )}
 
-                <Box sx={{ mb: 2 }}>
+                {/* Radar plots section - Modified for 2 columns */}
+                <Box sx={{ mb: 3 }}>
                     <Typography variant="h6" gutterBottom>Graphiques radar par activité</Typography>
-                    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 2 }}>
+                    <Box sx={{ 
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(2, 1fr)', // Changed to 2 columns
+                        gap: 2,
+                        '& img': {
+                            maxWidth: '100%',
+                            height: 'auto'
+                        }
+                    }}>
                         {Object.entries(figures)
                             .filter(([key]) => key.startsWith('radar_plot_'))
                             .map(([key, value]) => (
-                                <Box key={key} sx={{ p: 1 }}>
-                                    <Typography variant="subtitle1" gutterBottom>
+                                <Box key={key} sx={{ 
+                                    p: 1,
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center'
+                                }}>
+                                    <Typography variant="subtitle1" gutterBottom align="center">
                                         {key.replace('radar_plot_', 'Activité ')}
                                     </Typography>
                                     <img 
                                         src={value} 
                                         alt={`Radar plot for ${key}`}
-                                        style={{ width: '100%', height: 'auto' }}
+                                        style={{ width: '100%', maxWidth: '450px' }} // Added maxWidth
                                         onError={(e) => {
                                             console.error(`Error loading radar plot ${key}`);
                                             e.target.style.display = 'none';
