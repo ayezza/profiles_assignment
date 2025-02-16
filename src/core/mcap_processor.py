@@ -13,9 +13,7 @@ import uuid
 import os
 import math
 import logging
-from src.models import mcap_functions
-#from src.models.mcap_functions import McapFunctions  # Changed this line
-from src.models.mcap_functions import McapFunctions  # Changed this line
+from src.models.mcap_functions import McapFunctions  # Correct import
 
 
 # Configuration du logging
@@ -191,21 +189,34 @@ class McapProcessor:
 
     def plot_results(self, result_matrix, kind="bar"):
         """Génère un graphique des résultats"""
-        fig = plt.figure(figsize=(12, 7))
-        result_matrix.plot(kind=kind, stacked=False)
-        plt.title("Matrice d'affectation - Poids des profils par activité")
-        plt.xlabel('Activités')
-        plt.ylabel('Poids des profils')
-        plt.legend(title='Profils', bbox_to_anchor=(1.05, 1), loc='upper left')
-        plt.grid(True, alpha=0.3)
-        plt.tight_layout()
-        
-        # Sauvegarder la figure dans le dictionnaire
-        self.figures['bar_plot'] = fig
-        
-        # Sauvegarder aussi dans un fichier
-        output_file = os.path.join(self.figures_dir, f'affectation_bar_{uuid.uuid4()}.png')
-        plt.savefig(output_file, dpi=300, bbox_inches='tight')
+        try:
+            fig = plt.figure(figsize=(12, 7))
+            ax = fig.add_subplot(111)
+            
+            # Plot data
+            result_matrix.plot(kind=kind, ax=ax, stacked=False)
+            
+            # Customize plot
+            plt.title("Matrice d'affectation - Poids des profils par activité")
+            plt.xlabel('Activités')
+            plt.ylabel('Poids des profils')
+            plt.legend(title='Profils', bbox_to_anchor=(1.05, 1), loc='upper left')
+            plt.grid(True, alpha=0.3)
+            
+            # Adjust layout to prevent label cutoff
+            plt.tight_layout()
+            
+            # Save figure with a unique filename
+            self.figures['bar_plot'] = fig
+            
+            # Explicitly close the figure to free memory
+            plt.close(fig)
+            
+            self.logger.info("Bar plot generated successfully")
+            return True
+        except Exception as e:
+            self.logger.error(f"Error generating bar plot: {str(e)}")
+            return False
 
     def plot_radar(self, result_matrix):
         """Génère un graphique radar pentagonal pour chaque activité"""
@@ -281,15 +292,7 @@ class McapProcessor:
             plt.savefig(output_file, dpi=300, bbox_inches='tight')
 
     def generate_mcap_matrix(self):
-        """
-        Génère la matrice MCAP en appliquant la fonction de modèle entre les matrices MCA et MCP
-        
-        Returns:
-            pd.DataFrame: Matrice MCAP résultante
-            
-        Raises:
-            ValueError: Si la génération échoue
-        """
+        """Génère la matrice MCAP"""
         try:
             result = pd.DataFrame(
                 np.zeros((self.mca_matrix.shape[0], self.mcp_matrix.shape[0])),
@@ -312,11 +315,10 @@ class McapProcessor:
                             raise ValueError(f"Échec du calcul pour {activity}/{profile}")
                         scores.append(score)
                     
-                    # Calculer le score final
                     try:
-                        
+                        # Use the imported McapFunctions class directly
                         mcap_fun = McapFunctions.get_mcap_function(self.mcap_function)
-                        final_score = float(mcap_fun(scores))
+                        final_score = mcap_fun(scores)
                         
                         if not math.isfinite(final_score):
                             raise ValueError(f"Score final non fini pour {activity}/{profile}")
@@ -324,29 +326,38 @@ class McapProcessor:
                         result.iloc[i, j] = final_score
                         
                     except Exception as e:
-                        raise ValueError(f"Erreur lors du calcul final pour {activity}/{profile}: {str(e)}")
+                        self.logger.error(f"Erreur calcul {activity}/{profile}: {str(e)}")
+                        raise
             
             return result
             
         except Exception as e:
-            self.logger.error(f"Erreur lors de la génération de la matrice MCAP: {str(e)}")
-            raise ValueError(f"Erreur lors de la génération de la matrice MCAP: {str(e)}")
+            self.logger.error(f"Erreur matrice MCAP: {str(e)}")
+            raise
 
     def process(self):
-        """
-        Traite les matrices MCA et MCP pour générer les résultats MCAP
-        Returns:
-            dict: Dictionnaire contenant les résultats du traitement avec les clés suivantes :
-                - ranking_matrix (pd.DataFrame): Matrice de classement
-                - ranking_results (str): Résultats détaillés au format texte
-                - result_matrix (pd.DataFrame): Matrice de résultats complète
-        Raises:
-            ValueError: Si le traitement échoue
-        """
-        result = None
+        """Process the matrices"""
         try:
+            self.logger.info("="*50)
             self.logger.info("Début du traitement MCAP")
             
+            # Log input parameters
+            self.logger.info(f"Paramètres utilisés:")
+            self.logger.info(f"- Model: {self.model_function.__name__}")
+            self.logger.info(f"- Scale type: {self.scale_type}")
+            self.logger.info(f"- MCAP function: {self.mcap_function}")
+            self.logger.info(f"- Normalize: {self.normalize}")
+            
+            # Log matrix info
+            self.logger.info(f"Dimensions MCA: {self.mca_matrix.shape}")
+            self.logger.info(f"Dimensions MCP: {self.mcp_matrix.shape}")
+            
+            # Log matrix content preview
+            self.logger.debug("Aperçu MCA:")
+            self.logger.debug(f"\n{self.mca_matrix.head()}")
+            self.logger.debug("Aperçu MCP:")
+            self.logger.debug(f"\n{self.mcp_matrix.head()}")
+
             # Vérifications initiales
             if self.mca_matrix.empty or self.mcp_matrix.empty:
                 raise ValueError("Les matrices MCA ou MCP sont vides")
@@ -362,10 +373,15 @@ class McapProcessor:
             
             # Normalisation
             if self.normalize:
-                self.logger.info("Normalisation des matrices")
+                self.logger.info("Début normalisation des matrices")
+                self.logger.info(f"MCA avant normalisation - min: {self.mca_matrix.values.min():.3f}, max: {self.mca_matrix.values.max():.3f}")
                 self.mca_matrix = self._normalize_matrix(self.mca_matrix)
+                self.logger.info(f"MCA après normalisation - min: {self.mca_matrix.values.min():.3f}, max: {self.mca_matrix.values.max():.3f}")
+                
+                self.logger.info(f"MCP avant normalisation - min: {self.mcp_matrix.values.min():.3f}, max: {self.mcp_matrix.values.max():.3f}")
                 self.mcp_matrix = self._normalize_matrix(self.mcp_matrix)
-            
+                self.logger.info(f"MCP après normalisation - min: {self.mcp_matrix.values.min():.3f}, max: {self.mcp_matrix.values.max():.3f}")
+
             # Génération de la matrice MCAP
             self.logger.info("Génération de la matrice MCAP")
             result = self.generate_mcap_matrix()

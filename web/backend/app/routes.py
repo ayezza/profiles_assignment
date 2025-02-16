@@ -15,6 +15,7 @@ import os
 import traceback
 import logging
 import shutil
+import uuid
 
 # Configuration du logging
 logging.basicConfig(level=logging.DEBUG)
@@ -83,7 +84,7 @@ async def process_mcap(
     try:
         logger.info("="*50)
         logger.info("Processing MCAP request")
-        logger.info(f"Parameters received:")
+        logger.info(f"Request parameters:")
         logger.info(f"- model_name: {model_name}")
         logger.info(f"- scale_type: {scale_type}")
         logger.info(f"- mcap_function: {mcap_function}")
@@ -92,20 +93,25 @@ async def process_mcap(
         if not model_name or not scale_type or not mcap_function:
             raise ValueError("Missing required parameters")
 
-        # Read files
+        # Read and validate files
+        logger.info("Reading files...")
         mca_content = await mca_file.read()
         mcp_content = await mcp_file.read()
         
-        # Convert to dataframes
+        logger.info("Converting to dataframes...")
         mca_df = pd.read_csv(io.StringIO(mca_content.decode('utf-8')), index_col=0)
         mcp_df = pd.read_csv(io.StringIO(mcp_content.decode('utf-8')), index_col=0)
         
+        logger.info(f"MCA shape: {mca_df.shape}, MCP shape: {mcp_df.shape}")
+        
         # Get model function with provided model name
+        logger.info(f"Getting model function for: {model_name}")
         model_function = ModelFunctions.get_model_function(model_name)
         if not model_function:
             raise ValueError(f"Invalid model name: {model_name}")
             
         # Initialize processor with validated parameters
+        logger.info("Initializing processor...")
         processor = McapProcessor(
             logger=mcap_logger,
             mca_matrix=mca_df,
@@ -117,24 +123,63 @@ async def process_mcap(
             is_web_request=True
         )
         
+        logger.info("Processing data...")
         result = processor.process()
         
-        # Format the response with received parameters
+        # Ensure result_matrix is properly formatted
+        result_matrix = result['result_matrix']
+        if 'max_value' in result_matrix.columns:
+            result_matrix = result_matrix.drop(['max_value'], axis=1)
+        if 'first_best_profile' in result_matrix.columns:
+            result_matrix = result_matrix.drop(['first_best_profile'], axis=1)
+
+        # Convert figures to base64 with higher DPI for bar plot
+        figure_data = {}
+        for name, fig in processor.figures.items():
+            try:
+                buf = io.BytesIO()
+                # Use higher DPI for bar plot
+                dpi = 300 if name != 'bar_plot' else 150
+                fig.savefig(buf, format='png', bbox_inches='tight', dpi=dpi)
+                buf.seek(0)
+                img_base64 = base64.b64encode(buf.getvalue()).decode('utf-8')
+                figure_data[name] = f'data:image/png;base64,{img_base64}'
+                plt.close(fig)
+                logger.info(f"Successfully converted figure {name}")
+            except Exception as e:
+                logger.error(f"Error converting figure {name}: {str(e)}")
+
+        # Log the response data before sending
+        logger.info("Preparing response with data:")
+        logger.info(f"- Ranking matrix shape: {result['ranking_matrix'].shape if 'ranking_matrix' in result else 'missing'}")
+        logger.info(f"- Result matrix shape: {result['result_matrix'].shape if 'result_matrix' in result else 'missing'}")
+        logger.info(f"- Has ranking results: {bool(result.get('ranking_results'))}")
+        logger.info(f"- Number of figures: {len(figure_data)}")
+        
         response_data = {
             'status': 'success',
             'data': {
                 'ranking_matrix': result['ranking_matrix'].to_dict('index'),
                 'ranking_results': result['ranking_results'],
-                'result_matrix': result['result_matrix'].drop(['max_value', 'first_best_profile'], axis=1).to_dict('index'),
+                'result_matrix': result_matrix.to_dict('index'),  # Use cleaned result_matrix
                 'parameters_used': {
-                    'model_name': model_name,        # Include actual parameters used
+                    'model_name': model_name,
                     'mcap_function': mcap_function,
                     'scale_type': scale_type
-                }
+                },
+                'figures': figure_data
             }
         }
-        
-        logger.info("Successfully formatted response")
+
+        # Verify response data
+        logger.info("Final response verification:")
+        logger.info(f"- Has ranking matrix: {bool(response_data['data']['ranking_matrix'])}")
+        logger.info(f"- Ranking matrix keys: {list(response_data['data']['ranking_matrix'].keys())}")
+        logger.info(f"- Has result matrix: {bool(response_data['data']['result_matrix'])}")
+        logger.info(f"- Result matrix keys: {list(response_data['data']['result_matrix'].keys())}")
+        logger.info(f"- Has figures: {bool(response_data['data']['figures'])}")
+        logger.info(f"- Figure count: {len(response_data['data']['figures'])}")
+
         return response_data
 
     except Exception as e:

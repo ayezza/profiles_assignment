@@ -102,16 +102,36 @@ const FileUpload = () => {
             console.log('Submitting with parameters:', {
                 model_name: model,
                 scale_type: scaleType,
-                mcap_function: mcapFunction
+                mcap_function: mcapFunction,
+                mca_file: selectedFiles.mca.name,
+                mcp_file: selectedFiles.mcp.name
             });
 
             const response = await mcapService.processMcap(formData);
+            console.log('Response from mcapService:', response);
             
-            if (response.status === 'error') {
-                throw new Error(response.error || 'Processing failed');
+            // Validate response structure
+            if (!response.data) {
+                throw new Error('Missing data in response');
             }
 
-            console.log('Received response:', response);
+            const { ranking_matrix, result_matrix, ranking_results, parameters_used, figures } = response.data;
+            
+            // Validate required data
+            if (!ranking_matrix || !result_matrix) {
+                console.error('Missing required matrices:', { ranking_matrix, result_matrix });
+                throw new Error('Missing required data in response');
+            }
+
+            console.log('Setting results with validated data:', {
+                hasRankingMatrix: !!ranking_matrix,
+                rankingMatrixKeys: Object.keys(ranking_matrix),
+                hasResultMatrix: !!result_matrix,
+                resultMatrixKeys: Object.keys(result_matrix),
+                hasFigures: !!figures,
+                figureCount: figures ? Object.keys(figures).length : 0
+            });
+
             setResults(response);
 
         } catch (error) {
@@ -122,6 +142,14 @@ const FileUpload = () => {
             setLoading(false);
         }
     };
+
+    // Add debug render logging
+    console.log('FileUpload render state:', {
+        hasResults: !!results,
+        isLoading: loading,
+        hasError: !!error,
+        resultData: results?.data
+    });
 
     return (
         <Box sx={{ p: 3 }}>
@@ -200,11 +228,19 @@ const FileUpload = () => {
                     ))}
                 </Select>
             </FormControl>
-            <Button variant="contained" onClick={handleSubmit}>
+            <Button 
+                variant="contained" 
+                onClick={handleSubmit}
+                disabled={loading || !selectedFiles.mca || !selectedFiles.mcp}
+            >
                 Calculer la matrice MCAP
             </Button>
 
-            {loading && <CircularProgress />}
+            {loading && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                    <CircularProgress />
+                </Box>
+            )}
             
             {error && (
                 <Alert severity="error" sx={{ mt: 2 }}>
@@ -213,7 +249,15 @@ const FileUpload = () => {
             )}
 
             {results && !loading && (
-                <Results results={results} loading={loading} />
+                <Box sx={{ mt: 4 }}>
+                    <Alert severity="success" sx={{ mt: 2, mb: 2 }}>
+                        Processing complete
+                    </Alert>
+                    <Results 
+                        results={results} 
+                        loading={loading} 
+                    />
+                </Box>
             )}
         </Box>
     );
