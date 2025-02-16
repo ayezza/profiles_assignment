@@ -144,29 +144,5 @@ You can now view mcap-frontend in the browser.
 
 
 ## 📁 Project Structure
-
-- `src/`: Core source code
-  - `core/`: Core processing logic
-  - `models/`: Matching model implementations
-  - `utils/`: Utility functions and helpers
-- `config/`: Configuration files
-- `data/`: Input and output data
-  - `input/`: Input CSV files
-  - `output/`: Generated outputs
-- `tests/`: Unit and integration tests
-- `web/`: Web interface components
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🔗 More Information
-
-For more detailed examples and explanations, check out the author's article:
-[LinkedIn Article](https://www.linkedin.com/feed/update/urn:li:activity:6853567958246027265/)
-
-## ✍️ Author
-
-**Abdel YEZZA (Ph.D)**
-
-*Note: This code is completely free and can be modified with only one condition: DO NOT REMOVE author's name*
+```
+<copilot-edited-file>````
