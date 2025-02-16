@@ -212,48 +212,127 @@ class McapProcessor:
             self.logger.info(f"Using MCAP function: {self.mcap_function}")
             self.logger.info(f"Using scale type: {self.scale_type}")
 
-            # Créer la matrice avec Activities en lignes et Profiles en colonnes
+            # Initialize result matrix with Activities as rows and Profiles as columns
             result = pd.DataFrame(
-                index=self.mca_matrix.index,     # Activities en lignes
-                columns=self.mcp_matrix.index,    # Profiles en colonnes
+                np.zeros((len(self.mca_matrix.index), len(self.mcp_matrix.index))),
+                index=self.mca_matrix.index,     
+                columns=self.mcp_matrix.index,    
                 dtype=float
             )
 
-            # Normaliser les matrices si nécessaire
-            mca_normalized = self._normalize_matrix(self.mca_matrix.copy())
-            mcp_normalized = self._normalize_matrix(self.mcp_matrix.copy())
-
-            # Use McapFunctions directly
-            mcap_fun = McapFunctions.get_mcap_function(self.mcap_function)
-
-            # Pour chaque activité (lignes)
-            for activity in mca_normalized.index:
-                # Pour chaque profil (colonnes)
-                for profile in mcp_normalized.index:
+            # Calculate matrix values
+            for activity in self.mca_matrix.index:
+                for profile in self.mcp_matrix.index:
                     scores = []
-                    # Pour chaque compétence
-                    for comp in mca_normalized.columns:
-                        mcp_value = float(mcp_normalized.loc[profile, comp])
-                        mca_value = float(mca_normalized.loc[activity, comp])
+                    for comp in self.mca_matrix.columns:
+                        mca_value = float(self.mca_matrix.loc[activity, comp])
+                        mcp_value = float(self.mcp_matrix.loc[profile, comp])
                         score = self.model_function(mcp_value, mca_value)
                         scores.append(score)
                     
-                    # Calculer le score final selon la fonction MCAP choisie
+                    # Calculate final score based on MCAP function
                     if self.mcap_function == 'mean':
-                        result.loc[activity, profile] = np.mean(scores)
+                        final_score = np.mean(scores)
                     elif self.mcap_function == 'sum':
-                        result.loc[activity, profile] = np.sum(scores)
+                        final_score = np.sum(scores)
                     elif self.mcap_function == 'sqrt':
-                        result.loc[activity, profile] = np.sqrt(np.sum(np.square(scores)))
-                    else:
-                        result.loc[activity, profile] = self.model_function(scores)
+                        final_score = np.sqrt(np.sum(np.square(scores)))
+                    
+                    result.loc[activity, profile] = final_score
 
-            self.logger.info(f"Generated matrix shape: {result.shape}")
-            self.logger.info(f"Matrix orientation: Activities (rows) x Profiles (columns)")
+            # Save matrix immediately after generation
+            self._save_mcap_matrix(result)
             return result
 
         except Exception as e:
             self.logger.error(f"Error generating MCAP matrix: {str(e)}", exc_info=True)
+            raise
+
+    def _save_mcap_matrix(self, mcap_matrix):
+        """Internal method to save MCAP matrix"""
+        try:
+            output_path = os.path.join(self.output_dir, 'mcap_matrix.txt')
+            
+            # Format matrix for output
+            header = "Matrice MCAP (Activités x Profils)\n"
+            header += "=" * 50 + "\n\n"
+            
+            # Convert matrix to string with proper formatting
+            matrix_str = mcap_matrix.round(3).to_string(
+                float_format=lambda x: '{:.3f}'.format(x),
+                justify='right'
+            )
+            
+            # Write to file
+            with open(output_path, 'w', encoding='utf-8') as f:
+                f.write(header)
+                f.write(matrix_str)
+                f.write('\n')
+            
+            self.logger.info(f"Matrice MCAP sauvegardée dans: {output_path}")
+            
+        except Exception as e:
+            self.logger.error(f"Error saving MCAP matrix: {str(e)}")
+            raise
+
+    def process(self):
+        try:
+            self.logger.info("Starting MCAP processing")
+            
+            # Generate MCAP matrix first
+            mcap_matrix = self.generate_mcap_matrix()
+            
+            if mcap_matrix.empty:
+                raise ValueError("Generated MCAP matrix is empty")
+                
+            # Create plots using the raw matrix
+            self.plot_results(mcap_matrix)
+            self.plot_radar(mcap_matrix)
+            
+            return {
+                'mcap_matrix': mcap_matrix,
+                'ranking_matrix': None  # Remove ranking matrix from output
+            }
+            
+        except Exception as e:
+            self.logger.error(f"Error during MCAP processing: {str(e)}")
+            raise
+
+    def _calculate_rankings(self, mcap_matrix):
+        """Calculate rankings for each activity based on MCAP scores"""
+        try:
+            # Create a DataFrame for storing rankings
+            rankings_df = pd.DataFrame(columns=['Activity', 'Rank1', 'Score1', 'Rank2', 'Score2', 'Rank3', 'Score3'])
+            
+            # For each activity (row in MCAP matrix)
+            for idx, activity in enumerate(mcap_matrix.index):
+                # Get scores for this activity
+                scores = mcap_matrix.iloc[idx]
+                # Sort profiles by score in descending order
+                sorted_scores = scores.sort_values(ascending=False)
+                
+                # Get top 3 profiles and their scores
+                top3 = {
+                    'Activity': activity,
+                    'Rank1': sorted_scores.index[0],
+                    'Score1': sorted_scores.iloc[0],
+                    'Rank2': sorted_scores.index[1],
+                    'Score2': sorted_scores.iloc[1],
+                    'Rank3': sorted_scores.index[2],
+                    'Score3': sorted_scores.iloc[2]
+                }
+                rankings_df = pd.concat([rankings_df, pd.DataFrame([top3])], ignore_index=True)
+            
+            # Save rankings to CSV
+            output_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 
+                                     'data', 'output', 'ranking_matrix.csv')
+            rankings_df.to_csv(output_path, index=False)
+            self.logger.info(f"Rankings matrix saved to: {output_path}")
+            
+            return rankings_df
+            
+        except Exception as e:
+            self.logger.error(f"Error calculating rankings: {str(e)}")
             raise
 
     def process(self):
