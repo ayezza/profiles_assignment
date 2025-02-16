@@ -71,9 +71,9 @@ python main.py --mca path/to/mca.csv --mcp path/to/mcp.csv --model model_name --
 ```
 **NOTE**
 
-You can define your own **model function** as well as **mcap_function** and call ***McapProcessor*** class with appropriate methods
+You can define your own ***model function*** as well as ***mcap_function*** and call ***McapProcessor*** class with appropriate methods
 
-Example:
+**Example:**
 
 ```bash
 python main.py --mca .\data\input\mca.csv --mcp .\data\input\mcp.csv --model model5 --scale 0-1 --mcap sqrt
