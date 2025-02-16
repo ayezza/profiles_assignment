@@ -208,19 +208,22 @@ const Results = ({ results, loading }) => {
             <Box sx={{ mb: 4 }}>
                 <Typography variant="h5" gutterBottom>Graphiques</Typography>
                 
-                {/* Bar plot section */}
+                {/* Bar plot section - Updated styling */}
                 {figures.bar_plot && (
                     <Box sx={{ mb: 3 }}>
                         <Typography variant="h6" gutterBottom>Distribution des poids</Typography>
-                        <Box sx={{ maxWidth: '100%', overflow: 'auto' }}>
+                        <Box sx={{ 
+                            width: '100%',
+                            '& img': {
+                                width: '100%',
+                                height: 'auto',
+                                objectFit: 'contain',
+                                maxHeight: '500px' // Adjust this value as needed
+                            }
+                        }}>
                             <img 
                                 src={figures.bar_plot} 
                                 alt="Bar Plot"
-                                style={{ 
-                                    maxWidth: 'none', 
-                                    height: 'auto',
-                                    minWidth: '800px'
-                                }}
                                 onError={(e) => {
                                     console.error('Error loading bar plot');
                                     e.target.style.display = 'none';
