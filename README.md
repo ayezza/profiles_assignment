@@ -7,10 +7,11 @@ A Python package designed for optimal profile-to-activity assignment based on sk
 
 It is designed to provide a comprehensive solution for profile-activity matching, offering multiple models, flexible scaling options, streamlit web interface, a robust logging system, a detailed validation of input data, and a customizable processing of MCAP functions (sum, mean, euclidean and any custom function).
 
-This project is built on the two following articles:
+This project is built on the two following articles presenting all the concepts and basic elements:
 
 1. [UN NOUVEAU MODELE POUR AFFECTER LES PROFILS ADEQUATS](https://www.linkedin.com/feed/update/urn:li:activity:7057629409758846976/) - by Abdel YEZZA (Ph.D) - 2024
 2. [UNE NOUVELLE FAÇON D'AFFECTATION DES PROFILS AUX ACTIVITES](https://www.linkedin.com/feed/update/urn:li:activity:6853567958246027265/) - by Abdel YEZZA (Ph.D) - 2022
+
 
 ## 🎯 Key Features
 
@@ -191,3 +192,13 @@ profiles_assignment/
 ├── main.py                 # CLI entry point
 └── README.md               # Project documentation
 ```
+
+
+## 📜 License
+
+This project is open source and available under the MIT License.
+
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
