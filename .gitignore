@@ -19,6 +19,8 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+*.docx
+*.tmp
 
 # Virtual Environment
 venv/

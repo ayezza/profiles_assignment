@@ -434,6 +434,9 @@ class McapProcessor:
             
             # Calculer la matrice de résultats (Activities x Profiles)
             result = self.generate_mcap_matrix()
+            self.logger.info("MCAP matrix generated successfully" if result is not None else "MCAP matrix is empty")
+            self.logger.info(f"MCAP matrix shape: {result.shape}")
+            self.logger.info(f"MCAP matrix sample:\n{result.head(10)}")
             
             # Ne PAS transposer la matrice - garder Activities x Profiles
             result_without_stats = result.copy()
@@ -454,6 +457,12 @@ class McapProcessor:
                     f"{top3_indices[1]} ({top3_values[1]:.3f})",
                     f"{top3_indices[2]} ({top3_values[2]:.3f})"
                 ]
+            
+            # log results
+            self.logger.info(f"Ranking matrix generated successfully")
+            self.logger.info(f"MCAP matrix shape: {ranking_matrix.shape}")
+            self.logger.info(f"MCAP matrix sample:\n{ranking_matrix.head(10)}")
+            
             
             # save ranking matrix
             self._save_ranking_matrix(result_without_stats)
