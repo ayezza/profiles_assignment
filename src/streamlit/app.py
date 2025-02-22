@@ -423,6 +423,8 @@ def run_streamlit_app():
                             st.dataframe(mcap_matrix, use_container_width=True)
                         except Exception as e:
                             st.error(f"Erreur lors de la lecture de la matrice MCAP : {str(e)}")
+                    else:
+                        st.warning("Matrice MCAP non trouvée")
                 
                 # Affichage des résultats détaillés
                 ranking_results_path = os.path.join(root_dir, 'data', 'output', 'ranking_results.txt')

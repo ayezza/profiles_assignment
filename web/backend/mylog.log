@@ -8140,3 +8140,172 @@ Prof5      0.5    0.9    0.7    0.4    0.8    0.3    0.7    0.6    0.8     0.5
 2025-02-22 10:16:27 - myLogger - INFO - Using scale type: 0-1
 2025-02-22 10:16:27 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
 2025-02-22 10:16:27 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-22 10:40:08 - myLogger - INFO - Root directory: D:\PythonProjects
+2025-02-22 10:40:08 - myLogger - INFO - Output directory: D:\PythonProjects\data\output
+2025-02-22 10:40:08 - myLogger - INFO - Figures directory: D:\PythonProjects\data\output\figures
+2025-02-22 10:40:08 - myLogger - ERROR - Error purging output files: 'McapProcessor' object has no attribute 'figures'
+2025-02-22 10:40:08 - myLogger - INFO - Initialized processor with parameters:
+2025-02-22 10:40:08 - myLogger - INFO - - mca_matrix shape: (10, 10)
+2025-02-22 10:40:08 - myLogger - INFO - - mcp_matrix:          Comp1  Comp2  Comp3  Comp4  Comp5  Comp6  Comp7  Comp8  Comp9  Comp10
+Profile                                                                       
+Prof1      0.9    0.5    0.3    0.8    0.6    0.7    0.4    0.8    0.5     0.6
+Prof2      0.4    0.8    0.6    0.5    0.7    0.9    0.3    0.7    0.4     0.8
+Prof3      0.6    0.4    0.9    0.7    0.5    0.8    0.6    0.4    0.9     0.3
+Prof4      0.8    0.7    0.4    0.9    0.3    0.6    0.8    0.5    0.7     0.4
+Prof5      0.5    0.9    0.7    0.4    0.8    0.3    0.7    0.6    0.8     0.5
+Prof6      0.7    0.3    0.8    0.6    0.4    0.9    0.5    0.7    0.3     0.8
+Prof7      0.9    0.6    0.5    0.8    0.7    0.4    0.9    0.3    0.6     0.7
+Prof8      0.3    0.8    0.7    0.5    0.9    0.6    0.4    0.8    0.5     0.9
+Prof9      0.8    0.4    0.9    0.3    0.6    0.7    0.5    0.9    0.4     0.6
+Prof10     0.6    0.9    0.4    0.7    0.5    0.8    0.3    0.6    0.8     0.5
+2025-02-22 10:40:08 - myLogger - INFO - - mcp_matrix shape: (15, 10)
+2025-02-22 10:40:08 - myLogger - INFO - - mcp_matrix:          Comp1  Comp2  Comp3  Comp4  Comp5  Comp6  Comp7  Comp8  Comp9  Comp10
+Profile                                                                       
+Prof1      0.9    0.5    0.3    0.8    0.6    0.7    0.4    0.8    0.5     0.6
+Prof2      0.4    0.8    0.6    0.5    0.7    0.9    0.3    0.7    0.4     0.8
+Prof3      0.6    0.4    0.9    0.7    0.5    0.8    0.6    0.4    0.9     0.3
+Prof4      0.8    0.7    0.4    0.9    0.3    0.6    0.8    0.5    0.7     0.4
+Prof5      0.5    0.9    0.7    0.4    0.8    0.3    0.7    0.6    0.8     0.5
+Prof6      0.7    0.3    0.8    0.6    0.4    0.9    0.5    0.7    0.3     0.8
+Prof7      0.9    0.6    0.5    0.8    0.7    0.4    0.9    0.3    0.6     0.7
+Prof8      0.3    0.8    0.7    0.5    0.9    0.6    0.4    0.8    0.5     0.9
+Prof9      0.8    0.4    0.9    0.3    0.6    0.7    0.5    0.9    0.4     0.6
+Prof10     0.6    0.9    0.4    0.7    0.5    0.8    0.3    0.6    0.8     0.5
+2025-02-22 10:40:08 - myLogger - INFO - - model_function: model5
+2025-02-22 10:40:08 - myLogger - INFO - - scale_type: 0-1
+2025-02-22 10:40:08 - myLogger - INFO - - mcap_function: sqrt
+2025-02-22 10:40:08 - myLogger - INFO - - normalize: True
+2025-02-22 10:40:08 - myLogger - INFO - - norm: l2
+2025-02-22 10:40:08 - myLogger - INFO - - axis: 1
+2025-02-22 10:40:08 - myLogger - INFO - - is_web_request: True
+2025-02-22 10:40:08 - myLogger - INFO - Starting MCAP processing
+2025-02-22 10:40:08 - myLogger - INFO - Using parameters:
+2025-02-22 10:40:08 - myLogger - INFO - - MCAP function: sqrt
+2025-02-22 10:40:08 - myLogger - INFO - - Scale type: 0-1
+2025-02-22 10:40:08 - myLogger - INFO - - Normalization: True
+2025-02-22 10:40:08 - myLogger - INFO - Dimensions MCA: (10, 10)
+2025-02-22 10:40:08 - myLogger - INFO - Dimensions MCP: (15, 10)
+2025-02-22 10:40:08 - myLogger - INFO - Fonction modèle: model5
+2025-02-22 10:40:08 - myLogger - INFO - Type d'échelle: 0-1
+2025-02-22 10:40:08 - myLogger - INFO - Fonction MCAP: sqrt
+2025-02-22 10:40:08 - myLogger - INFO - Plage de valeurs MCA: [0.30, 0.90]
+2025-02-22 10:40:08 - myLogger - INFO - Plage de valeurs MCP: [0.30, 0.90]
+2025-02-22 10:40:08 - myLogger - INFO - Normalisation des matrices
+2025-02-22 10:40:08 - myLogger - INFO - Applying 0-1 scaling
+2025-02-22 10:40:08 - myLogger - INFO - Applying 0-1 scaling
+2025-02-22 10:40:08 - myLogger - INFO - === MCAP Matrix Generation ===
+2025-02-22 10:40:08 - myLogger - INFO - Using model function: model5
+2025-02-22 10:40:08 - myLogger - INFO - Using MCAP function: sqrt
+2025-02-22 10:40:08 - myLogger - INFO - Using scale type: 0-1
+2025-02-22 10:40:08 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-22 10:40:08 - myLogger - INFO - Ranking matrix saved to: D:\PythonProjects\data\output\ranking_matrix.csv
+2025-02-22 10:40:08 - myLogger - INFO - Ranking matrix saved to: D:\PythonProjects\data\output\ranking_matrix.csv
+2025-02-22 10:40:08 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-22 10:40:08 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-22 10:40:08 - myLogger - INFO - MCAP matrix saved to: D:\PythonProjects\data\output\mcap_matrix.csv
+2025-02-22 10:42:17 - myLogger - INFO - Root directory: D:\PythonProjects
+2025-02-22 10:42:17 - myLogger - INFO - Output directory: D:\PythonProjects\data\output
+2025-02-22 10:42:17 - myLogger - INFO - Figures directory: D:\PythonProjects\data\output\figures
+2025-02-22 10:42:17 - myLogger - ERROR - Error purging output files: 'McapProcessor' object has no attribute 'figures'
+2025-02-22 10:42:17 - myLogger - INFO - Initialized processor with parameters:
+2025-02-22 10:42:17 - myLogger - INFO - - mca_matrix shape: (5, 10)
+2025-02-22 10:42:17 - myLogger - INFO - - mcp_matrix:          Comp1  Comp2  Comp3  Comp4  Comp5  Comp6  Comp7  Comp8  Comp9  Comp10
+Profile                                                                       
+Prof1      0.9    0.5    0.3    0.8    0.6    0.7    0.4    0.8    0.5     0.6
+Prof2      0.4    0.8    0.6    0.5    0.7    0.9    0.3    0.7    0.4     0.8
+Prof3      0.6    0.4    0.9    0.7    0.5    0.8    0.6    0.4    0.9     0.3
+Prof4      0.8    0.7    0.4    0.9    0.3    0.6    0.8    0.5    0.7     0.4
+Prof5      0.5    0.9    0.7    0.4    0.8    0.3    0.7    0.6    0.8     0.5
+2025-02-22 10:42:17 - myLogger - INFO - - mcp_matrix shape: (5, 10)
+2025-02-22 10:42:17 - myLogger - INFO - - mcp_matrix:          Comp1  Comp2  Comp3  Comp4  Comp5  Comp6  Comp7  Comp8  Comp9  Comp10
+Profile                                                                       
+Prof1      0.9    0.5    0.3    0.8    0.6    0.7    0.4    0.8    0.5     0.6
+Prof2      0.4    0.8    0.6    0.5    0.7    0.9    0.3    0.7    0.4     0.8
+Prof3      0.6    0.4    0.9    0.7    0.5    0.8    0.6    0.4    0.9     0.3
+Prof4      0.8    0.7    0.4    0.9    0.3    0.6    0.8    0.5    0.7     0.4
+Prof5      0.5    0.9    0.7    0.4    0.8    0.3    0.7    0.6    0.8     0.5
+2025-02-22 10:42:17 - myLogger - INFO - - model_function: model5
+2025-02-22 10:42:17 - myLogger - INFO - - scale_type: 0-1
+2025-02-22 10:42:17 - myLogger - INFO - - mcap_function: sqrt
+2025-02-22 10:42:17 - myLogger - INFO - - normalize: True
+2025-02-22 10:42:17 - myLogger - INFO - - norm: l2
+2025-02-22 10:42:17 - myLogger - INFO - - axis: 1
+2025-02-22 10:42:17 - myLogger - INFO - - is_web_request: True
+2025-02-22 10:42:17 - myLogger - INFO - Starting MCAP processing
+2025-02-22 10:42:17 - myLogger - INFO - Using parameters:
+2025-02-22 10:42:17 - myLogger - INFO - - MCAP function: sqrt
+2025-02-22 10:42:17 - myLogger - INFO - - Scale type: 0-1
+2025-02-22 10:42:17 - myLogger - INFO - - Normalization: True
+2025-02-22 10:42:17 - myLogger - INFO - Dimensions MCA: (5, 10)
+2025-02-22 10:42:17 - myLogger - INFO - Dimensions MCP: (5, 10)
+2025-02-22 10:42:17 - myLogger - INFO - Fonction modèle: model5
+2025-02-22 10:42:17 - myLogger - INFO - Type d'échelle: 0-1
+2025-02-22 10:42:17 - myLogger - INFO - Fonction MCAP: sqrt
+2025-02-22 10:42:17 - myLogger - INFO - Plage de valeurs MCA: [0.30, 0.90]
+2025-02-22 10:42:17 - myLogger - INFO - Plage de valeurs MCP: [0.30, 0.90]
+2025-02-22 10:42:17 - myLogger - INFO - Normalisation des matrices
+2025-02-22 10:42:17 - myLogger - INFO - Applying 0-1 scaling
+2025-02-22 10:42:17 - myLogger - INFO - Applying 0-1 scaling
+2025-02-22 10:42:17 - myLogger - INFO - === MCAP Matrix Generation ===
+2025-02-22 10:42:17 - myLogger - INFO - Using model function: model5
+2025-02-22 10:42:17 - myLogger - INFO - Using MCAP function: sqrt
+2025-02-22 10:42:17 - myLogger - INFO - Using scale type: 0-1
+2025-02-22 10:42:17 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-22 10:42:17 - myLogger - INFO - Ranking matrix saved to: D:\PythonProjects\data\output\ranking_matrix.csv
+2025-02-22 10:42:17 - myLogger - INFO - Ranking matrix saved to: D:\PythonProjects\data\output\ranking_matrix.csv
+2025-02-22 10:42:17 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-22 10:42:17 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\data\output\mcap_matrix.txt
+2025-02-22 10:42:17 - myLogger - INFO - MCAP matrix saved to: D:\PythonProjects\data\output\mcap_matrix.csv
+2025-02-22 11:07:55 - myLogger - INFO - Root directory: D:\PythonProjects\profiles_assignment
+2025-02-22 11:07:55 - myLogger - INFO - Output directory: D:\PythonProjects\profiles_assignment\data\output
+2025-02-22 11:07:55 - myLogger - INFO - Figures directory: D:\PythonProjects\profiles_assignment\data\output\figures
+2025-02-22 11:07:55 - myLogger - ERROR - Error purging output files: 'McapProcessor' object has no attribute 'figures'
+2025-02-22 11:07:55 - myLogger - INFO - Initialized processor with parameters:
+2025-02-22 11:07:55 - myLogger - INFO - - mca_matrix shape: (5, 10)
+2025-02-22 11:07:55 - myLogger - INFO - - mcp_matrix:          Comp1  Comp2  Comp3  Comp4  Comp5  Comp6  Comp7  Comp8  Comp9  Comp10
+Profile                                                                       
+Prof1      0.9    0.5    0.3    0.8    0.6    0.7    0.4    0.8    0.5     0.6
+Prof2      0.4    0.8    0.6    0.5    0.7    0.9    0.3    0.7    0.4     0.8
+Prof3      0.6    0.4    0.9    0.7    0.5    0.8    0.6    0.4    0.9     0.3
+Prof4      0.8    0.7    0.4    0.9    0.3    0.6    0.8    0.5    0.7     0.4
+Prof5      0.5    0.9    0.7    0.4    0.8    0.3    0.7    0.6    0.8     0.5
+2025-02-22 11:07:55 - myLogger - INFO - - mcp_matrix shape: (5, 10)
+2025-02-22 11:07:55 - myLogger - INFO - - mcp_matrix:          Comp1  Comp2  Comp3  Comp4  Comp5  Comp6  Comp7  Comp8  Comp9  Comp10
+Profile                                                                       
+Prof1      0.9    0.5    0.3    0.8    0.6    0.7    0.4    0.8    0.5     0.6
+Prof2      0.4    0.8    0.6    0.5    0.7    0.9    0.3    0.7    0.4     0.8
+Prof3      0.6    0.4    0.9    0.7    0.5    0.8    0.6    0.4    0.9     0.3
+Prof4      0.8    0.7    0.4    0.9    0.3    0.6    0.8    0.5    0.7     0.4
+Prof5      0.5    0.9    0.7    0.4    0.8    0.3    0.7    0.6    0.8     0.5
+2025-02-22 11:07:55 - myLogger - INFO - - model_function: model5
+2025-02-22 11:07:55 - myLogger - INFO - - scale_type: 0-1
+2025-02-22 11:07:55 - myLogger - INFO - - mcap_function: sqrt
+2025-02-22 11:07:55 - myLogger - INFO - - normalize: True
+2025-02-22 11:07:55 - myLogger - INFO - - norm: l2
+2025-02-22 11:07:55 - myLogger - INFO - - axis: 1
+2025-02-22 11:07:55 - myLogger - INFO - - is_web_request: True
+2025-02-22 11:07:55 - myLogger - INFO - Starting MCAP processing
+2025-02-22 11:07:55 - myLogger - INFO - Using parameters:
+2025-02-22 11:07:55 - myLogger - INFO - - MCAP function: sqrt
+2025-02-22 11:07:55 - myLogger - INFO - - Scale type: 0-1
+2025-02-22 11:07:55 - myLogger - INFO - - Normalization: True
+2025-02-22 11:07:55 - myLogger - INFO - Dimensions MCA: (5, 10)
+2025-02-22 11:07:55 - myLogger - INFO - Dimensions MCP: (5, 10)
+2025-02-22 11:07:55 - myLogger - INFO - Fonction modèle: model5
+2025-02-22 11:07:55 - myLogger - INFO - Type d'échelle: 0-1
+2025-02-22 11:07:55 - myLogger - INFO - Fonction MCAP: sqrt
+2025-02-22 11:07:55 - myLogger - INFO - Plage de valeurs MCA: [0.30, 0.90]
+2025-02-22 11:07:55 - myLogger - INFO - Plage de valeurs MCP: [0.30, 0.90]
+2025-02-22 11:07:55 - myLogger - INFO - Normalisation des matrices
+2025-02-22 11:07:55 - myLogger - INFO - Applying 0-1 scaling
+2025-02-22 11:07:55 - myLogger - INFO - Applying 0-1 scaling
+2025-02-22 11:07:55 - myLogger - INFO - === MCAP Matrix Generation ===
+2025-02-22 11:07:55 - myLogger - INFO - Using model function: model5
+2025-02-22 11:07:55 - myLogger - INFO - Using MCAP function: sqrt
+2025-02-22 11:07:55 - myLogger - INFO - Using scale type: 0-1
+2025-02-22 11:07:55 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.txt
+2025-02-22 11:07:55 - myLogger - INFO - Ranking matrix saved to: D:\PythonProjects\profiles_assignment\data\output\ranking_matrix.csv
+2025-02-22 11:07:55 - myLogger - INFO - Ranking matrix saved to: D:\PythonProjects\profiles_assignment\data\output\ranking_matrix.csv
+2025-02-22 11:07:55 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.txt
+2025-02-22 11:07:55 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.txt
+2025-02-22 11:07:55 - myLogger - INFO - MCAP matrix saved to: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.csv

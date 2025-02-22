@@ -41,9 +41,12 @@ class McapProcessor:
 
         # Adjust root directory based on request type
         if is_web_request:
-            self.root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-        else:
+            # For web requests, navigate up one directory less
             self.root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        else:
+            # For command-line/local requests, use the standard path
+            self.root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        
         logger.info(f"Root directory: {self.root_dir}")
         
 
@@ -55,7 +58,7 @@ class McapProcessor:
         self.mcap_matrix_path = os.path.join(self.output_dir, 'mcap_matrix.csv')
         self.ranking_matrix_path = os.path.join(self.output_dir, 'ranking_matrix.csv')
         # clear output directory
-        self.purge_output()
+        self._purge_output()
 
         # Initialize figures dictionary
         self.figures = {}  # Add this line to initialize the figures attribute
@@ -274,7 +277,7 @@ class McapProcessor:
             
             # Format matrix for output
             header = "Matrice MCAP (Activités x Profils)\n"
-            header += "=" * 50 + "\n\n"
+            header += "=" * 100 + "\n\n"
             
             # Convert matrix to string with proper formatting
             matrix_str = mcap_matrix.round(3).to_string(
@@ -293,6 +296,7 @@ class McapProcessor:
         except Exception as e:
             self.logger.error(f"Error saving MCAP matrix: {str(e)}")
             raise
+        
 
     def _save_ranking_matrix(self, mcap_matrix):
         """Generate and save ranking matrix showing top 3 profiles for each activity"""
@@ -315,7 +319,8 @@ class McapProcessor:
             
             # Create DataFrame and save
             ranking_df = pd.DataFrame(ranking_data)
-            ranking_df.to_csv(self.ranking_matrix_path, index=False)
+            
+            ranking_df.to_csv(os.path.join(self.output_dir, self.ranking_matrix_path), index=False)
             self.logger.info(f"Ranking matrix saved to: {self.ranking_matrix_path}")
             
             return ranking_df
@@ -331,7 +336,7 @@ class McapProcessor:
             # Generate MCAP matrix first
             mcap_matrix = self.generate_mcap_matrix()
             
-            if mcap_matrix.empty:
+            if (mcap_matrix.empty):
                 raise ValueError("Generated MCAP matrix is empty")
                 
             # Create plots using the raw matrix
@@ -450,6 +455,10 @@ class McapProcessor:
                     f"{top3_indices[2]} ({top3_values[2]:.3f})"
                 ]
             
+            # save ranking matrix
+            self._save_ranking_matrix(result_without_stats)
+            self.logger.info(f"Ranking matrix saved to: {self.ranking_matrix_path}")
+            
             # Sauvegarder la matrice dans le format Activities x Profiles
             matrix_file = os.path.join(self.output_dir, 'mcap_matrix.txt')
             with open(matrix_file, 'w', encoding='utf-8') as f:
@@ -459,6 +468,10 @@ class McapProcessor:
                 f.write('\n')
             
             self.logger.info(f"Matrice MCAP sauvegardée dans: {matrix_file}")
+            # save mcap matrix
+            self._save_mcap_matrix(result_without_stats)
+            self.logger.info(f"MCAP matrix saved to: {self.mcap_matrix_path}")
+            
             
             # Générer les graphiques avec la matrice Activities x Profiles
             result_without_stats = result.drop(['max_value', 'first_best_profile'], axis=1)
@@ -497,11 +510,11 @@ class McapProcessor:
             raise  # Propager l'erreur pour plus de détails
         
         
-    def purge_output(self):
+    def _purge_output(self):
         """cleanup output files"""
         try:
-            os.removedirs(self.figures)
-            os.removedirs(self.output_dir)
+            os.removedirs(self.figures_dir)
+            #os.removedirs(self.output_dir)
             self.logger.info("Output files and figures purged successfully")
         except Exception as e:
             self.logger.error(f"Error purging output files: {str(e)}")
