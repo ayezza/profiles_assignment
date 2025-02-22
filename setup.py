@@ -1,34 +1,28 @@
 from setuptools import setup, find_packages
+import io
+
+# Read README with explicit UTF-8 encoding
+with io.open("README.md", encoding="utf-8") as f:
+    long_description = f.read()
 
 setup(
-    name="mcap-profiles",
+    name="mcap-processor",
     version="0.1.0",
-    author="Abdel YEZZA",
-    author_email="abdel.yezza24@gmail.com",  
-    description="Un package pour l'affectation des profils aux activités",
-    long_description=open("README.md").read(),
-    long_description_content_type="text/markdown",
-    url="https://github.com/ayezza/profiles_assignment", 
-    packages=find_packages(),
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
-    ],
-    python_requires=">=3.6",
+    packages=find_packages(where="src"),
+    package_dir={"": "src"},
     install_requires=[
-        "numpy",
-        "pandas",
-        "matplotlib",
-        "scikit-learn"
+        "numpy>=1.26.4",
+        "pandas>=2.2.1",
+        "scikit-learn>=1.3.2",
+        "matplotlib>=3.8.2",
+        "fastapi>=0.115.8",
+        "uvicorn>=0.34.0",
     ],
-    entry_points={
-        'console_scripts': [
-            'mcap=main:main',
-        ],
-    },
-    include_package_data=True,
-    package_data={
-        'mcap_profiles': ['data/input/*.csv', 'config/*.ini'],
-    },
-) 
+    author="Your Name",
+    author_email="your.email@example.com",
+    description="A package for MCAP matrix processing and profile assignments",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    keywords="mcap, matrix, profile assignment",
+    python_requires=">=3.8",
+)
