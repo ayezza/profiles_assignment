@@ -72,6 +72,28 @@ def main():
                 key=f'model_select_{st.session_state.get("counter", 0)}'
             )
             
+            model_name = model_options[selected_model]
+            # Get model function with proper name
+            model_func = get_model_function(model_name)
+            
+            # Log model selection with actual name
+            logger.info(f"Selected model: {selected_model} ({model_name})")
+            
+            processor = McapProcessor(
+                logger=logger,
+                mca_matrix=st.session_state.mca_matrix,
+                mcp_matrix=st.session_state.mcp_matrix,
+                model_function=model_func,
+                model_name=model_name,  # Pass model name to processor
+                mcap_function=mcap_function,
+                scale_type=scale_type,
+                normalize=True,
+                is_web_request=True
+            )
+            
+            # Add model info to sidebar
+            st.sidebar.write(f"Selected Model: {selected_model}")
+            
         with col2:
             mcap_function = st.selectbox(
                 'Select MCAP Function',
@@ -101,11 +123,17 @@ def main():
 
         if should_process and hasattr(st.session_state, 'mca_matrix'):
             with st.spinner('Processing data...'):
+                model_func = get_model_function(model_options[selected_model])
+                
+                # Log model selection
+                logger.info(f"Using model: {selected_model} ({model_options[selected_model]})")
+                
                 processor = McapProcessor(
                     logger=logger,
                     mca_matrix=st.session_state.mca_matrix,
                     mcp_matrix=st.session_state.mcp_matrix,
-                    model_function=get_model_function(model_options[selected_model]),
+                    model_function=model_func,
+                    model_name=model_name,  # Pass model name to processor
                     mcap_function=mcap_function,
                     scale_type=scale_type,
                     normalize=True,

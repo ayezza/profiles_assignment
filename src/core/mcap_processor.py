@@ -28,9 +28,9 @@ class McapProcessor:
         self.scale_type = scale_type.lower()
         self.norm = norm
         self.axis = axis
-        self.is_web_request = is_web_request  # Store the flag
+        self.is_web_request = is_web_request  # Store the flag telling if this is a web request
 
-        # Validation des paramètres
+        # Parameters validation
         valid_mcap_functions = ['sum', 'mean', 'sqrt']
         if self.mcap_function not in valid_mcap_functions:
             raise ValueError(f"mcap_function doit être l'un des suivants: {valid_mcap_functions}")
@@ -44,17 +44,31 @@ class McapProcessor:
             self.root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
         else:
             self.root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        logger.info(f"Root directory: {self.root_dir}")
+        
 
         self.output_dir = os.path.join(self.root_dir, 'data', 'output')
+        logger.info(f"Output directory: {self.output_dir}")
         self.figures_dir = os.path.join(self.output_dir, 'figures')
         os.makedirs(self.figures_dir, exist_ok=True)
+        logger.info(f"Figures directory: {self.figures_dir}")
+        self.mcap_matrix_path = os.path.join(self.output_dir, 'mcap_matrix.csv')
+        self.ranking_matrix_path = os.path.join(self.output_dir, 'ranking_matrix.csv')
+        # clear output directory
+        self.purge_output()
 
         # Initialize figures dictionary
         self.figures = {}  # Add this line to initialize the figures attribute
 
+        # log parameters
         self.logger.info(f"Initialized processor with parameters:")
-        self.logger.info(f"- mcap_function: {self.mcap_function}")
+        self.logger.info(f"- mca_matrix shape: {self.mca_matrix.shape}")
+        self.logger.info(f"- mcp_matrix: {self.mcp_matrix.head(10)}")
+        self.logger.info(f"- mcp_matrix shape: {self.mcp_matrix.shape}")
+        self.logger.info(f"- mcp_matrix: {self.mcp_matrix.head(10)}")
+        self.logger.info(f"- model_function: {self.model_function.__name__}")
         self.logger.info(f"- scale_type: {self.scale_type}")
+        self.logger.info(f"- mcap_function: {self.mcap_function}")
         self.logger.info(f"- normalize: {self.normalize}")
         self.logger.info(f"- norm: {self.norm}")
         self.logger.info(f"- axis: {self.axis}")
@@ -95,8 +109,8 @@ class McapProcessor:
         fig = plt.figure(figsize=(15, 8))
         ax = fig.add_subplot(111)
         
-        # Plot transposed data for better visualization
-        result_matrix.T.plot(kind=kind, ax=ax, stacked=False)
+        # Plot data as bar chart
+        result_matrix.plot(kind=kind, ax=ax, stacked=False)
         
         plt.title("Matrice d'affectation - Poids des profils par activité")
         plt.xlabel('Profils')
@@ -237,6 +251,11 @@ class McapProcessor:
                         final_score = np.sum(scores)
                     elif self.mcap_function == 'sqrt':
                         final_score = np.sqrt(np.sum(np.square(scores)))
+                    elif self.mcap_function == 'custom':
+                        final_score = self.mcap_function(scores)
+                    else:
+                        raise ValueError(f"Unknown MCAP function: {self.mcap_function}")
+                    
                     
                     result.loc[activity, profile] = final_score
 
@@ -304,6 +323,7 @@ class McapProcessor:
             self.logger.error(f"Error saving ranking matrix: {str(e)}")
             raise
 
+    """ 
     def process(self):
         try:
             self.logger.info("Starting MCAP processing")
@@ -330,7 +350,9 @@ class McapProcessor:
         except Exception as e:
             self.logger.error(f"Error during MCAP processing: {str(e)}")
             raise
-
+    """       
+    
+    
     def _calculate_rankings(self, mcap_matrix):
         """Calculate rankings for each activity based on MCAP scores"""
         try:
@@ -382,9 +404,12 @@ class McapProcessor:
             
             self.logger.info(f"Dimensions MCA: {self.mca_matrix.shape}")
             self.logger.info(f"Dimensions MCP: {self.mcp_matrix.shape}")
+            self.logger.info(f"Fonction modèle: {self.model_function.__name__}")
             self.logger.info(f"Type d'échelle: {self.scale_type}")
+            self.logger.info(f"Fonction MCAP: {self.mcap_function}")
             
-            # Vérifier les dimensions des matrices
+            
+            # Vérifier les dimensions des matrices (same competencies for both MCA and MCP)
             if self.mca_matrix.shape[1] != self.mcp_matrix.shape[1]:
                 raise ValueError(f"Les dimensions des matrices ne correspondent pas: MCA={self.mca_matrix.shape}, MCP={self.mcp_matrix.shape}")
             
@@ -470,3 +495,13 @@ class McapProcessor:
         except Exception as e:
             self.logger.error(f"MCAP processing error: {str(e)}")
             raise  # Propager l'erreur pour plus de détails
+        
+        
+    def purge_output(self):
+        """cleanup output files"""
+        try:
+            os.removedirs(self.figures)
+            os.removedirs(self.output_dir)
+            self.logger.info("Output files and figures purged successfully")
+        except Exception as e:
+            self.logger.error(f"Error purging output files: {str(e)}")

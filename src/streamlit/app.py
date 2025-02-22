@@ -19,14 +19,14 @@ import matplotlib.pyplot as plt
 plt.style.use('default')  # Utiliser le style par défaut
 
 # Configuration des polices
-matplotlib.rcParams['font.family'] = ['Arial']
-matplotlib.rcParams['font.sans-serif'] = ['Arial']
+#matplotlib.rcParams['font.family'] = ['Arial']
+#matplotlib.rcParams['font.sans-serif'] = ['Arial']
 matplotlib.rcParams['font.size'] = 10
 matplotlib.rcParams['axes.unicode_minus'] = False
 matplotlib.rcParams['axes.labelsize'] = 10
-matplotlib.rcParams['xtick.labelsize'] = 8
-matplotlib.rcParams['ytick.labelsize'] = 8
-matplotlib.rcParams['legend.fontsize'] = 8
+matplotlib.rcParams['xtick.labelsize'] = 9
+matplotlib.rcParams['ytick.labelsize'] = 9
+matplotlib.rcParams['legend.fontsize'] = 9
 
 import pandas as pd
 from src.core.mcap_processor import McapProcessor
@@ -35,6 +35,7 @@ from src.utils.logger import LoggerSetup
 import logging
 import logging.config
 import time
+
 
 def run_streamlit_app():
     # Configuration du logger
@@ -136,7 +137,7 @@ def run_streamlit_app():
     
     # Sélecteur de page
     page = st.sidebar.radio(
-        "Navigation",
+        "**Navigation**",
         ["Page d'accueil", "Tester l'application", "Saisie manuelle"],
         index=0,
         key="navigation"
@@ -240,11 +241,11 @@ def run_streamlit_app():
         st.title("Traitement des données")
         
         # Configuration
-        st.sidebar.header("Configuration")
+        st.sidebar.header("Configuration", divider="orange")
         
         # Upload des fichiers
-        mca_file = st.sidebar.file_uploader("Charger le fichier MCA", type=['csv'])
-        mcp_file = st.sidebar.file_uploader("Charger le fichier MCP", type=['csv'])
+        mca_file = st.sidebar.file_uploader("Charger le fichier MCA :", type=['csv'])
+        mcp_file = st.sidebar.file_uploader("Charger le fichier MCP :", type=['csv'])
         
         # Sélection du modèle
         model_options = {
@@ -267,7 +268,7 @@ def run_streamlit_app():
         """)
         
         scale_type = st.sidebar.selectbox(
-            "Type d'échelle",
+            "Type d'échelle :",
             options=['free', '0-1'],
             index=0,  # Sélectionner 'free' par défaut
             help="Choisissez 'free' si vos données ne sont pas déjà normalisées"
@@ -280,7 +281,7 @@ def run_streamlit_app():
             'Racine carrée': 'sqrt'
         }
         selected_mcap_function = st.sidebar.selectbox(
-            "Choisir la fonction MCAP",
+            "Choisir la fonction MCAP :",
             options=list(mcap_function_options.keys())
         )
         
@@ -362,7 +363,7 @@ def run_streamlit_app():
                 streamlit_handler = StreamlitHandler(log_messages)
                 logger.addHandler(streamlit_handler)
                 
-                # Nettoyer le dossier des figures
+                # Nettoyer le dossier des figures (not really needed)
                 figures_dir = os.path.join(root_dir, 'data', 'output', 'figures')
                 os.makedirs(figures_dir, exist_ok=True)
                 for f in os.listdir(figures_dir):
@@ -379,6 +380,12 @@ def run_streamlit_app():
                     mcap_function=mcap_function_options[selected_mcap_function],
                     scale_type=scale_type
                 )
+                
+                st.write("Traitement en cours...")
+                st.write("Modèle utilisé :", selected_model)
+                st.write("Type d'échelle :", scale_type)    
+                st.write("Fonction MCAP :", selected_mcap_function)
+                
                 
                 processor.process()
                 
@@ -546,7 +553,7 @@ def run_streamlit_app():
             'Modèle 5': 'model5'
         }
         selected_model = st.sidebar.selectbox(
-            "Choisir le modèle",
+            "Choisir le modèle :",
             options=list(model_options.keys())
         )
         
