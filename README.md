@@ -10,6 +10,9 @@
 [![Scikit-learn](https://img.shields.io/badge/Scikit--learn-1.3.2+-F7931E?style=flat&logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115.8+-009688?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Matplotlib](https://img.shields.io/badge/Matplotlib-3.8.2+-11557c?style=flat&logo=python&logoColor=white)](https://matplotlib.org/)
+[![React](https://img.shields.io/badge/React-18.0+-61DAFB?style=flat&logo=react&logoColor=white)](https://reactjs.org/)
+[![Node](https://img.shields.io/badge/Node.js-18.0+-339933?style=flat&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![NPM](https://img.shields.io/badge/NPM-9.0+-CB3837?style=flat&logo=npm&logoColor=white)](https://www.npmjs.com/)
 
 A Python package designed for optimal profile-to-activity assignment based on skills matching, developed by Abdel YEZZA (Ph.D). This solution employs advanced algorithms to maximize the correspondence between required activity competencies and available profile skills.
 
