@@ -20,6 +20,7 @@ var/
 .installed.cfg
 *.egg
 *.docx
+*.ppx
 *.tmp
 
 # Virtual Environment
