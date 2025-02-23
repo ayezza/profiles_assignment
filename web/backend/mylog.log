@@ -405,3 +405,360 @@ Act5      Prof2 (7.667)  Prof4 (7.500)  Prof1 (7.333)
 2025-02-23 12:20:11 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.txt
 2025-02-23 12:20:11 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.txt
 2025-02-23 12:20:11 - myLogger - INFO - MCAP matrix saved to: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.csv
+2025-02-23 14:36:57 - myLogger - INFO - Root directory: D:\PythonProjects\profiles_assignment
+2025-02-23 14:36:57 - myLogger - INFO - Output directory: D:\PythonProjects\profiles_assignment\data\output
+2025-02-23 14:36:57 - myLogger - INFO - Figures directory: D:\PythonProjects\profiles_assignment\data\output\figures
+2025-02-23 14:36:57 - myLogger - INFO - Output directories purged successfully
+2025-02-23 14:36:57 - myLogger - INFO - Initialized processor with parameters:
+2025-02-23 14:36:57 - myLogger - INFO - - mca_matrix shape: (10, 10)
+2025-02-23 14:36:57 - myLogger - INFO - - mcp_matrix:          Comp1  Comp2  Comp3  Comp4  Comp5  Comp6  Comp7  Comp8  Comp9  Comp10
+Profile                                                                       
+Prof1      0.9    0.5    0.3    0.8    0.6    0.7    0.4    0.8    0.5     0.6
+Prof2      0.4    0.8    0.6    0.5    0.7    0.9    0.3    0.7    0.4     0.8
+Prof3      0.6    0.4    0.9    0.7    0.5    0.8    0.6    0.4    0.9     0.3
+Prof4      0.8    0.7    0.4    0.9    0.3    0.6    0.8    0.5    0.7     0.4
+Prof5      0.5    0.9    0.7    0.4    0.8    0.3    0.7    0.6    0.8     0.5
+Prof6      0.7    0.3    0.8    0.6    0.4    0.9    0.5    0.7    0.3     0.8
+Prof7      0.9    0.6    0.5    0.8    0.7    0.4    0.9    0.3    0.6     0.7
+Prof8      0.3    0.8    0.7    0.5    0.9    0.6    0.4    0.8    0.5     0.9
+Prof9      0.8    0.4    0.9    0.3    0.6    0.7    0.5    0.9    0.4     0.6
+Prof10     0.6    0.9    0.4    0.7    0.5    0.8    0.3    0.6    0.8     0.5
+2025-02-23 14:36:57 - myLogger - INFO - - mcp_matrix shape: (15, 10)
+2025-02-23 14:36:57 - myLogger - INFO - - mcp_matrix:          Comp1  Comp2  Comp3  Comp4  Comp5  Comp6  Comp7  Comp8  Comp9  Comp10
+Profile                                                                       
+Prof1      0.9    0.5    0.3    0.8    0.6    0.7    0.4    0.8    0.5     0.6
+Prof2      0.4    0.8    0.6    0.5    0.7    0.9    0.3    0.7    0.4     0.8
+Prof3      0.6    0.4    0.9    0.7    0.5    0.8    0.6    0.4    0.9     0.3
+Prof4      0.8    0.7    0.4    0.9    0.3    0.6    0.8    0.5    0.7     0.4
+Prof5      0.5    0.9    0.7    0.4    0.8    0.3    0.7    0.6    0.8     0.5
+Prof6      0.7    0.3    0.8    0.6    0.4    0.9    0.5    0.7    0.3     0.8
+Prof7      0.9    0.6    0.5    0.8    0.7    0.4    0.9    0.3    0.6     0.7
+Prof8      0.3    0.8    0.7    0.5    0.9    0.6    0.4    0.8    0.5     0.9
+Prof9      0.8    0.4    0.9    0.3    0.6    0.7    0.5    0.9    0.4     0.6
+Prof10     0.6    0.9    0.4    0.7    0.5    0.8    0.3    0.6    0.8     0.5
+2025-02-23 14:36:57 - myLogger - INFO - - model_function: model2
+2025-02-23 14:36:57 - myLogger - INFO - - scale_type: 0-1
+2025-02-23 14:36:57 - myLogger - INFO - - mcap_function: sqrt
+2025-02-23 14:36:57 - myLogger - INFO - - normalize: True
+2025-02-23 14:36:57 - myLogger - INFO - - norm: l2
+2025-02-23 14:36:57 - myLogger - INFO - - axis: 1
+2025-02-23 14:36:57 - myLogger - INFO - - is_web_request: True
+2025-02-23 14:36:57 - myLogger - INFO - Starting MCAP processing
+2025-02-23 14:36:57 - myLogger - INFO - Using parameters:
+2025-02-23 14:36:57 - myLogger - INFO - - MCAP function: sqrt
+2025-02-23 14:36:57 - myLogger - INFO - - Scale type: 0-1
+2025-02-23 14:36:57 - myLogger - INFO - - Normalization: True
+2025-02-23 14:36:57 - myLogger - INFO - MCA Dimension: (10, 10)
+2025-02-23 14:36:57 - myLogger - INFO - MCP Dimension: (15, 10)
+2025-02-23 14:36:57 - myLogger - INFO - Model function: model2
+2025-02-23 14:36:57 - myLogger - INFO - Scale type: 0-1
+2025-02-23 14:36:57 - myLogger - INFO - MCAP function: sqrt
+2025-02-23 14:36:57 - myLogger - INFO - Plage de valeurs MCA: [0.30, 0.90]
+2025-02-23 14:36:57 - myLogger - INFO - Plage de valeurs MCP: [0.30, 0.90]
+2025-02-23 14:36:57 - myLogger - INFO - Normalisation des matrices
+2025-02-23 14:36:57 - myLogger - INFO - Applying 0-1 scaling
+2025-02-23 14:36:57 - myLogger - INFO - Applying 0-1 scaling
+2025-02-23 14:36:57 - myLogger - INFO - === MCAP Matrix Generation ===
+2025-02-23 14:36:57 - myLogger - INFO - Using model function: model2
+2025-02-23 14:36:57 - myLogger - INFO - Using MCAP function: sqrt
+2025-02-23 14:36:57 - myLogger - INFO - Using scale type: 0-1
+2025-02-23 14:36:57 - myLogger - INFO - MCAP matrix 'mcap_matrix.csv' generated successfully in: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.csv
+2025-02-23 14:36:57 - myLogger - INFO - MCAP matrix shape: (10, 15)
+2025-02-23 14:36:57 - myLogger - INFO - MCAP matrix TOP10 head:
+Profile      Prof1     Prof2     Prof3     Prof4     Prof5     Prof6     Prof7     Prof8     Prof9    Prof10    Prof11    Prof12    Prof13    Prof14    Prof15
+Activity                                                                                                                                                      
+Act1      1.825742  2.127858  1.787301  1.818119  2.266912  1.993043  2.236068  2.273030  2.101587  1.666667  1.900292  2.074983  2.034426  1.840894  1.922094
+Act2      1.964971  1.724013  2.254625  2.114763  2.006932  2.254625  1.870829  1.979057  2.108185  2.074983  2.061553  2.134375  1.943651  2.260777  2.041241
+Act3      2.223611  2.236068  1.900292  1.922094  1.740051  2.134375  2.041241  2.242271  2.114763  2.166667  1.840894  1.649916  2.088327  2.088327  1.818119
+Act4      1.779513  1.929306  2.134375  1.810463  2.140872  2.013841  2.081666  2.166667  2.285218  1.748015  2.166667  1.957890  1.715938  2.094968  2.211083
+Act5      2.020726  2.153808  2.094968  1.957890  1.885618  2.160247  1.950783  2.397916  1.840894  1.878238  1.957890  1.922094  2.309401  1.914854  1.936492
+Act6      1.848423  1.779513  2.198484  2.101587  2.236068  1.825742  2.108185  2.088327  2.074983  1.833333  1.885618  2.179449  1.855921  1.979057  1.922094
+Act7      2.166667  2.211083  1.878238  2.192158  1.787301  1.818119  2.160247  2.242271  1.950783  2.192158  1.589899  1.840894  2.108185  2.101587  1.563472
+Act8      1.787301  1.840894  2.081666  1.972027  2.204793  1.950783  2.333333  2.081666  2.027588  1.674979  2.041241  2.048034  1.802776  1.936492  2.088327
+Act9      2.088327  1.979057  2.006932  2.260777  1.641476  2.173067  1.957890  2.108185  2.013841  2.088327  2.034426  1.840894  2.223611  2.048034  2.013841
+Act10     2.034426  1.957890  2.020726  1.658312  2.153808  2.266912  2.101587  1.979057  2.345208  1.848423  2.074983  2.088327  2.068279  2.134375  2.054805
+2025-02-23 14:36:57 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.txt
+2025-02-23 14:36:57 - myLogger - INFO - MCAP matrix generated successfully
+2025-02-23 14:36:57 - myLogger - INFO - MCAP matrix shape: (10, 15)
+2025-02-23 14:36:57 - myLogger - INFO - MCAP matrix sample:
+Profile      Prof1     Prof2     Prof3     Prof4     Prof5     Prof6     Prof7     Prof8     Prof9    Prof10    Prof11    Prof12    Prof13    Prof14    Prof15
+Activity                                                                                                                                                      
+Act1      1.825742  2.127858  1.787301  1.818119  2.266912  1.993043  2.236068  2.273030  2.101587  1.666667  1.900292  2.074983  2.034426  1.840894  1.922094
+Act2      1.964971  1.724013  2.254625  2.114763  2.006932  2.254625  1.870829  1.979057  2.108185  2.074983  2.061553  2.134375  1.943651  2.260777  2.041241
+Act3      2.223611  2.236068  1.900292  1.922094  1.740051  2.134375  2.041241  2.242271  2.114763  2.166667  1.840894  1.649916  2.088327  2.088327  1.818119
+Act4      1.779513  1.929306  2.134375  1.810463  2.140872  2.013841  2.081666  2.166667  2.285218  1.748015  2.166667  1.957890  1.715938  2.094968  2.211083
+Act5      2.020726  2.153808  2.094968  1.957890  1.885618  2.160247  1.950783  2.397916  1.840894  1.878238  1.957890  1.922094  2.309401  1.914854  1.936492
+Act6      1.848423  1.779513  2.198484  2.101587  2.236068  1.825742  2.108185  2.088327  2.074983  1.833333  1.885618  2.179449  1.855921  1.979057  1.922094
+Act7      2.166667  2.211083  1.878238  2.192158  1.787301  1.818119  2.160247  2.242271  1.950783  2.192158  1.589899  1.840894  2.108185  2.101587  1.563472
+Act8      1.787301  1.840894  2.081666  1.972027  2.204793  1.950783  2.333333  2.081666  2.027588  1.674979  2.041241  2.048034  1.802776  1.936492  2.088327
+Act9      2.088327  1.979057  2.006932  2.260777  1.641476  2.173067  1.957890  2.108185  2.013841  2.088327  2.034426  1.840894  2.223611  2.048034  2.013841
+Act10     2.034426  1.957890  2.020726  1.658312  2.153808  2.266912  2.101587  1.979057  2.345208  1.848423  2.074983  2.088327  2.068279  2.134375  2.054805
+2025-02-23 14:36:57 - myLogger - INFO - Ranking matrix generated successfully
+2025-02-23 14:36:57 - myLogger - INFO - MCAP matrix shape: (10, 3)
+2025-02-23 14:36:57 - myLogger - INFO - MCAP matrix sample:
+                    Top1            Top2            Top3
+Activity                                                
+Act1       Prof8 (2.273)   Prof5 (2.267)   Prof7 (2.236)
+Act2      Prof14 (2.261)   Prof3 (2.255)   Prof6 (2.255)
+Act3       Prof8 (2.242)   Prof2 (2.236)   Prof1 (2.224)
+Act4       Prof9 (2.285)  Prof15 (2.211)  Prof11 (2.167)
+Act5       Prof8 (2.398)  Prof13 (2.309)   Prof6 (2.160)
+Act6       Prof5 (2.236)   Prof3 (2.198)  Prof12 (2.179)
+Act7       Prof8 (2.242)   Prof2 (2.211)   Prof4 (2.192)
+Act8       Prof7 (2.333)   Prof5 (2.205)  Prof15 (2.088)
+Act9       Prof4 (2.261)  Prof13 (2.224)   Prof6 (2.173)
+Act10      Prof9 (2.345)   Prof6 (2.267)   Prof5 (2.154)
+2025-02-23 14:36:57 - myLogger - INFO - Ranking matrix saved to: D:\PythonProjects\profiles_assignment\data\output\ranking_matrix.csv
+2025-02-23 14:36:57 - myLogger - INFO - Ranking matrix saved to: D:\PythonProjects\profiles_assignment\data\output\ranking_matrix.csv
+2025-02-23 14:36:57 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.txt
+2025-02-23 14:36:57 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.txt
+2025-02-23 14:36:57 - myLogger - INFO - MCAP matrix saved to: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.csv
+2025-02-23 14:50:24 - myLogger - INFO - Root directory: D:\PythonProjects\profiles_assignment
+2025-02-23 14:50:24 - myLogger - INFO - Output directory: D:\PythonProjects\profiles_assignment\data\output
+2025-02-23 14:50:24 - myLogger - INFO - Figures directory: D:\PythonProjects\profiles_assignment\data\output\figures
+2025-02-23 14:50:24 - myLogger - INFO - Output directories purged successfully
+2025-02-23 14:50:24 - myLogger - INFO - Initialized processor with parameters:
+2025-02-23 14:50:24 - myLogger - INFO - - mca_matrix shape: (5, 10)
+2025-02-23 14:50:24 - myLogger - INFO - - mcp_matrix:          Comp1  Comp2  Comp3  Comp4  Comp5  Comp6  Comp7  Comp8  Comp9  Comp10
+Profile                                                                       
+Prof1      0.9    0.5    0.3    0.8    0.6    0.7    0.4    0.8    0.5     0.6
+Prof2      0.4    0.8    0.6    0.5    0.7    0.9    0.3    0.7    0.4     0.8
+Prof3      0.6    0.4    0.9    0.7    0.5    0.8    0.6    0.4    0.9     0.3
+Prof4      0.8    0.7    0.4    0.9    0.3    0.6    0.8    0.5    0.7     0.4
+Prof5      0.5    0.9    0.7    0.4    0.8    0.3    0.7    0.6    0.8     0.5
+2025-02-23 14:50:24 - myLogger - INFO - - mcp_matrix shape: (5, 10)
+2025-02-23 14:50:24 - myLogger - INFO - - mcp_matrix:          Comp1  Comp2  Comp3  Comp4  Comp5  Comp6  Comp7  Comp8  Comp9  Comp10
+Profile                                                                       
+Prof1      0.9    0.5    0.3    0.8    0.6    0.7    0.4    0.8    0.5     0.6
+Prof2      0.4    0.8    0.6    0.5    0.7    0.9    0.3    0.7    0.4     0.8
+Prof3      0.6    0.4    0.9    0.7    0.5    0.8    0.6    0.4    0.9     0.3
+Prof4      0.8    0.7    0.4    0.9    0.3    0.6    0.8    0.5    0.7     0.4
+Prof5      0.5    0.9    0.7    0.4    0.8    0.3    0.7    0.6    0.8     0.5
+2025-02-23 14:50:24 - myLogger - INFO - - model_function: model2
+2025-02-23 14:50:24 - myLogger - INFO - - scale_type: 0-1
+2025-02-23 14:50:24 - myLogger - INFO - - mcap_function: sqrt
+2025-02-23 14:50:24 - myLogger - INFO - - normalize: True
+2025-02-23 14:50:24 - myLogger - INFO - - norm: l2
+2025-02-23 14:50:24 - myLogger - INFO - - axis: 1
+2025-02-23 14:50:24 - myLogger - INFO - - is_web_request: True
+2025-02-23 14:50:24 - myLogger - INFO - Starting MCAP processing
+2025-02-23 14:50:24 - myLogger - INFO - Using parameters:
+2025-02-23 14:50:24 - myLogger - INFO - - MCAP function: sqrt
+2025-02-23 14:50:24 - myLogger - INFO - - Scale type: 0-1
+2025-02-23 14:50:24 - myLogger - INFO - - Normalization: True
+2025-02-23 14:50:24 - myLogger - INFO - MCA Dimension: (5, 10)
+2025-02-23 14:50:24 - myLogger - INFO - MCP Dimension: (5, 10)
+2025-02-23 14:50:24 - myLogger - INFO - Model function: model2
+2025-02-23 14:50:24 - myLogger - INFO - Scale type: 0-1
+2025-02-23 14:50:24 - myLogger - INFO - MCAP function: sqrt
+2025-02-23 14:50:24 - myLogger - INFO - Plage de valeurs MCA: [0.30, 0.90]
+2025-02-23 14:50:24 - myLogger - INFO - Plage de valeurs MCP: [0.30, 0.90]
+2025-02-23 14:50:24 - myLogger - INFO - Normalisation des matrices
+2025-02-23 14:50:24 - myLogger - INFO - Applying 0-1 scaling
+2025-02-23 14:50:24 - myLogger - INFO - Applying 0-1 scaling
+2025-02-23 14:50:24 - myLogger - INFO - === MCAP Matrix Generation ===
+2025-02-23 14:50:24 - myLogger - INFO - Using model function: model2
+2025-02-23 14:50:24 - myLogger - INFO - Using MCAP function: sqrt
+2025-02-23 14:50:24 - myLogger - INFO - Using scale type: 0-1
+2025-02-23 14:50:24 - myLogger - INFO - MCAP matrix 'mcap_matrix.csv' generated successfully in: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.csv
+2025-02-23 14:50:24 - myLogger - INFO - MCAP matrix shape: (5, 5)
+2025-02-23 14:50:24 - myLogger - INFO - MCAP matrix TOP10 head:
+Profile      Prof1     Prof2     Prof3     Prof4     Prof5
+Activity                                                  
+Act1      1.825742  2.127858  1.787301  1.818119  2.266912
+Act2      1.964971  1.724013  2.254625  2.114763  2.006932
+Act3      2.223611  2.236068  1.900292  1.922094  1.740051
+Act4      1.779513  1.929306  2.134375  1.810463  2.140872
+Act5      2.020726  2.153808  2.094968  1.957890  1.885618
+2025-02-23 14:50:24 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.txt
+2025-02-23 14:50:24 - myLogger - INFO - MCAP matrix generated successfully
+2025-02-23 14:50:24 - myLogger - INFO - MCAP matrix shape: (5, 5)
+2025-02-23 14:50:24 - myLogger - INFO - MCAP matrix sample:
+Profile      Prof1     Prof2     Prof3     Prof4     Prof5
+Activity                                                  
+Act1      1.825742  2.127858  1.787301  1.818119  2.266912
+Act2      1.964971  1.724013  2.254625  2.114763  2.006932
+Act3      2.223611  2.236068  1.900292  1.922094  1.740051
+Act4      1.779513  1.929306  2.134375  1.810463  2.140872
+Act5      2.020726  2.153808  2.094968  1.957890  1.885618
+2025-02-23 14:50:24 - myLogger - INFO - Ranking matrix generated successfully
+2025-02-23 14:50:24 - myLogger - INFO - MCAP matrix shape: (5, 3)
+2025-02-23 14:50:24 - myLogger - INFO - MCAP matrix sample:
+                   Top1           Top2           Top3
+Activity                                             
+Act1      Prof5 (2.267)  Prof2 (2.128)  Prof1 (1.826)
+Act2      Prof3 (2.255)  Prof4 (2.115)  Prof5 (2.007)
+Act3      Prof2 (2.236)  Prof1 (2.224)  Prof4 (1.922)
+Act4      Prof5 (2.141)  Prof3 (2.134)  Prof2 (1.929)
+Act5      Prof2 (2.154)  Prof3 (2.095)  Prof1 (2.021)
+2025-02-23 14:50:24 - myLogger - INFO - Ranking matrix saved to: D:\PythonProjects\profiles_assignment\data\output\ranking_matrix.csv
+2025-02-23 14:50:24 - myLogger - INFO - Ranking matrix saved to: D:\PythonProjects\profiles_assignment\data\output\ranking_matrix.csv
+2025-02-23 14:50:24 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.txt
+2025-02-23 14:50:24 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.txt
+2025-02-23 14:50:24 - myLogger - INFO - MCAP matrix saved to: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.csv
+2025-02-23 15:02:53 - myLogger - INFO - Root directory: D:\PythonProjects\profiles_assignment
+2025-02-23 15:02:53 - myLogger - INFO - Output directory: D:\PythonProjects\profiles_assignment\data\output
+2025-02-23 15:02:53 - myLogger - INFO - Figures directory: D:\PythonProjects\profiles_assignment\data\output\figures
+2025-02-23 15:02:53 - myLogger - INFO - Output directories purged successfully
+2025-02-23 15:02:53 - myLogger - INFO - Initialized processor with parameters:
+2025-02-23 15:02:53 - myLogger - INFO - - mca_matrix shape: (5, 10)
+2025-02-23 15:02:53 - myLogger - INFO - - mcp_matrix:          Comp1  Comp2  Comp3  Comp4  Comp5  Comp6  Comp7  Comp8  Comp9  Comp10
+Profile                                                                       
+Prof1      0.9    0.5    0.3    0.8    0.6    0.7    0.4    0.8    0.5     0.6
+Prof2      0.4    0.8    0.6    0.5    0.7    0.9    0.3    0.7    0.4     0.8
+Prof3      0.6    0.4    0.9    0.7    0.5    0.8    0.6    0.4    0.9     0.3
+Prof4      0.8    0.7    0.4    0.9    0.3    0.6    0.8    0.5    0.7     0.4
+Prof5      0.5    0.9    0.7    0.4    0.8    0.3    0.7    0.6    0.8     0.5
+2025-02-23 15:02:53 - myLogger - INFO - - mcp_matrix shape: (5, 10)
+2025-02-23 15:02:53 - myLogger - INFO - - mcp_matrix:          Comp1  Comp2  Comp3  Comp4  Comp5  Comp6  Comp7  Comp8  Comp9  Comp10
+Profile                                                                       
+Prof1      0.9    0.5    0.3    0.8    0.6    0.7    0.4    0.8    0.5     0.6
+Prof2      0.4    0.8    0.6    0.5    0.7    0.9    0.3    0.7    0.4     0.8
+Prof3      0.6    0.4    0.9    0.7    0.5    0.8    0.6    0.4    0.9     0.3
+Prof4      0.8    0.7    0.4    0.9    0.3    0.6    0.8    0.5    0.7     0.4
+Prof5      0.5    0.9    0.7    0.4    0.8    0.3    0.7    0.6    0.8     0.5
+2025-02-23 15:02:53 - myLogger - INFO - - model_function: model2
+2025-02-23 15:02:53 - myLogger - INFO - - scale_type: 0-1
+2025-02-23 15:02:53 - myLogger - INFO - - mcap_function: sqrt
+2025-02-23 15:02:53 - myLogger - INFO - - normalize: True
+2025-02-23 15:02:53 - myLogger - INFO - - norm: l2
+2025-02-23 15:02:53 - myLogger - INFO - - axis: 1
+2025-02-23 15:02:53 - myLogger - INFO - - is_web_request: True
+2025-02-23 15:02:53 - myLogger - INFO - Starting MCAP processing
+2025-02-23 15:02:53 - myLogger - INFO - Using parameters:
+2025-02-23 15:02:53 - myLogger - INFO - - MCAP function: sqrt
+2025-02-23 15:02:53 - myLogger - INFO - - Scale type: 0-1
+2025-02-23 15:02:53 - myLogger - INFO - - Normalization: True
+2025-02-23 15:02:53 - myLogger - INFO - MCA Dimension: (5, 10)
+2025-02-23 15:02:53 - myLogger - INFO - MCP Dimension: (5, 10)
+2025-02-23 15:02:53 - myLogger - INFO - Model function: model2
+2025-02-23 15:02:53 - myLogger - INFO - Scale type: 0-1
+2025-02-23 15:02:53 - myLogger - INFO - MCAP function: sqrt
+2025-02-23 15:02:53 - myLogger - INFO - Plage de valeurs MCA: [0.30, 0.90]
+2025-02-23 15:02:53 - myLogger - INFO - Plage de valeurs MCP: [0.30, 0.90]
+2025-02-23 15:02:53 - myLogger - INFO - Normalisation des matrices
+2025-02-23 15:02:53 - myLogger - INFO - Applying 0-1 scaling
+2025-02-23 15:02:53 - myLogger - INFO - Applying 0-1 scaling
+2025-02-23 15:02:53 - myLogger - INFO - === MCAP Matrix Generation ===
+2025-02-23 15:02:53 - myLogger - INFO - Using model function: model2
+2025-02-23 15:02:53 - myLogger - INFO - Using MCAP function: sqrt
+2025-02-23 15:02:53 - myLogger - INFO - Using scale type: 0-1
+2025-02-23 15:02:53 - myLogger - INFO - MCAP matrix 'mcap_matrix.csv' generated successfully in: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.csv
+2025-02-23 15:02:53 - myLogger - INFO - MCAP matrix shape: (5, 5)
+2025-02-23 15:02:53 - myLogger - INFO - MCAP matrix TOP10 head:
+Profile      Prof1     Prof2     Prof3     Prof4     Prof5
+Activity                                                  
+Act1      1.825742  2.127858  1.787301  1.818119  2.266912
+Act2      1.964971  1.724013  2.254625  2.114763  2.006932
+Act3      2.223611  2.236068  1.900292  1.922094  1.740051
+Act4      1.779513  1.929306  2.134375  1.810463  2.140872
+Act5      2.020726  2.153808  2.094968  1.957890  1.885618
+2025-02-23 15:02:53 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.txt
+2025-02-23 15:02:53 - myLogger - INFO - MCAP matrix generated successfully
+2025-02-23 15:02:53 - myLogger - INFO - MCAP matrix shape: (5, 5)
+2025-02-23 15:02:53 - myLogger - INFO - MCAP matrix sample:
+Profile      Prof1     Prof2     Prof3     Prof4     Prof5
+Activity                                                  
+Act1      1.825742  2.127858  1.787301  1.818119  2.266912
+Act2      1.964971  1.724013  2.254625  2.114763  2.006932
+Act3      2.223611  2.236068  1.900292  1.922094  1.740051
+Act4      1.779513  1.929306  2.134375  1.810463  2.140872
+Act5      2.020726  2.153808  2.094968  1.957890  1.885618
+2025-02-23 15:02:53 - myLogger - INFO - Ranking matrix generated successfully
+2025-02-23 15:02:53 - myLogger - INFO - MCAP matrix shape: (5, 3)
+2025-02-23 15:02:53 - myLogger - INFO - MCAP matrix sample:
+                   Top1           Top2           Top3
+Activity                                             
+Act1      Prof5 (2.267)  Prof2 (2.128)  Prof1 (1.826)
+Act2      Prof3 (2.255)  Prof4 (2.115)  Prof5 (2.007)
+Act3      Prof2 (2.236)  Prof1 (2.224)  Prof4 (1.922)
+Act4      Prof5 (2.141)  Prof3 (2.134)  Prof2 (1.929)
+Act5      Prof2 (2.154)  Prof3 (2.095)  Prof1 (2.021)
+2025-02-23 15:02:53 - myLogger - INFO - Ranking matrix saved to: D:\PythonProjects\profiles_assignment\data\output\ranking_matrix.csv
+2025-02-23 15:02:53 - myLogger - INFO - Ranking matrix saved to: D:\PythonProjects\profiles_assignment\data\output\ranking_matrix.csv
+2025-02-23 15:02:53 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.txt
+2025-02-23 15:02:53 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.txt
+2025-02-23 15:02:53 - myLogger - INFO - MCAP matrix saved to: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.csv
+2025-02-23 15:07:04 - myLogger - INFO - Root directory: D:\PythonProjects\profiles_assignment
+2025-02-23 15:07:04 - myLogger - INFO - Output directory: D:\PythonProjects\profiles_assignment\data\output
+2025-02-23 15:07:04 - myLogger - INFO - Figures directory: D:\PythonProjects\profiles_assignment\data\output\figures
+2025-02-23 15:07:04 - myLogger - INFO - Output directories purged successfully
+2025-02-23 15:07:04 - myLogger - INFO - Initialized processor with parameters:
+2025-02-23 15:07:04 - myLogger - INFO - - mca_matrix shape: (5, 10)
+2025-02-23 15:07:04 - myLogger - INFO - - mcp_matrix:          Comp1  Comp2  Comp3  Comp4  Comp5  Comp6  Comp7  Comp8  Comp9  Comp10
+Profile                                                                       
+Prof1      0.9    0.5    0.3    0.8    0.6    0.7    0.4    0.8    0.5     0.6
+Prof2      0.4    0.8    0.6    0.5    0.7    0.9    0.3    0.7    0.4     0.8
+Prof3      0.6    0.4    0.9    0.7    0.5    0.8    0.6    0.4    0.9     0.3
+Prof4      0.8    0.7    0.4    0.9    0.3    0.6    0.8    0.5    0.7     0.4
+Prof5      0.5    0.9    0.7    0.4    0.8    0.3    0.7    0.6    0.8     0.5
+2025-02-23 15:07:04 - myLogger - INFO - - mcp_matrix shape: (5, 10)
+2025-02-23 15:07:04 - myLogger - INFO - - mcp_matrix:          Comp1  Comp2  Comp3  Comp4  Comp5  Comp6  Comp7  Comp8  Comp9  Comp10
+Profile                                                                       
+Prof1      0.9    0.5    0.3    0.8    0.6    0.7    0.4    0.8    0.5     0.6
+Prof2      0.4    0.8    0.6    0.5    0.7    0.9    0.3    0.7    0.4     0.8
+Prof3      0.6    0.4    0.9    0.7    0.5    0.8    0.6    0.4    0.9     0.3
+Prof4      0.8    0.7    0.4    0.9    0.3    0.6    0.8    0.5    0.7     0.4
+Prof5      0.5    0.9    0.7    0.4    0.8    0.3    0.7    0.6    0.8     0.5
+2025-02-23 15:07:04 - myLogger - INFO - - model_function: model2
+2025-02-23 15:07:04 - myLogger - INFO - - scale_type: 0-1
+2025-02-23 15:07:04 - myLogger - INFO - - mcap_function: sqrt
+2025-02-23 15:07:04 - myLogger - INFO - - normalize: True
+2025-02-23 15:07:04 - myLogger - INFO - - norm: l2
+2025-02-23 15:07:04 - myLogger - INFO - - axis: 1
+2025-02-23 15:07:04 - myLogger - INFO - - is_web_request: True
+2025-02-23 15:07:04 - myLogger - INFO - Starting MCAP processing
+2025-02-23 15:07:04 - myLogger - INFO - Using parameters:
+2025-02-23 15:07:04 - myLogger - INFO - - MCAP function: sqrt
+2025-02-23 15:07:04 - myLogger - INFO - - Scale type: 0-1
+2025-02-23 15:07:04 - myLogger - INFO - - Normalization: True
+2025-02-23 15:07:04 - myLogger - INFO - MCA Dimension: (5, 10)
+2025-02-23 15:07:04 - myLogger - INFO - MCP Dimension: (5, 10)
+2025-02-23 15:07:04 - myLogger - INFO - Model function: model2
+2025-02-23 15:07:04 - myLogger - INFO - Scale type: 0-1
+2025-02-23 15:07:04 - myLogger - INFO - MCAP function: sqrt
+2025-02-23 15:07:04 - myLogger - INFO - Plage de valeurs MCA: [0.30, 0.90]
+2025-02-23 15:07:04 - myLogger - INFO - Plage de valeurs MCP: [0.30, 0.90]
+2025-02-23 15:07:04 - myLogger - INFO - Normalisation des matrices
+2025-02-23 15:07:04 - myLogger - INFO - Applying 0-1 scaling
+2025-02-23 15:07:04 - myLogger - INFO - Applying 0-1 scaling
+2025-02-23 15:07:04 - myLogger - INFO - === MCAP Matrix Generation ===
+2025-02-23 15:07:04 - myLogger - INFO - Using model function: model2
+2025-02-23 15:07:04 - myLogger - INFO - Using MCAP function: sqrt
+2025-02-23 15:07:04 - myLogger - INFO - Using scale type: 0-1
+2025-02-23 15:07:04 - myLogger - INFO - MCAP matrix 'mcap_matrix.csv' generated successfully in: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.csv
+2025-02-23 15:07:04 - myLogger - INFO - MCAP matrix shape: (5, 5)
+2025-02-23 15:07:04 - myLogger - INFO - MCAP matrix TOP10 head:
+Profile      Prof1     Prof2     Prof3     Prof4     Prof5
+Activity                                                  
+Act1      1.825742  2.127858  1.787301  1.818119  2.266912
+Act2      1.964971  1.724013  2.254625  2.114763  2.006932
+Act3      2.223611  2.236068  1.900292  1.922094  1.740051
+Act4      1.779513  1.929306  2.134375  1.810463  2.140872
+Act5      2.020726  2.153808  2.094968  1.957890  1.885618
+2025-02-23 15:07:04 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.txt
+2025-02-23 15:07:04 - myLogger - INFO - MCAP matrix generated successfully
+2025-02-23 15:07:04 - myLogger - INFO - MCAP matrix shape: (5, 5)
+2025-02-23 15:07:04 - myLogger - INFO - MCAP matrix sample:
+Profile      Prof1     Prof2     Prof3     Prof4     Prof5
+Activity                                                  
+Act1      1.825742  2.127858  1.787301  1.818119  2.266912
+Act2      1.964971  1.724013  2.254625  2.114763  2.006932
+Act3      2.223611  2.236068  1.900292  1.922094  1.740051
+Act4      1.779513  1.929306  2.134375  1.810463  2.140872
+Act5      2.020726  2.153808  2.094968  1.957890  1.885618
+2025-02-23 15:07:04 - myLogger - INFO - Ranking matrix generated successfully
+2025-02-23 15:07:04 - myLogger - INFO - MCAP matrix shape: (5, 3)
+2025-02-23 15:07:04 - myLogger - INFO - MCAP matrix sample:
+                   Top1           Top2           Top3
+Activity                                             
+Act1      Prof5 (2.267)  Prof2 (2.128)  Prof1 (1.826)
+Act2      Prof3 (2.255)  Prof4 (2.115)  Prof5 (2.007)
+Act3      Prof2 (2.236)  Prof1 (2.224)  Prof4 (1.922)
+Act4      Prof5 (2.141)  Prof3 (2.134)  Prof2 (1.929)
+Act5      Prof2 (2.154)  Prof3 (2.095)  Prof1 (2.021)
+2025-02-23 15:07:04 - myLogger - INFO - Ranking matrix saved to: D:\PythonProjects\profiles_assignment\data\output\ranking_matrix.csv
+2025-02-23 15:07:04 - myLogger - INFO - Ranking matrix saved to: D:\PythonProjects\profiles_assignment\data\output\ranking_matrix.csv
+2025-02-23 15:07:04 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.txt
+2025-02-23 15:07:04 - myLogger - INFO - Matrice MCAP sauvegardée dans: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.txt
+2025-02-23 15:07:04 - myLogger - INFO - MCAP matrix saved to: D:\PythonProjects\profiles_assignment\data\output\mcap_matrix.csv
