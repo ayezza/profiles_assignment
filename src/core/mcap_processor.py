@@ -14,6 +14,8 @@ import uuid
 import os
 import math
 from src.models.mcap_functions import McapFunctions  # Add this import at the top
+import shutil
+from pathlib import Path
 
 class McapProcessor:
     def __init__(self, logger, mca_matrix, mcp_matrix, model_function, mcap_function='mean', 
@@ -230,6 +232,8 @@ class McapProcessor:
             self.logger.info(f"Using scale type: {self.scale_type}")
 
             # Initialize result matrix with Activities as rows and Profiles as columns
+            # Make sure to set the index names as Act1, Act2, etc.
+            #activities = [f'Activ.{i+1}' for i in range(len(self.mca_matrix.index))]  # Changed to Activ.N format
             result = pd.DataFrame(
                 np.zeros((len(self.mca_matrix.index), len(self.mcp_matrix.index))),
                 index=self.mca_matrix.index,     
@@ -256,11 +260,27 @@ class McapProcessor:
                         final_score = np.sqrt(np.sum(np.square(scores)))
                     elif self.mcap_function == 'custom':
                         final_score = self.mcap_function(scores)
+                    elif self.mcap_function == 'weighted_mean':
+                        final_score = np.average(scores, weights=self.mcp_matrix.loc[profile])
                     else:
                         raise ValueError(f"Unknown MCAP function: {self.mcap_function}")
                     
                     
                     result.loc[activity, profile] = final_score
+            
+            # Save matrix to CSV with proper formatting
+            mcap_matrix_path = os.path.join(self.output_dir, 'mcap_matrix.csv')
+            result.to_csv(
+                mcap_matrix_path,
+                index=True,              # Include the index column
+                index_label='Activity', # Label for index column
+                sep=',',               # Use comma as separator 
+                float_format='%.16f'   # Use full precision for float values
+            )
+            
+            self.logger.info(f"MCAP matrix 'mcap_matrix.csv' generated successfully in: {mcap_matrix_path}")
+            self.logger.info(f"MCAP matrix shape: {result.shape}")
+            self.logger.info(f"MCAP matrix TOP10 head:\n{result.head(10)}")
 
             # Save matrix immediately after generation
             self._save_mcap_matrix(result)
@@ -405,13 +425,13 @@ class McapProcessor:
             
             # Vérification des données
             if self.mca_matrix.empty or self.mcp_matrix.empty:
-                raise ValueError("Les matrices MCA ou MCP sont vides")
+                raise ValueError("MCA or MCP matrices is empty")
             
-            self.logger.info(f"Dimensions MCA: {self.mca_matrix.shape}")
-            self.logger.info(f"Dimensions MCP: {self.mcp_matrix.shape}")
-            self.logger.info(f"Fonction modèle: {self.model_function.__name__}")
-            self.logger.info(f"Type d'échelle: {self.scale_type}")
-            self.logger.info(f"Fonction MCAP: {self.mcap_function}")
+            self.logger.info(f"MCA Dimension: {self.mca_matrix.shape}")
+            self.logger.info(f"MCP Dimension: {self.mcp_matrix.shape}")
+            self.logger.info(f"Model function: {self.model_function.__name__}")
+            self.logger.info(f"Scale type: {self.scale_type}")
+            self.logger.info(f"MCAP function: {self.mcap_function}")
             
             
             # Vérifier les dimensions des matrices (same competencies for both MCA and MCP)
@@ -520,10 +540,26 @@ class McapProcessor:
         
         
     def _purge_output(self):
-        """cleanup output files"""
+        """Purge the output directories before generating new files."""
         try:
-            os.removedirs(self.figures_dir)
-            #os.removedirs(self.output_dir)
-            self.logger.info("Output files and figures purged successfully")
+            # Get the figures directory path
+            figures_dir = os.path.join('data', 'output', 'figures')
+            
+            # Create full path if it doesn't exist
+            os.makedirs(figures_dir, exist_ok=True)
+            
+            # Remove all files in the figures directory
+            for file in os.listdir(figures_dir):
+                file_path = os.path.join(figures_dir, file)
+                try:
+                    if os.path.isfile(file_path):
+                        os.unlink(file_path)
+                    elif os.path.isdir(file_path):
+                        shutil.rmtree(file_path)
+                except Exception as e:
+                    self.logger.warning(f"Error deleting {file_path}: {str(e)}")
+                    
+            self.logger.info("Output directories purged successfully")
         except Exception as e:
-            self.logger.error(f"Error purging output files: {str(e)}")
+            self.logger.error(f"Error purging output directories: {str(e)}")
+            raise

@@ -404,7 +404,7 @@ def run_streamlit_app():
                 
                 # Affichage des résultats dans la page principale
                 ranking_matrix_path = os.path.join(root_dir, 'data', 'output', 'ranking_matrix.csv')
-                mcap_matrix_path = os.path.join(root_dir, 'data', 'output', 'mcap_matrix.txt')
+                mcap_matrix_path = os.path.join(root_dir, 'data', 'output', 'mcap_matrix.csv')
                 
                 # Create columns for matrices
                 col1, col2 = st.columns(2)
@@ -425,6 +425,7 @@ def run_streamlit_app():
                             st.error(f"Erreur lors de la lecture de la matrice MCAP : {str(e)}")
                     else:
                         st.warning("Matrice MCAP non trouvée")
+                
                 
                 # Affichage des résultats détaillés
                 ranking_results_path = os.path.join(root_dir, 'data', 'output', 'ranking_results.txt')

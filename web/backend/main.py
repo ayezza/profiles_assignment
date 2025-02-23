@@ -28,7 +28,7 @@ from app.routes import router
 # Création des tables dans la base de données
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="MCAP Profiles API")
+app = FastAPI()
 
 # Middleware pour logger toutes les requêtes
 @app.middleware("http")
@@ -41,7 +41,7 @@ async def log_requests(request: Request, call_next):
 # Configuration CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"],
+    allow_origins=["http://localhost:3001"],  # React app URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -50,7 +50,7 @@ app.add_middleware(
 # Route de test
 @app.get("/")
 async def root():
-    return {"message": "MCAP API is running"}
+    return {"message": "MCAP API Backend"}
 
 # Route de test pour les modèles
 @app.get("/api/v1/models/")
