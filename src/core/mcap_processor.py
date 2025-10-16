@@ -35,11 +35,11 @@ class McapProcessor:
         # Parameters validation
         valid_mcap_functions = ['sum', 'mean', 'sqrt']
         if self.mcap_function not in valid_mcap_functions:
-            raise ValueError(f"mcap_function doit être l'un des suivants: {valid_mcap_functions}")
+            raise ValueError(f"mcap_function must be one of the following functions: {valid_mcap_functions}")
 
         valid_scale_types = ['0-1', 'free']
         if self.scale_type not in valid_scale_types:
-            raise ValueError(f"scale_type doit être l'un des suivants: {valid_scale_types}")
+            raise ValueError(f"scale_type must be one of the following values: {valid_scale_types}")
 
         # Adjust root directory based on request type
         if is_web_request:
@@ -117,7 +117,7 @@ class McapProcessor:
         # Plot data as bar chart
         result_matrix.plot(kind=kind, ax=ax, stacked=False)
         
-        plt.title("Matrice d'affectation - Poids des profils par activité")
+        plt.title("Assignment matrix - Profiles weight per activity", fontsize=14)
         plt.xlabel('Profils')
         plt.ylabel('Poids')
         
@@ -296,7 +296,7 @@ class McapProcessor:
             output_path = os.path.join(self.output_dir, 'mcap_matrix.txt')
             
             # Format matrix for output
-            header = "Matrice MCAP (Activités x Profils)\n"
+            header = "MCAP matrix (Activities x Profiles)\n"
             header += "=" * 100 + "\n\n"
             
             # Convert matrix to string with proper formatting
@@ -311,7 +311,7 @@ class McapProcessor:
                 f.write(matrix_str)
                 f.write('\n')
             
-            self.logger.info(f"Matrice MCAP sauvegardée dans: {output_path}")
+            self.logger.info(f"MCAP saved dans: {output_path}")
             
         except Exception as e:
             self.logger.error(f"Error saving MCAP matrix: {str(e)}")
@@ -436,19 +436,19 @@ class McapProcessor:
             
             # Vérifier les dimensions des matrices (same competencies for both MCA and MCP)
             if self.mca_matrix.shape[1] != self.mcp_matrix.shape[1]:
-                raise ValueError(f"Les dimensions des matrices ne correspondent pas: MCA={self.mca_matrix.shape}, MCP={self.mcp_matrix.shape}")
+                raise ValueError(f"Matrices have inconsistant dimensions: MCA={self.mca_matrix.shape}, MCP={self.mcp_matrix.shape}")
             
             # Vérifier les valeurs NaN
             if self.mca_matrix.isna().any().any() or self.mcp_matrix.isna().any().any():
-                raise ValueError("Les matrices contiennent des valeurs NaN")
+                raise ValueError("Matrices contaoin NaN values")
             
             # Afficher les plages de valeurs avant normalisation
-            self.logger.info(f"Plage de valeurs MCA: [{self.mca_matrix.values.min():.2f}, {self.mca_matrix.values.max():.2f}]")
-            self.logger.info(f"Plage de valeurs MCP: [{self.mcp_matrix.values.min():.2f}, {self.mcp_matrix.values.max():.2f}]")
+            self.logger.info(f"MCA values range: [{self.mca_matrix.values.min():.2f}, {self.mca_matrix.values.max():.2f}]")
+            self.logger.info(f"MCP values range: [{self.mcp_matrix.values.min():.2f}, {self.mcp_matrix.values.max():.2f}]")
             
             # Normaliser les matrices si demandé
             if self.normalize:
-                self.logger.info("Normalisation des matrices")
+                self.logger.info("Matrices normalization enabled")
                 self.mca_matrix = self._normalize_matrix(self.mca_matrix)
                 self.mcp_matrix = self._normalize_matrix(self.mcp_matrix)
             
@@ -491,12 +491,12 @@ class McapProcessor:
             # Sauvegarder la matrice dans le format Activities x Profiles
             matrix_file = os.path.join(self.output_dir, 'mcap_matrix.txt')
             with open(matrix_file, 'w', encoding='utf-8') as f:
-                f.write("Matrice de résultats (Activités x Profils)\n")
+                f.write("Results matrix (Activities x Profiles)\n")
                 f.write("=====================================\n\n")
                 f.write(result_without_stats.to_string(float_format=lambda x: '{:.3f}'.format(x)))
                 f.write('\n')
             
-            self.logger.info(f"Matrice MCAP sauvegardée dans: {matrix_file}")
+            self.logger.info(f"MCAP saved in: {matrix_file}")
             # save mcap matrix
             self._save_mcap_matrix(result_without_stats)
             self.logger.info(f"MCAP matrix saved to: {self.mcap_matrix_path}")
