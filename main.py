@@ -38,7 +38,7 @@ def main():
     try:
         # Vérifier l'existence des fichiers
         if not os.path.exists(args.mca) or not os.path.exists(args.mcp):
-            raise FileNotFoundError("Les fichiers MCA ou MCP n'existent pas")
+            raise FileNotFoundError("Files MCA or MCP do not exist")
             
         # Charger les matrices
         mca_df = pd.read_csv(args.mca, index_col=0)
@@ -67,7 +67,7 @@ def main():
         # Traiter et obtenir les résultats
         results = processor.process()
         
-        logger.info("Traitement terminé avec succès")
+        logger.info("Processing completed successfully")
         return 0
         
     except Exception as e:
